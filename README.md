@@ -1,5 +1,7 @@
 # GUI Package for PPE Vending Machine
 
+Version: 0.2.0
+
 A ROS2 package containing a PyQt5-based graphical user interface for controlling and monitoring a PPE (Personal Protective Equipment) vending machine.
 
 ## Features
@@ -12,9 +14,9 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 
 ## Dependencies
 
-- ROS2 (tested on Humble)
+- ROS2 Humble
 - Python 3.10+
-- PyQt5
+- PyQt5 5.15+
 - rclpy
 - std_msgs
 
@@ -26,10 +28,10 @@ mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws
 ```
 
-2. Clone this package into the src directory:
+2. Clone this package into the workspace src directory:
 ```bash
 cd src
-git clone https://github.com/maxckyuen/gui_package.git
+git clone https://github.com/ckyb63/ppe_gui_package.git
 ```
 
 3. Install dependencies:
@@ -41,7 +43,7 @@ sudo apt install python3-pyqt5
 4. Build the workspace:
 ```bash
 cd ~/ros2_ws
-colcon build --packages-select gui_package
+colcon build
 ```
 
 5. Source the workspace:
@@ -51,6 +53,11 @@ source install/setup.bash
 
 ## Usage
 
+First, source your workspace:
+```bash
+source ~/ros2_ws/install/setup.bash
+```
+
 1. Launch the GUI:
 ```bash
 ros2 run gui_package ppe_gui
@@ -58,6 +65,9 @@ ros2 run gui_package ppe_gui
 
 2. For testing without hardware, run the dummy PPE status publisher in another terminal:
 ```bash
+# Make sure to source the workspace in the new terminal too
+source ~/ros2_ws/install/setup.bash
+
 ros2 run gui_package dummy_ppe
 ```
 
@@ -80,10 +90,10 @@ ros2 run gui_package dummy_ppe
 gui_package/
 ├── gui_package/
 │   ├── __init__.py
-│   ├── ppe_gui.py          # Main GUI implementation
-│   └── dummy_ppe_status.py # Test publisher for simulating PPE detection
-├── package.xml
-├── setup.py
+│   ├── ppe_gui.py          # Main GUI implementation (v0.2.0)
+│   └── dummy_ppe_status.py # Test publisher for simulating PPE detection (v0.2.0)
+├── package.xml             # Package manifest (v0.2.0)
+├── setup.py               # Package setup
 └── README.md
 ```
 
@@ -95,4 +105,4 @@ colcon build --packages-select gui_package --symlink-install
 
 ## Author
 
-- Max Chen 
+- Max Chen

@@ -4,7 +4,7 @@ package_name = 'gui_package'
 
 setup(
     name=package_name,
-    version='0.1.0',
+    version='0.2.0',
     packages=[package_name],
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -16,7 +16,6 @@ setup(
     maintainer='Max Chen',
     maintainer_email='ckyb63@gmail.com',
     description='PyQt5-based GUI for PPE Vending Machine with ROS2 integration',
-    license='Apache License 2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [

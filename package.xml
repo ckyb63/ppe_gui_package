@@ -2,10 +2,10 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>gui_package</name>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <description>PyQt5-based GUI for PPE Vending Machine with ROS2 integration</description>
   <maintainer email="ckyb63@gmail.com">Max Chen</maintainer>
-  <license>Apache License 2.0</license>
+  <license>TODO</license>
 
   <depend>rclpy</depend>
   <depend>std_msgs</depend>

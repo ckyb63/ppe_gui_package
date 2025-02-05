@@ -1,9 +1,19 @@
 #!/usr/bin/env python3
+"""
+PPE Vending Machine GUI Node
+---------------------------
+A PyQt5-based graphical user interface for controlling and monitoring a PPE vending machine.
+Integrates with ROS2 for real-time PPE detection status and vending control.
+
+Author: Max Chen
+Version: 0.2.0
+"""
+
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QPushButton, QWidget, 
                             QGridLayout, QLabel, QVBoxLayout, QHBoxLayout,
                             QMessageBox)
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, pyqtSignal
 from PyQt5.QtGui import QFont
 import rclpy
 from rclpy.node import Node
@@ -11,12 +21,32 @@ from std_msgs.msg import String, Bool
 import threading
 import time
 import os
+import signal
+from contextlib import contextmanager
+
+@contextmanager
+def ros_context():
+    """Context manager for ROS initialization and shutdown"""
+    try:
+        rclpy.init()
+        yield
+    finally:
+        try:
+            rclpy.shutdown()
+        except Exception:
+            pass
 
 class PPEVendingMachine(QMainWindow):
+    # Add signal for shutdown
+    shutdown_signal = pyqtSignal()
+    
     def __init__(self, ros_node):
         super().__init__()
         self.ros_node = ros_node
         self.initUI()
+        
+        # Connect shutdown signal to cleanup method
+        self.shutdown_signal.connect(self.cleanup)
         
         # Initialize PPE status
         self.ppe_status = {
@@ -53,6 +83,9 @@ class PPEVendingMachine(QMainWindow):
         self.status_timer = QTimer()
         self.status_timer.timeout.connect(self.reset_status)
         self.status_timer.setSingleShot(True)
+        
+        # Initialize shutdown flag
+        self.is_shutting_down = False
 
     def initUI(self):
         # Main widget and layout
@@ -275,21 +308,28 @@ class PPEVendingMachine(QMainWindow):
 
     def update_status_displays(self):
         """Update all status displays"""
-        # Update PPE status indicators
-        for ppe, status in self.ppe_status.items():
-            if ppe in self.ppe_status_labels:
-                if status:
-                    self.ppe_status_labels[ppe].setText('O')
-                    self.ppe_status_labels[ppe].setStyleSheet('color: green;')
-                else:
-                    self.ppe_status_labels[ppe].setText('X')
-                    self.ppe_status_labels[ppe].setStyleSheet('color: red;')
-        
-        # Update gate status
-        self.gate_status.setText('LOCKED' if self.safety_gate_locked else 'UNLOCKED')
-        self.gate_status.setStyleSheet(
-            'color: red;' if self.safety_gate_locked else 'color: green;'
-        )
+        if self.is_shutting_down:
+            return
+            
+        try:
+            # Update PPE status indicators
+            for ppe, status in self.ppe_status.items():
+                if ppe in self.ppe_status_labels:
+                    if status:
+                        self.ppe_status_labels[ppe].setText('O')
+                        self.ppe_status_labels[ppe].setStyleSheet('color: green;')
+                    else:
+                        self.ppe_status_labels[ppe].setText('X')
+                        self.ppe_status_labels[ppe].setStyleSheet('color: red;')
+            
+            # Update gate status
+            self.gate_status.setText('LOCKED' if self.safety_gate_locked else 'UNLOCKED')
+            self.gate_status.setStyleSheet(
+                'color: red;' if self.safety_gate_locked else 'color: green;'
+            )
+        except Exception as e:
+            if not self.is_shutting_down:
+                print(f"Error updating status displays: {e}")
 
     def parse_ppe_status(self, status_str):
         """Parse PPE status string into dictionary"""
@@ -318,6 +358,21 @@ class PPEVendingMachine(QMainWindow):
         except Exception as e:
             self.ros_node.get_logger().error(f'Error parsing PPE status: {e}')
             self.show_status("Error updating PPE status", "red")
+
+    def cleanup(self):
+        """Clean up timers from the Qt thread"""
+        if not self.is_shutting_down:
+            self.is_shutting_down = True
+            self.timer.stop()
+            self.override_timer.stop()
+            self.countdown_timer.stop()
+            self.status_timer.stop()
+            QApplication.processEvents()  # Process any pending events
+
+    def closeEvent(self, event):
+        """Handle window close event"""
+        self.cleanup()
+        event.accept()
 
 class ROSNode(Node):
     def __init__(self):
@@ -368,32 +423,63 @@ class ROSNode(Node):
         self.get_logger().info(f'Published gate status: {"locked" if is_locked else "unlocked"}')
 
 def main():
-    # Initialize ROS
-    rclpy.init(args=None)
-    ros_node = ROSNode()
-    
-    # Initialize Qt and suppress runtime directory warning
-    os.environ['XDG_RUNTIME_DIR'] = '/tmp/runtime-dir'
-    app = QApplication(sys.argv)
-    gui = PPEVendingMachine(ros_node)
-    
-    # Connect GUI to ROS node
-    ros_node.gui = gui
-    
-    # Create and start ROS spin thread
-    def spin_ros():
-        rclpy.spin(ros_node)
-        ros_node.destroy_node()
+    with ros_context():
+        # Create ROS node
+        ros_node = ROSNode()
         
-    ros_thread = threading.Thread(target=spin_ros, daemon=True)
-    ros_thread.start()
-    
-    # Start Qt event loop
-    exit_code = app.exec_()
-    
-    # Cleanup ROS - do shutdown only once here
-    rclpy.shutdown()
-    sys.exit(exit_code)
+        # Initialize Qt and suppress runtime directory warning
+        os.environ['XDG_RUNTIME_DIR'] = '/tmp/runtime-dir'
+        app = QApplication(sys.argv)
+        gui = PPEVendingMachine(ros_node)
+        
+        # Connect GUI to ROS node
+        ros_node.gui = gui
+        
+        # Create and start ROS spin thread
+        def spin_ros():
+            try:
+                while not gui.is_shutting_down:
+                    if rclpy.ok():
+                        rclpy.spin_once(ros_node, timeout_sec=0.1)
+                    else:
+                        break
+            except Exception as e:
+                if not gui.is_shutting_down:
+                    print(f"ROS thread error: {e}")
+        
+        ros_thread = threading.Thread(target=spin_ros, daemon=True)
+        ros_thread.start()
+        
+        def shutdown():
+            """Clean shutdown sequence"""
+            if not gui.is_shutting_down:
+                gui.is_shutting_down = True
+                gui.cleanup()
+                if rclpy.ok():
+                    ros_node.destroy_node()
+        
+        def signal_handler(signum, frame):
+            """Handle interrupt signals"""
+            shutdown()
+            app.quit()
+        
+        # Set up signal handlers
+        signal.signal(signal.SIGINT, signal_handler)
+        signal.signal(signal.SIGTERM, signal_handler)
+        
+        try:
+            # Start Qt event loop
+            exit_code = app.exec_()
+        except KeyboardInterrupt:
+            shutdown()
+            exit_code = 0
+        except Exception as e:
+            print(f"Error in main loop: {e}")
+            shutdown()
+            exit_code = 1
+        finally:
+            shutdown()
+            sys.exit(exit_code)
 
 if __name__ == '__main__':
     main()
