@@ -13,33 +13,38 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 ## Dependencies
 
 - ROS2 (tested on Humble)
-- Python 3.8+
+- Python 3.10+
 - PyQt5
 - rclpy
 - std_msgs
 
 ## Installation
 
-1. Clone this package into your ROS2 workspace's src directory:
+1. Create a ROS2 workspace (if you don't have one):
 ```bash
-cd ~/ros2_ws/src
-git clone <repository-url>/gui_package.git
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws
 ```
 
-2. Install dependencies:
+2. Clone this package into the src directory:
 ```bash
-sudo apt-get update
-sudo apt-get install python3-pyqt5
-rosdep install --from-paths src --ignore-src -r -y
+cd src
+git clone https://github.com/maxckyuen/gui_package.git
 ```
 
-3. Build the workspace:
+3. Install dependencies:
+```bash
+sudo apt update
+sudo apt install python3-pyqt5
+```
+
+4. Build the workspace:
 ```bash
 cd ~/ros2_ws
 colcon build --packages-select gui_package
 ```
 
-4. Source the workspace:
+5. Source the workspace:
 ```bash
 source install/setup.bash
 ```
@@ -51,7 +56,7 @@ source install/setup.bash
 ros2 run gui_package ppe_gui
 ```
 
-2. For testing without hardware, run the dummy PPE status publisher:
+2. For testing without hardware, run the dummy PPE status publisher in another terminal:
 ```bash
 ros2 run gui_package dummy_ppe
 ```
@@ -60,7 +65,7 @@ ros2 run gui_package dummy_ppe
 
 ### Subscribed Topics
 - `ppe_status` (std_msgs/String): Receives PPE detection status
-  - Format: "item1:true, item2:false, ..."
+  - Format: "hardhat:true, beardnet:false, gloves:true, glasses:true, earplugs:false"
 
 ### Published Topics
 - `pleaseDispense` (std_msgs/String): Sends dispense requests
@@ -71,19 +76,23 @@ ros2 run gui_package dummy_ppe
 ## Development
 
 ### File Structure
-- `ppe_gui.py`: Main GUI implementation
-- `dummy_ppe_status.py`: Test publisher for simulating PPE detection
+```
+gui_package/
+├── gui_package/
+│   ├── __init__.py
+│   ├── ppe_gui.py          # Main GUI implementation
+│   └── dummy_ppe_status.py # Test publisher for simulating PPE detection
+├── package.xml
+├── setup.py
+└── README.md
+```
 
-### Building from Source
+### Building for Development
 ```bash
 cd ~/ros2_ws
 colcon build --packages-select gui_package --symlink-install
 ```
 
-## License
-
-Apache License 2.0
-
-## Authors
+## Author
 
 - Max Chen 

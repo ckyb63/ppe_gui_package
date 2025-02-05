@@ -10,6 +10,7 @@ from rclpy.node import Node
 from std_msgs.msg import String, Bool
 import threading
 import time
+import os
 
 class PPEVendingMachine(QMainWindow):
     def __init__(self, ros_node):
@@ -371,7 +372,8 @@ def main():
     rclpy.init(args=None)
     ros_node = ROSNode()
     
-    # Initialize Qt
+    # Initialize Qt and suppress runtime directory warning
+    os.environ['XDG_RUNTIME_DIR'] = '/tmp/runtime-dir'
     app = QApplication(sys.argv)
     gui = PPEVendingMachine(ros_node)
     
@@ -382,15 +384,14 @@ def main():
     def spin_ros():
         rclpy.spin(ros_node)
         ros_node.destroy_node()
-        rclpy.shutdown()
-    
+        
     ros_thread = threading.Thread(target=spin_ros, daemon=True)
     ros_thread.start()
     
     # Start Qt event loop
     exit_code = app.exec_()
     
-    # Cleanup
+    # Cleanup ROS - do shutdown only once here
     rclpy.shutdown()
     sys.exit(exit_code)
 
