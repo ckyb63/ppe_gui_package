@@ -18,9 +18,10 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 - Thread-safe GUI updates
 - Enhanced status displays with color feedback
 - Improved button styling and feedback
-- Help system with context-sensitive information
+- Comprehensive help system with accessibility options
 - Configurable window sizing
 - Responsive camera feed placeholder
+- Accessibility mode with O/X indicators for color-blind users
 
 ## Dependencies
 
@@ -129,8 +130,23 @@ colcon build --packages-select gui_package --symlink-install
 ### Status Display
 - Color-coded buttons indicate PPE detection status
 - Large, clear gate status display
-- Countdown timer for override mode
+- Integrated override countdown
 - Status messages with auto-reset
+- Optional O/X indicators for accessibility
+
+### Help System
+- Context-sensitive help dialog
+- Accessibility mode toggle
+- Clear operation instructions
+- Safety override guidelines
+- Visual status indicators explanation
+
+### Accessibility Features
+- Toggle for O/X status indicators
+- High contrast color scheme
+- Clear text labels
+- Consistent button sizing
+- Screen reader friendly layout
 
 ### Thread Safety
 - ROS communications handled in separate thread

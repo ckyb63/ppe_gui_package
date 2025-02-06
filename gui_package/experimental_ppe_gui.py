@@ -12,7 +12,7 @@ Version: 0.2.0
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QPushButton, QWidget, 
                             QGridLayout, QLabel, QVBoxLayout, QHBoxLayout,
-                            QMessageBox)
+                            QMessageBox, QDialog)
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
 from PyQt5.QtGui import QFont, QImage, QPixmap
 import rclpy
@@ -85,41 +85,85 @@ class ROSNode(Node):
         self.gate_publisher.publish(msg)
         self.get_logger().info(f'Published gate status: {"locked" if is_locked else "unlocked"}')
 
-class HelpDialog(QMessageBox):
+class HelpDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.parent = parent
         self.setWindowTitle("PPE Vending Machine Help")
+        self.setModal(True)  # Make dialog modal
         
+        # Create main layout
+        layout = QVBoxLayout(self)
+        
+        # Help text
         help_text = """
 <h1>PPE Vending Machine Help</h1>
 
-<h2>Basic Operation:</h2>
+<h2>Operation:</h2>
 <ul style='font-size: 14pt;'>
 <li>The system detects required PPE items</li>
 <li>Green buttons indicate detected PPE</li>
 <li>Red buttons indicate missing PPE</li>
+<li>The user may need to rotate head to fully detect all requiredPPE</li>
 </ul>
 
-<h2>Dispensing PPE:</h2>
+<h2>Dispensing:</h2>
 <ul style='font-size: 14pt;'>
 <li>Click any PPE button to dispense that item</li>
-<li>Wait for cooldown (1 second) between dispenses</li>
+<li>There is a 1 second cooldown between dispense requests</li>
 <li>The safety gate remains locked until all required PPE is detected</li>
 </ul>
 
 <h2>Safety Override:</h2>
 <ul style='font-size: 14pt;'>
-<li>Orange OVERRIDE button for emergency situations only</li>
+<li>Orange OVERRIDE button for emergency or administrative override only</li>
 <li>Override unlocks the gate for 10 seconds</li>
-<li>A countdown timer shows remaining override time</li>
 </ul>
 """
-        self.setText(help_text)
-        self.setTextFormat(Qt.RichText)
+        text_label = QLabel(help_text)
+        text_label.setTextFormat(Qt.RichText)
+        layout.addWidget(text_label)
         
-        # Set a larger size for the dialog and increase font size
+        # Add accessibility toggle
+        toggle_container = QWidget()
+        toggle_layout = QHBoxLayout(toggle_container)
+        
+        toggle_label = QLabel("Accessibility Mode (O/X Indicators):")
+        toggle_label.setFont(QFont('Arial', 12))
+        toggle_layout.addWidget(toggle_label)
+        
+        self.toggle_button = QPushButton("OFF" if not parent.accessibility_mode else "ON")
+        self.toggle_button.setFont(QFont('Arial', 12, QFont.Bold))
+        self.toggle_button.setFixedSize(100, 40)
+        self.toggle_button.setStyleSheet("""
+            QPushButton {
+                background-color: #666;
+                color: white;
+                border: none;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: #555;
+            }
+        """)
+        self.toggle_button.clicked.connect(self.toggle_accessibility)
+        toggle_layout.addWidget(self.toggle_button)
+        
+        layout.addWidget(toggle_container)
+        
+        # Add OK button
+        button_box = QWidget()
+        button_layout = QHBoxLayout(button_box)
+        ok_button = QPushButton("OK")
+        ok_button.setFont(QFont('Arial', 12))
+        ok_button.clicked.connect(self.accept)
+        button_layout.addStretch()
+        button_layout.addWidget(ok_button)
+        layout.addWidget(button_box)
+        
+        # Set dialog styling
         self.setStyleSheet("""
-            QMessageBox {
+            QDialog {
                 min-width: 600px;
             }
             QLabel {
@@ -130,6 +174,24 @@ class HelpDialog(QMessageBox):
                 padding: 5px 10px;
             }
         """)
+        
+    def toggle_accessibility(self):
+        """Toggle accessibility mode"""
+        self.parent.accessibility_mode = not self.parent.accessibility_mode
+        self.toggle_button.setText("ON" if self.parent.accessibility_mode else "OFF")
+        self.toggle_button.setStyleSheet("""
+            QPushButton {
+                background-color: %s;
+                color: white;
+                border: none;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: %s;
+            }
+        """ % (('#4caf50' if self.parent.accessibility_mode else '#666'),
+               ('#45a049' if self.parent.accessibility_mode else '#555')))
+        self.parent.update_status_displays()
 
 class ExperimentalPPEVendingMachine(QMainWindow):
     # Add signals for thread-safe updates
@@ -140,6 +202,9 @@ class ExperimentalPPEVendingMachine(QMainWindow):
     def __init__(self, ros_node):
         super().__init__()
         self.ros_node = ros_node
+        
+        # Add accessibility setting
+        self.accessibility_mode = False
         
         # Connect signals to slots
         self.status_update_signal.connect(self.handle_status_update)
@@ -286,16 +351,11 @@ class ExperimentalPPEVendingMachine(QMainWindow):
         title_layout.addWidget(status_line)
 
     def createStatusSection(self):
-        """Create countdown and status section"""
+        """Create status section"""
         self.status_widget = QWidget()
         status_layout = QVBoxLayout(self.status_widget)
-        
-        # Add countdown label
-        self.countdown_label = QLabel('')
-        self.countdown_label.setFont(QFont('Arial', 12))
-        self.countdown_label.setAlignment(Qt.AlignCenter)
-        self.countdown_label.setStyleSheet('color: orange;')
-        status_layout.addWidget(self.countdown_label)
+        # Empty widget to maintain layout structure
+        status_layout.addStretch()
 
     def createCameraSection(self):
         """Create camera feed section"""
@@ -318,10 +378,9 @@ class ExperimentalPPEVendingMachine(QMainWindow):
 
     def createPPEGrid(self):
         """Create PPE buttons grid"""
-        # Create PPE buttons
         self.ppe_buttons = {}
+        self.ppe_indicators = {}  # Add storage for indicators
         
-        # Create all buttons
         ppe_items = [
             ('Hard Hat', 'hardhat'),
             ('Beard Net', 'beardnet'),
@@ -332,13 +391,17 @@ class ExperimentalPPEVendingMachine(QMainWindow):
         ]
         
         for label, key in ppe_items:
-            # Create button with bold text
+            # Create container for button and indicator
+            container = QWidget()
+            layout = QHBoxLayout(container)
+            
+            # Create button
             button = QPushButton(label)
             button.setFont(QFont('Arial', 12, QFont.Bold))
             button.setMinimumHeight(60)
             button.setStyleSheet("""
                 QPushButton {
-                    background-color: #ff6b6b;  /* Red background */
+                    background-color: #ff6b6b;
                     color: white;
                     border: none;
                     border-radius: 5px;
@@ -356,6 +419,20 @@ class ExperimentalPPEVendingMachine(QMainWindow):
             """)
             button.clicked.connect(lambda checked, k=key: self.on_ppe_button_click(k))
             self.ppe_buttons[key] = button
+            
+            # Create indicator label (hidden by default)
+            indicator = QLabel('')
+            indicator.setFont(QFont('Arial', 16, QFont.Bold))
+            indicator.setFixedWidth(30)
+            indicator.setAlignment(Qt.AlignCenter)
+            indicator.hide()
+            self.ppe_indicators[key] = indicator
+            
+            # Add to layout
+            layout.addWidget(button)
+            layout.addWidget(indicator)
+            
+            self.ppe_buttons[key] = container
 
     def setupLayouts(self):
         """Set up portrait and landscape layouts"""
@@ -619,10 +696,10 @@ class ExperimentalPPEVendingMachine(QMainWindow):
         """Update the override countdown display"""
         self.time_remaining -= 1
         if self.time_remaining > 0:
-            self.countdown_label.setText(f"Override active: {int(self.time_remaining)}s remaining")
+            self.show_status(f"Override active: {int(self.time_remaining)}s", "orange")
         else:
-            self.countdown_label.setText("")
             self.countdown_timer.stop()
+            self.reset_override()
 
     def reset_override(self):
         """Reset system after override period"""
@@ -633,7 +710,6 @@ class ExperimentalPPEVendingMachine(QMainWindow):
         self.ros_node.publish_gate_status(self.safety_gate_locked)
         self.ppe_buttons['override'].setEnabled(True)
         
-        self.countdown_label.setText("")
         self.countdown_timer.stop()
         
         self.show_status("Override period ended", "blue")
@@ -641,9 +717,14 @@ class ExperimentalPPEVendingMachine(QMainWindow):
 
     def show_status(self, message, color="black"):
         """Show status message with color and auto-reset"""
-        self.status_label.setText(message)  # No "Status: " prefix
-        self.status_label.setStyleSheet(f"color: {color};")
-        self.status_timer.start(3000)
+        self.status_label.setText(message)
+        self.status_label.setStyleSheet(f"""
+            color: {color};
+            font-weight: bold;
+        """)
+        # Only start auto-reset timer if not in override countdown
+        if "Override active" not in message:
+            self.status_timer.start(3000)
 
     def reset_status(self):
         """Reset status message to default"""
@@ -707,14 +788,17 @@ class ExperimentalPPEVendingMachine(QMainWindow):
             return
             
         try:
-            # Update button colors based on status
+            # Update button colors and indicators
             for ppe, status in self.ppe_status.items():
                 if ppe in self.ppe_buttons:
+                    button = self.ppe_buttons[ppe].layout().itemAt(0).widget()
+                    indicator = self.ppe_buttons[ppe].layout().itemAt(1).widget()
+                    
+                    # Update button color
                     if status:
-                        # Green button for detected
-                        self.ppe_buttons[ppe].setStyleSheet("""
+                        button.setStyleSheet("""
                             QPushButton {
-                                background-color: #4caf50;  /* Green background */
+                                background-color: #4caf50;
                                 color: white;
                                 border: none;
                                 border-radius: 5px;
@@ -731,10 +815,9 @@ class ExperimentalPPEVendingMachine(QMainWindow):
                             }
                         """)
                     else:
-                        # Red button for not detected
-                        self.ppe_buttons[ppe].setStyleSheet("""
+                        button.setStyleSheet("""
                             QPushButton {
-                                background-color: #ff6b6b;  /* Red background */
+                                background-color: #ff6b6b;
                                 color: white;
                                 border: none;
                                 border-radius: 5px;
@@ -750,12 +833,21 @@ class ExperimentalPPEVendingMachine(QMainWindow):
                                 background-color: #cccccc;
                             }
                         """)
+                    
+                    # Update indicator visibility and content
+                    if self.accessibility_mode:
+                        indicator.show()
+                        indicator.setText('O' if status else 'X')
+                        indicator.setStyleSheet(f'color: {"green" if status else "red"};')
+                    else:
+                        indicator.hide()
             
             # Special styling for override button
             if 'override' in self.ppe_buttons:
-                self.ppe_buttons['override'].setStyleSheet("""
+                override_button = self.ppe_buttons['override'].layout().itemAt(0).widget()
+                override_button.setStyleSheet("""
                     QPushButton {
-                        background-color: #ff9800;  /* Orange background */
+                        background-color: #ff9800;
                         color: white;
                         border: none;
                         border-radius: 5px;
@@ -772,7 +864,7 @@ class ExperimentalPPEVendingMachine(QMainWindow):
                     }
                 """)
             
-            # Update gate status with 'Gate' prefix
+            # Update gate status
             self.gate_status.setText('Gate LOCKED' if self.safety_gate_locked else 'Gate UNLOCKED')
             self.gate_status.setStyleSheet(f"""
                 QLabel {{
