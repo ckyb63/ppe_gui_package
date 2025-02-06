@@ -6,11 +6,21 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 
 ## Features
 
+### Core Features
 - Real-time PPE detection status monitoring
 - Automated safety gate control
 - ROS2 integration for vending machine control
 - Administrative override system
 - Simulation support for testing
+
+### New in v0.2.0
+- Adaptive layout switching (portrait/landscape)
+- Thread-safe GUI updates
+- Enhanced status displays with color feedback
+- Improved button styling and feedback
+- Help system with context-sensitive information
+- Configurable window sizing
+- Responsive camera feed placeholder
 
 ## Dependencies
 
@@ -58,16 +68,20 @@ First, source your workspace:
 source ~/ros2_ws/install/setup.bash
 ```
 
-1. Launch the GUI:
+### Running the GUI
+
+1. Launch the standard GUI:
 ```bash
 ros2 run gui_package ppe_gui
 ```
 
-2. For testing without hardware, run the dummy PPE status publisher in another terminal:
+2. Launch the experimental GUI with adaptive layout:
 ```bash
-# Make sure to source the workspace in the new terminal too
-source ~/ros2_ws/install/setup.bash
+ros2 run gui_package experimental_gui
+```
 
+3. For testing without hardware, run the dummy PPE status publisher:
+```bash
 ros2 run gui_package dummy_ppe
 ```
 
@@ -90,10 +104,11 @@ ros2 run gui_package dummy_ppe
 gui_package/
 ├── gui_package/
 │   ├── __init__.py
-│   ├── ppe_gui.py          # Main GUI implementation (v0.2.0)
-│   └── dummy_ppe_status.py # Test publisher for simulating PPE detection (v0.2.0)
-├── package.xml             # Package manifest (v0.2.0)
-├── setup.py               # Package setup
+│   ├── ppe_gui.py              # Standard GUI implementation
+│   ├── experimental_ppe_gui.py # Adaptive layout GUI implementation
+│   └── dummy_ppe_status.py     # Test publisher for simulating PPE detection
+├── package.xml                 # Package manifest
+├── setup.py                   # Package setup
 └── README.md
 ```
 
@@ -103,6 +118,27 @@ cd ~/ros2_ws
 colcon build --packages-select gui_package --symlink-install
 ```
 
+## Features in Detail
+
+### Adaptive Layout
+- Portrait mode: Traditional vertical layout
+- Landscape mode: Side-by-side controls and camera feed
+- Automatic switching based on window dimensions
+- Maintains proper spacing and proportions
+
+### Status Display
+- Color-coded buttons indicate PPE detection status
+- Large, clear gate status display
+- Countdown timer for override mode
+- Status messages with auto-reset
+
+### Thread Safety
+- ROS communications handled in separate thread
+- Qt updates properly marshalled to GUI thread
+- Clean shutdown handling
+- Proper resource cleanup
+
 ## Author
 
 - Max Chen
+- Email: ckyb63@gmail.com

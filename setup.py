@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 package_name = 'gui_package'
 
@@ -21,6 +21,7 @@ setup(
         'console_scripts': [
             'ppe_gui = gui_package.ppe_gui:main',
             'dummy_ppe = gui_package.dummy_ppe_status:main',
+            'experimental_gui = gui_package.experimental_ppe_gui:main',
         ],
     },
 )

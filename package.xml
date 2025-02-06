@@ -3,7 +3,10 @@
 <package format="3">
   <name>gui_package</name>
   <version>0.2.0</version>
-  <description>PyQt5-based GUI for PPE Vending Machine with ROS2 integration</description>
+  <description>
+    PyQt5-based GUI for PPE Vending Machine with ROS2 integration.
+    Features adaptive layout switching, thread-safe updates, and improved status displays.
+  </description>
   <maintainer email="ckyb63@gmail.com">Max Chen</maintainer>
   <license>TODO</license>
 
