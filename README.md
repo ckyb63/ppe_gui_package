@@ -1,6 +1,6 @@
 # GUI Package for PPE Vending Machine
 
-Version: 0.2.0
+## Version 0.3.0
 
 A ROS2 package containing a PyQt5-based graphical user interface for controlling and monitoring a PPE (Personal Protective Equipment) vending machine.
 
@@ -13,15 +13,22 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 - Administrative override system
 - Simulation support for testing
 
-### New in v0.2.0
-- Adaptive layout switching (portrait/landscape)
-- Thread-safe GUI updates
-- Enhanced status displays with color feedback
-- Improved button styling and feedback
-- Comprehensive help system with accessibility options
-- Configurable window sizing
-- Responsive camera feed placeholder
-- Accessibility mode with O/X indicators for color-blind users
+### Latest Features (v0.3.0)
+- Integrated accessibility mode with O/X indicators directly in buttons
+- Added Settings which allows you to change the theme, font size, and more!
+- Improved button readability with larger fonts
+- Enhanced status message system
+- Proper theme handling and settings management
+- Added Dark Theme!
+- Fixed dialog positioning and content switching
+- Override Logging
+- Improved Button Styling for touchscreen
+
+### Accessibility Features
+- Toggle for O/X status indicators
+- Clear text labels
+- Consistent button sizing
+- Screen reader friendly layout
 
 ## Dependencies
 
@@ -39,7 +46,7 @@ mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws
 ```
 
-2. Clone this package into the workspace src directory:
+2. Clone this package:
 ```bash
 cd src
 git clone https://github.com/ckyb63/ppe_gui_package.git
@@ -51,39 +58,26 @@ sudo apt update
 sudo apt install python3-pyqt5
 ```
 
-4. Build the workspace:
+4. Build and source:
 ```bash
 cd ~/ros2_ws
 colcon build
-```
-
-5. Source the workspace:
-```bash
 source install/setup.bash
 ```
 
 ## Usage
 
-First, source your workspace:
-```bash
-source ~/ros2_ws/install/setup.bash
-```
-
 ### Running the GUI
 
-1. Launch the standard GUI:
 ```bash
-ros2 run gui_package ppe_gui
-```
-
-2. Launch the experimental GUI with adaptive layout:
-```bash
+# Launch the experimental GUI (recommended)
 ros2 run gui_package experimental_gui
-```
 
-3. For testing without hardware, run the dummy PPE status publisher:
-```bash
+# For testing without hardware
 ros2 run gui_package dummy_ppe
+
+# Launch the standard Stable GUI
+ros2 run gui_package ppe_gui
 ```
 
 ## ROS2 Topics
@@ -105,11 +99,10 @@ ros2 run gui_package dummy_ppe
 gui_package/
 ├── gui_package/
 │   ├── __init__.py
-│   ├── ppe_gui.py              # Standard GUI implementation
-│   ├── experimental_ppe_gui.py # Adaptive layout GUI implementation
-│   └── dummy_ppe_status.py     # Test publisher for simulating PPE detection
-├── package.xml                 # Package manifest
-├── setup.py                   # Package setup
+│   ├── experimental_ppe_gui.py # Main GUI implementation
+│   └── dummy_ppe_status.py     # Test publisher
+├── package.xml
+├── setup.py
 └── README.md
 ```
 
@@ -118,41 +111,6 @@ gui_package/
 cd ~/ros2_ws
 colcon build --packages-select gui_package --symlink-install
 ```
-
-## Features in Detail
-
-### Adaptive Layout
-- Portrait mode: Traditional vertical layout
-- Landscape mode: Side-by-side controls and camera feed
-- Automatic switching based on window dimensions
-- Maintains proper spacing and proportions
-
-### Status Display
-- Color-coded buttons indicate PPE detection status
-- Large, clear gate status display
-- Integrated override countdown
-- Status messages with auto-reset
-- Optional O/X indicators for accessibility
-
-### Help System
-- Context-sensitive help dialog
-- Accessibility mode toggle
-- Clear operation instructions
-- Safety override guidelines
-- Visual status indicators explanation
-
-### Accessibility Features
-- Toggle for O/X status indicators
-- High contrast color scheme
-- Clear text labels
-- Consistent button sizing
-- Screen reader friendly layout
-
-### Thread Safety
-- ROS communications handled in separate thread
-- Qt updates properly marshalled to GUI thread
-- Clean shutdown handling
-- Proper resource cleanup
 
 ## Author
 

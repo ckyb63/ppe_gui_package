@@ -1,10 +1,10 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 package_name = 'gui_package'
 
 setup(
     name=package_name,
-    version='0.2.0',
+    version='0.3.0',
     packages=[package_name],
     data_files=[
         ('share/ament_index/resource_index/packages',
