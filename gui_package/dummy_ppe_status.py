@@ -6,7 +6,7 @@ A test node that simulates PPE detection by publishing random PPE status message
 Used for testing the PPE Vending Machine GUI without actual hardware.
 
 Author: Max Chen
-Version: 0.2.0
+Version: 0.1.0
 """
 
 import rclpy

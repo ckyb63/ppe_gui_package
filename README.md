@@ -1,6 +1,6 @@
 # GUI Package for PPE Vending Machine
 
-## Version 0.3.0
+## Version 0.3.1
 
 A ROS2 package containing a PyQt5-based graphical user interface for controlling and monitoring a PPE (Personal Protective Equipment) vending machine.
 
@@ -13,7 +13,13 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 - Administrative override system
 - Simulation support for testing
 
-### Latest Features (v0.3.0)
+### Latest Features (v0.3.1)
+- Enhanced override system with user tracking and reason logging
+- Added user authentication for overrides
+- Detailed override logging with user and reason tracking
+- Improved override dialog UI with dropdown selections
+
+### Previous Features (v0.3.0)
 - Integrated accessibility mode with O/X indicators directly in buttons
 - Added Settings which allows you to change the theme, font size, and more!
 - Improved button readability with larger fonts
@@ -96,14 +102,18 @@ ros2 run gui_package ppe_gui
 
 ### File Structure
 ```
-gui_package/
-├── gui_package/
+├── gui_package
+│   ├── dummy_ppe_status.py       # Test publisher for PPE status
+│   ├── experimental_ppe_gui.py   # Main GUI implementation
 │   ├── __init__.py
-│   ├── experimental_ppe_gui.py # Main GUI implementation
-│   └── dummy_ppe_status.py     # Test publisher
+│   ├── launch
+│   └── ppe_gui.py                # Stable GUI implementation 
 ├── package.xml
-├── setup.py
-└── README.md
+├── README.md
+├── resource
+├── setup.cfg
+└── setup.py
+
 ```
 
 ### Building for Development

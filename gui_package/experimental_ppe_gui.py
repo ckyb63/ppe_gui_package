@@ -6,7 +6,7 @@ A resizable version of the PPE Vending Machine GUI that adapts layout based on w
 Integrates with ROS2 for real-time PPE detection status and vending control.
 
 Author: Max Chen
-Version: 0.3.0
+Version: 0.3.1
 """
 
 import sys
@@ -1210,8 +1210,62 @@ class ExperimentalPPEVendingMachine(QMainWindow):
         layout.addWidget(message)
         layout.addWidget(info_text)
         
-        # Add spacing before buttons
-        layout.addSpacing(20)
+        # Form layout for dropdowns
+        form_widget = QWidget()
+        form_layout = QFormLayout(form_widget)
+        form_layout.setSpacing(15)
+        
+        # User dropdown
+        user_combo = QComboBox()
+        user_combo.setFont(QFont('Arial', 14))
+        user_combo.addItems(["Select User", "Operator", "Supervisor", "Admin", "Maintenance"])
+        user_combo.setCurrentText("Select User")
+        user_combo.setStyleSheet(f"""
+            QComboBox {{
+                background-color: {self.colors.surface};
+                color: {self.colors.text};
+                border: 1px solid {self.colors.neutral};
+                border-radius: 5px;
+                padding: 8px;
+                min-width: 200px;
+                min-height: 40px;
+            }}
+        """)
+        
+        # Reason dropdown
+        reason_combo = QComboBox()
+        reason_combo.setFont(QFont('Arial', 14))
+        reason_combo.addItems([
+            "Select Reason",
+            "PPE Not Detected",
+            "System Maintenance",
+            "Emergency Override",
+            "Admin Access",
+            "Calibration Required"
+        ])
+        reason_combo.setCurrentText("Select Reason")
+        reason_combo.setStyleSheet(f"""
+            QComboBox {{
+                background-color: {self.colors.surface};
+                color: {self.colors.text};
+                border: 1px solid {self.colors.neutral};
+                border-radius: 5px;
+                padding: 8px;
+                min-width: 200px;
+                min-height: 40px;
+            }}
+        """)
+        
+        # Add dropdowns to form
+        form_layout.addRow("User:", user_combo)
+        form_layout.addRow("Reason:", reason_combo)
+        
+        # Style form labels
+        for label in form_widget.findChildren(QLabel):
+            label.setFont(QFont('Arial', 14))
+            label.setStyleSheet(f"color: {self.colors.text};")
+        
+        layout.addWidget(form_widget)
         
         # Buttons
         button_widget = QWidget()
@@ -1254,7 +1308,20 @@ class ExperimentalPPEVendingMachine(QMainWindow):
                 background-color: #ef6c00;
             }}
         """)
-        yes_button.clicked.connect(dialog.accept)
+        
+        # Custom accept handler to validate selections
+        def handle_accept():
+            if user_combo.currentText() == "Select User":
+                self.show_status("Please select a user", "red")
+                return
+            if reason_combo.currentText() == "Select Reason":
+                self.show_status("Please select a reason", "red")
+                return
+            # Log the override with user and reason
+            self.override_logger.log_override(f"User: {user_combo.currentText()} - Reason: {reason_combo.currentText()}")
+            dialog.accept()
+        
+        yes_button.clicked.connect(handle_accept)
         
         button_layout.addWidget(no_button)
         button_layout.addWidget(yes_button)
@@ -1266,7 +1333,7 @@ class ExperimentalPPEVendingMachine(QMainWindow):
             QDialog {{
                 background: {self.colors.background};
                 min-width: 600px;
-                min-height: 400px;
+                min-height: 500px;
             }}
             QLabel {{
                 color: {self.colors.text};
@@ -1276,7 +1343,7 @@ class ExperimentalPPEVendingMachine(QMainWindow):
         # Center the dialog on the parent window
         parent_geometry = self.geometry()
         dialog_width = 600
-        dialog_height = 400
+        dialog_height = 500
         
         x = parent_geometry.x() + (parent_geometry.width() - dialog_width) // 2
         y = parent_geometry.y() + (parent_geometry.height() - dialog_height) // 2

@@ -2,6 +2,16 @@
 Changelog for package gui_package
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.3.1 (2025-02-07)
+------------------
+* Enhanced override system with user authentication
+* Added user selection dropdown for overrides
+* Added reason tracking for override actions
+* Improved override logging with detailed user and reason information
+* Enhanced override dialog UI with themed dropdowns
+* Added validation for override user and reason selection
+* Fixed Errors
+
 0.3.0 (2025-02-07)
 ------------------
 * Added integrated accessibility mode with O/X indicators in buttons

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Experimental PPE Vending Machine GUI Node
+Stable PPE Vending Machine GUI Node
 --------------------------------------
 A resizable version of the PPE Vending Machine GUI that adapts layout based on window orientation.
 Integrates with ROS2 for real-time PPE detection status and vending control.
