@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 import os
 from glob import glob
 
@@ -6,8 +6,8 @@ package_name = 'gui_package'
 
 setup(
     name=package_name,
-    version='0.3.1',
-    packages=[package_name],
+    version='0.5.0',
+    packages=find_packages(),
     data_files=[
         # Explicitly specify the marker file installation
         ('share/ament_index/resource_index/packages', 
@@ -21,13 +21,14 @@ setup(
     maintainer='Max Chen',
     maintainer_email='ckyb63@gmail.com',
     description='GUI package for PPE vending machine',
-    license='Apache License 2.0',
+    license='Proprietary',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'ppe_gui = gui_package.ppe_gui:main',
-            'experimental_gui = gui_package.experimental_ppe_gui:main',
+            'experimental_gui = gui_package.experimental.main:main',
             'dummy_ppe = gui_package.dummy_ppe_status:main',
+            'dummy_inventory = gui_package.dummy_inventory_publisher:main',
         ],
     },
 )

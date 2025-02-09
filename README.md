@@ -1,6 +1,6 @@
 # GUI Package for PPE Vending Machine
 
-## Version 0.3.1
+## Version 0.5.0
 
 A ROS2 package containing a PyQt5-based graphical user interface for controlling and monitoring a PPE (Personal Protective Equipment) vending machine.
 
@@ -13,22 +13,20 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 - Administrative override system
 - Simulation support for testing
 
-### Latest Features (v0.3.1)
+### Latest Features (v0.5.0)
+- Modular code architecture with improved maintainability
+- Integrated inventory management system
+- Real-time inventory tracking and updates
+- Inventory request and response system
+- Improved settings interface with tabbed organization
+- Improved override system with user tracking and reason logging
+- Improved override content UI
+
+### Previous Features (v0.3.1)
 - Enhanced override system with user tracking and reason logging
 - Added user authentication for overrides
 - Detailed override logging with user and reason tracking
 - Improved override dialog UI with dropdown selections
-
-### Previous Features (v0.3.0)
-- Integrated accessibility mode with O/X indicators directly in buttons
-- Added Settings which allows you to change the theme, font size, and more!
-- Improved button readability with larger fonts
-- Enhanced status message system
-- Proper theme handling and settings management
-- Added Dark Theme!
-- Fixed dialog positioning and content switching
-- Override Logging
-- Improved Button Styling for touchscreen
 
 ### Accessibility Features
 - Toggle for O/X status indicators
@@ -76,13 +74,19 @@ source install/setup.bash
 ### Running the GUI
 
 ```bash
-# Launch the experimental GUI (recommended)
+# Launch the new modular main GUI (recommended)
+ros2 launch gui_package experimental_gui.launch.py
+
+# Run the experimental GUI (recommended)
 ros2 run gui_package experimental_gui
+
+# Run the dummy inventory publisher
+ros2 run gui_package dummy_inventory
 
 # For testing without hardware
 ros2 run gui_package dummy_ppe
 
-# Launch the standard Stable GUI
+# Run the older main GUI (deprecated)
 ros2 run gui_package ppe_gui
 ```
 
@@ -91,29 +95,42 @@ ros2 run gui_package ppe_gui
 ### Subscribed Topics
 - `ppe_status` (std_msgs/String): Receives PPE detection status
   - Format: "hardhat:true, beardnet:false, gloves:true, glasses:true, earplugs:false"
+- `ppeInventoryStatus` (std_msgs/String): Receives inventory status updates
+  - Format: JSON string with inventory levels
 
 ### Published Topics
 - `pleaseDispense` (std_msgs/String): Sends dispense requests
   - Values: "hardhat", "beardnet", "gloves", "glasses", "earplugs", "OVERRIDE"
 - `gate` (std_msgs/Bool): Controls safety gate status
   - true = locked, false = unlocked
+- `ppeInventory` (std_msgs/String): Sends inventory update requests
+  - Value: "request"
 
 ## Development
 
 ### File Structure
 ```
 ├── gui_package
-│   ├── dummy_ppe_status.py       # Test publisher for PPE status
-│   ├── experimental_ppe_gui.py   # Main GUI implementation
-│   ├── __init__.py
-│   ├── launch
-│   └── ppe_gui.py                # Stable GUI implementation 
+│   ├── experimental/
+│   │   ├── utils/
+│   │   │   ├── colors.py
+│   │   │   ├── context.py
+│   │   │   └── logger.py
+│   │   ├── widgets/
+│   │   │   ├── buttons.py
+│   │   │   ├── sections.py
+│   │   │   └── dialogs.py
+│   │   ├── main.py
+│   │   ├── main_window.py
+│   │   └── ros_node.py
+│   ├── dummy_ppe_status.py
+│   ├── dummy_inventory_publisher.py
+│   └── ppe_gui.py
+├── launch/
+│   └── experimental_gui.launch.py
 ├── package.xml
 ├── README.md
-├── resource
-├── setup.cfg
 └── setup.py
-
 ```
 
 ### Building for Development
