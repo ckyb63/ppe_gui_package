@@ -143,3 +143,43 @@ colcon build --packages-select gui_package --symlink-install
 
 - Max Chen
 - Email: ckyb63@gmail.com
+
+## Screenshots
+
+<details>
+<summary>Main Interface</summary>
+
+| Light Theme | Dark Theme |
+|------------|------------|
+| ![Main GUI Window](docs/images/main_gui_window.png) | ![Dark Theme with O/X Indicators](docs/images/dark_theme_with_OX.png) |
+| *Standard interface with PPE status indicators* | *Dark theme with accessibility features* |
+
+</details>
+
+<details>
+<summary>Override System</summary>
+
+![Override Dialog](docs/images/override_content.png)
+*Enhanced override dialog with user authentication and reason tracking*
+
+</details>
+
+<details>
+<summary>Settings Interface</summary>
+
+| Settings Panel | Description |
+|---------------|-------------|
+| ![Settings Main](docs/images/settings_content.png) | *Main settings configuration panel* |
+| ![Settings Inventory](docs/images/settings_inventory.png) | *Inventory management settings* |
+| ![Settings Override](docs/images/settings_override_log.png) | *Override logging and configuration* |
+| ![Settings Timing](docs/images/settings_timing.png) | *System timing and delay settings* |
+
+</details>
+
+<details>
+<summary>Help Documentation</summary>
+
+![User Help Guide](docs/images/user_help_content.png)
+*Comprehensive user help guide with feature explanations*
+
+</details>
