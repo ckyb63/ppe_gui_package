@@ -149,10 +149,16 @@ colcon build --packages-select gui_package --symlink-install
 <details>
 <summary>Main Interface</summary>
 
-| Light Theme | Dark Theme |
-|------------|------------|
-| ![Main GUI Window](docs/images/main_gui_window.png) | ![Dark Theme with O/X Indicators](docs/images/dark_theme_with_OX.png) |
-| *Standard interface with PPE status indicators* | *Dark theme with accessibility features* |
+<table>
+<tr>
+    <td width="50%"><img src="docs/images/main_gui_window.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/dark_theme_with_OX.png" width="100%" style="max-width:400px"/></td>
+</tr>
+<tr>
+    <td><em>Standard interface with PPE status indicators</em></td>
+    <td><em>Dark theme with accessibility features</em></td>
+</tr>
+</table>
 
 </details>
 
@@ -160,6 +166,7 @@ colcon build --packages-select gui_package --symlink-install
 <summary>Override System</summary>
 
 ![Override Dialog](docs/images/override_content.png)
+
 *Enhanced override dialog with user authentication and reason tracking*
 
 </details>
@@ -167,12 +174,27 @@ colcon build --packages-select gui_package --symlink-install
 <details>
 <summary>Settings Interface</summary>
 
-| Settings Panel | Description |
-|---------------|-------------|
-| ![Settings Main](docs/images/settings_content.png) | *Main settings configuration panel* |
-| ![Settings Inventory](docs/images/settings_inventory.png) | *Inventory management settings* |
-| ![Settings Override](docs/images/settings_override_log.png) | *Override logging and configuration* |
-| ![Settings Timing](docs/images/settings_timing.png) | *System timing and delay settings* |
+<table>
+<tr>
+    <td width="50%"><img src="docs/images/settings_content.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_inventory.png" width="100%" style="max-width:400px"/></td>
+</tr>
+<tr>
+    <td><em>Main settings configuration panel</em></td>
+    <td><em>Inventory management settings</em></td>
+</tr>
+</table>
+
+<table>
+<tr>
+    <td width="50%"><img src="docs/images/settings_override_log.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_timing.png" width="100%" style="max-width:400px"/></td>
+</tr>
+<tr>
+    <td><em>Override logging and configuration</em></td>
+    <td><em>System timing and delay settings</em></td>
+</tr>
+</table>
 
 </details>
 
@@ -180,6 +202,7 @@ colcon build --packages-select gui_package --symlink-install
 <summary>Help Documentation</summary>
 
 ![User Help Guide](docs/images/user_help_content.png)
+
 *Comprehensive user help guide with feature explanations*
 
 </details>

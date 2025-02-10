@@ -1,0 +1,17 @@
+# Override log file
+override_log.json
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Build directories
+build/
+install/
+
+# IDE files
+.vscode/
+.idea/
+
+# System files
+.DS_Store
