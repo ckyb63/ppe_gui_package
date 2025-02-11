@@ -6,6 +6,7 @@ Simulates a PPE inventory system by responding to inventory requests
 with mock inventory data.
 
 Author: Max Chen
+v0.1.0
 """
 
 import rclpy

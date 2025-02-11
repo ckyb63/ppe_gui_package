@@ -1,5 +1,15 @@
 """
 Color scheme management for the GUI
+
+This module provides a ColorScheme class that manages the color scheme of the GUI.
+It allows for easy switching between light and dark modes.
+
+The color scheme is defined in the update_colors method, which sets the colors for the
+light and dark modes.
+
+Author: Max Chen
+v0.5.0
+
 """
 
 class ColorScheme:

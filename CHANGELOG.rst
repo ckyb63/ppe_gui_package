@@ -2,6 +2,17 @@
 Changelog for package gui_package
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.0 (2025-02-10)
+------------------
+- Modular code architecture with improved maintainability
+- Integrated inventory management system
+- Real-time inventory tracking and updates
+- Inventory request and response system
+- Improved settings interface with tabbed organization
+- Improved override system with user tracking and reason logging
+- Improved override content UI
+
+
 0.3.1 (2025-02-07)
 ------------------
 * Enhanced override system with user authentication

@@ -1,5 +1,8 @@
 """
 Custom button widgets for the GUI
+
+Author: Max Chen
+v0.5.0
 """
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtCore import QVariantAnimation, pyqtProperty
