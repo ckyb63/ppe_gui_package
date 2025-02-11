@@ -17,6 +17,7 @@ class ColorScheme:
         self.is_dark = is_dark
         self.update_colors()
         
+    # Update the colors of the GUI
     def update_colors(self):
         if self.is_dark:
             self.background = "#1e1e1e"

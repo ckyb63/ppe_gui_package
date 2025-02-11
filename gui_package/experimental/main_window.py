@@ -2,7 +2,7 @@
 Main window implementation for the PPE Vending Machine GUI
 
 Author: Max Chen
-v0.5.0
+v0.5.1
 """
 import os
 import sys
@@ -37,6 +37,12 @@ class PPEVendingMachineGUI(QMainWindow):
         self.override_logger = OverrideLogger()
         self.colors = ColorScheme()
         self.accessibility_mode = False
+        
+        # Load saved inventory data and timestamp
+        self.inventory_file = "inventory_data.json"
+        inventory_data = self._load_inventory_data()
+        self.last_inventory = inventory_data['inventory']
+        self.last_update_time = inventory_data['last_update']
         
         # Initialize PPE status
         self.ppe_status = {
@@ -369,9 +375,30 @@ class PPEVendingMachineGUI(QMainWindow):
         title_layout.addWidget(title_text)
         layout.addWidget(title_widget)
         
-        # Create tabs
+        # Create tabs with larger size
         tabs = QTabWidget()
-        tabs.setFont(QFont('Arial', 12))
+        tabs.setFont(QFont('Arial', 18))
+        tabs.setStyleSheet("""
+            QTabWidget::pane {
+                border: 1px solid #cccccc;
+                padding: 20px;
+            }
+            QTabBar::tab {
+                min-width: 75px;
+                min-height: 60px;
+                padding: 10px 20px;
+                font-size: 24px;
+            }
+            QTabBar::tab:selected {
+                background: #007bff;
+                color: white;
+            }
+            QTabBar::tab:hover {
+                background: #0056b3;
+                color: white;
+            }
+        """)
+        
         tabs.addTab(self._create_colors_tab(), "Appearance")
         tabs.addTab(self._create_inventory_tab(), "Inventory")
         tabs.addTab(self._create_timing_tab(), "Timing")
@@ -471,19 +498,57 @@ class PPEVendingMachineGUI(QMainWindow):
         """Create timing tab for settings"""
         widget = QWidget()
         layout = QFormLayout(widget)
+        layout.setSpacing(40)
+        layout.setContentsMargins(30, 30, 30, 30)
+        
+        # Style for labels
+        label_style = f"""
+            QLabel {{
+                font-size: 36px;  # Increased from 28px
+                min-height: 100px;  # Increased from 80px
+                color: {self.colors.text};
+                padding: 15px;
+                font-weight: bold;  # Added bold weight
+            }}
+        """
+        
+        # Style for spin boxes
+        spinbox_style = f"""
+            QSpinBox, QDoubleSpinBox {{
+                min-height: 100px;  # Increased from 80px
+                min-width: 250px;  # Increased from 200px
+                font-size: 36px;  # Increased from 28px
+                padding: 15px;
+                background-color: {self.colors.surface};
+                color: {self.colors.text};
+                border: 3px solid {self.colors.neutral};
+                border-radius: 15px;
+                font-weight: bold;  # Added bold weight
+            }}
+            QSpinBox::up-button, QDoubleSpinBox::up-button,
+            QSpinBox::down-button, QDoubleSpinBox::down-button {{
+                width: 50px;  # Increased from 40px
+                height: 50px;  # Increased from 40px
+            }}
+        """
         
         # Create spinboxes with labels
         override_label = QLabel("Override Duration (s):")
-        override_label.setStyleSheet(f"color: {self.colors.text};")
+        override_label.setStyleSheet(label_style)
         self.override_duration_spin = QSpinBox()
+        self.override_duration_spin.setStyleSheet(spinbox_style)
         self.override_duration_spin.setRange(5, 30)
         self.override_duration_spin.setValue(int(self.override_duration))
         
         cooldown_label = QLabel("Cooldown Time (s):")
-        cooldown_label.setStyleSheet(f"color: {self.colors.text};")
+        cooldown_label.setStyleSheet(label_style)
         self.cooldown_time_spin = QDoubleSpinBox()
+        self.cooldown_time_spin.setStyleSheet(spinbox_style)
         self.cooldown_time_spin.setRange(0.5, 5.0)
         self.cooldown_time_spin.setValue(self.dispense_cooldown)
+        
+        # Add more vertical spacing between rows
+        layout.setVerticalSpacing(60)  # Increased from 50
         
         layout.addRow(override_label, self.override_duration_spin)
         layout.addRow(cooldown_label, self.cooldown_time_spin)
@@ -494,6 +559,7 @@ class PPEVendingMachineGUI(QMainWindow):
         """Create inventory tab for settings"""
         widget = QWidget()
         layout = QVBoxLayout(widget)
+        layout.setSpacing(20)
         
         # Create table
         self.inventory_table = QTableWidget()
@@ -501,17 +567,23 @@ class PPEVendingMachineGUI(QMainWindow):
         self.inventory_table.setHorizontalHeaderLabels(['PPE Item', 'Quantity'])
         
         # Set up table properties
+        self.inventory_table.setFont(QFont('Arial', 16))
+        self.inventory_table.verticalHeader().setDefaultSectionSize(50)
+        self.inventory_table.horizontalHeader().setMinimumHeight(60)
+        self.inventory_table.setMinimumHeight(400)
         self.inventory_table.setStyleSheet(f"""
             QTableWidget {{
                 background-color: {self.colors.surface};
                 color: {self.colors.text};
                 border: 1px solid {self.colors.neutral};
                 border-radius: 5px;
+                padding: 5px;
             }}
             QHeaderView::section {{
                 background-color: {self.colors.primary};
                 color: white;
-                padding: 5px;
+                padding: 10px;
+                font-size: 16px;
                 border: none;
             }}
         """)
@@ -520,21 +592,24 @@ class PPEVendingMachineGUI(QMainWindow):
         header = self.inventory_table.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.Stretch)
         header.setSectionResizeMode(1, QHeaderView.Fixed)
-        self.inventory_table.setColumnWidth(1, 100)
+        self.inventory_table.setColumnWidth(1, 150)
         
-        # Add PPE items
+        # Add PPE items and restore last known values
         ppe_items = ['Hard Hat', 'Beard Net', 'Gloves', 'Safety Glasses', 'Ear Plugs']
         self.inventory_table.setRowCount(len(ppe_items))
         
         for i, item in enumerate(ppe_items):
             # Item name
             name_item = QTableWidgetItem(item)
-            name_item.setFlags(name_item.flags() & ~Qt.ItemIsEditable)  # Make read-only
+            name_item.setFlags(name_item.flags() & ~Qt.ItemIsEditable)
             self.inventory_table.setItem(i, 0, name_item)
             
-            # Quantity (initially empty)
-            qty_item = QTableWidgetItem('--')
-            qty_item.setFlags(qty_item.flags() & ~Qt.ItemIsEditable)  # Make read-only
+            # Get the key for this item
+            key = item.lower().replace(' ', '')
+            
+            # Quantity (use stored value if available)
+            qty_item = QTableWidgetItem(str(self.last_inventory.get(key, '--')))
+            qty_item.setFlags(qty_item.flags() & ~Qt.ItemIsEditable)
             qty_item.setTextAlignment(Qt.AlignCenter)
             self.inventory_table.setItem(i, 1, qty_item)
         
@@ -542,8 +617,8 @@ class PPEVendingMachineGUI(QMainWindow):
         
         # Request button
         request_button = QPushButton("Request Inventory Update")
-        request_button.setFont(QFont('Arial', 14, QFont.Bold))
-        request_button.setMinimumHeight(40)
+        request_button.setFont(QFont('Arial', 16))
+        request_button.setMinimumHeight(60)
         request_button.setStyleSheet(f"""
             QPushButton {{
                 background-color: {self.colors.primary};
@@ -559,9 +634,10 @@ class PPEVendingMachineGUI(QMainWindow):
         request_button.clicked.connect(self._request_inventory_update)
         layout.addWidget(request_button)
         
-        # Last update time label
-        self.last_update_label = QLabel("Last Update: Never")
+        # Last update label - use saved timestamp if available
+        self.last_update_label = QLabel(f"Last Update: {self.last_update_time}")
         self.last_update_label.setAlignment(Qt.AlignCenter)
+        self.last_update_label.setFont(QFont('Arial', 14))
         self.last_update_label.setStyleSheet(f"color: {self.colors.text_secondary};")
         layout.addWidget(self.last_update_label)
         
@@ -1014,6 +1090,8 @@ class PPEVendingMachineGUI(QMainWindow):
         """Clean up timers from the Qt thread"""
         if not self.is_shutting_down:
             self.is_shutting_down = True
+            # Save inventory data before closing
+            self._save_inventory_data()
             self.timer.stop()
             self.override_timer.stop()
             self.countdown_timer.stop()
@@ -1092,27 +1170,91 @@ class PPEVendingMachineGUI(QMainWindow):
         try:
             inventory_data = json.loads(data)
             
-            # Update table
-            for row in range(self.inventory_table.rowCount()):
-                item_name = self.inventory_table.item(row, 0).text()
-                key = item_name.lower().replace(' ', '')
-                if key in inventory_data:
-                    qty_item = QTableWidgetItem(str(inventory_data[key]))
-                    qty_item.setFlags(qty_item.flags() & ~Qt.ItemIsEditable)
-                    qty_item.setTextAlignment(Qt.AlignCenter)
-                    self.inventory_table.setItem(row, 1, qty_item)
+            # Store the inventory data
+            for key, value in inventory_data.items():
+                self.last_inventory[key] = str(value)
             
-            # Update timestamp
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            self.last_update_label.setText(f"Last Update: {current_time}")
+            # Update timestamp with standardized format
+            self.last_update_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            # Save to file
+            self._save_inventory_data()
+            
+            # Update table if it exists
+            if hasattr(self, 'inventory_table'):
+                self._update_inventory_table()
+            
+            # Update timestamp label
+            if hasattr(self, 'last_update_label'):
+                self.last_update_label.setText(f"Last Update: {self.last_update_time}")
             
         except Exception as e:
             self.show_status("Error updating inventory", "red")
             print(f"Error parsing inventory data: {e}")
 
-    def _update_help_toggle_button_style(self):
-        """Update help toggle button styling"""
-        self.help_toggle_button.setStyleSheet(f"""
+    def _update_inventory_table(self):
+        """Update inventory table with stored values"""
+        for row in range(self.inventory_table.rowCount()):
+            item_name = self.inventory_table.item(row, 0).text()
+            key = item_name.lower().replace(' ', '')
+            if key in self.last_inventory:
+                qty_item = QTableWidgetItem(str(self.last_inventory[key]))
+                qty_item.setFlags(qty_item.flags() & ~Qt.ItemIsEditable)
+                qty_item.setTextAlignment(Qt.AlignCenter)
+                self.inventory_table.setItem(row, 1, qty_item)
+
+    def _load_inventory_data(self):
+        """Load inventory data from file"""
+        try:
+            if os.path.exists(self.inventory_file):
+                with open(self.inventory_file, 'r') as f:
+                    data = json.load(f)
+                    # Convert ISO format to standard format if needed
+                    last_update = data.get('last_update', "Never")
+                    if last_update != "Never" and 'T' in last_update:
+                        try:
+                            dt = datetime.fromisoformat(last_update)
+                            last_update = dt.strftime("%Y-%m-%d %H:%M:%S")
+                        except:
+                            last_update = "Never"
+                    
+                    return {
+                        'inventory': data.get('inventory', self._get_default_inventory()),
+                        'last_update': last_update
+                    }
+        except Exception as e:
+            print(f"Error loading inventory data: {e}")
+        
+        return {
+            'inventory': self._get_default_inventory(),
+            'last_update': "Never"
+        }
+
+    def _get_default_inventory(self):
+        """Get default inventory values"""
+        return {
+            'hardhat': '--',
+            'beardnet': '--',
+            'gloves': '--',
+            'glasses': '--',
+            'earplugs': '--'
+        }
+
+    def _save_inventory_data(self):
+        """Save inventory data to file"""
+        try:
+            data = {
+                'inventory': self.last_inventory,
+                'last_update': self.last_update_time
+            }
+            with open(self.inventory_file, 'w') as f:
+                json.dump(data, f, indent=2)
+        except Exception as e:
+            print(f"Error saving inventory data: {e}")
+
+    def _update_settings_toggle_button_style(self):
+        """Update settings toggle button styling"""
+        self.settings_toggle_button.setStyleSheet(f"""
             QPushButton {{
                 background-color: {self.colors.success if self.accessibility_mode else self.colors.neutral};
                 color: white;

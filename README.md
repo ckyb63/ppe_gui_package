@@ -1,6 +1,6 @@
 # GUI Package for PPE Vending Machine
 
-## Version 0.5.0
+## Version 0.5.1
 
 A ROS2 package containing a PyQt5-based graphical user interface for controlling and monitoring a PPE (Personal Protective Equipment) vending machine.
 

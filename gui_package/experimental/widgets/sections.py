@@ -2,7 +2,7 @@
 Main GUI sections for the PPE Vending Machine interface
 
 Author: Max Chen
-v0.5.0
+v0.5.1
 """
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                             QPushButton, QGridLayout)
@@ -22,19 +22,19 @@ class TitleSection(QWidget):
         
         # Help button container
         help_container = QWidget()
-        help_container.setFixedSize(40, 40)
+        help_container.setFixedSize(60, 60)
         help_layout = QHBoxLayout(help_container)
         help_layout.setContentsMargins(0, 0, 0, 0)
         
         # Help button
         help_button = QPushButton("?")
-        help_button.setFont(QFont('Arial', 16, QFont.Bold))
-        help_button.setFixedSize(40, 40)
+        help_button.setFont(QFont('Arial', 24, QFont.Bold))
+        help_button.setFixedSize(60, 60)
         help_button.setStyleSheet(f"""
             QPushButton {{
                 background-color: {self.parent.colors.primary};
                 color: white;
-                border-radius: 20px;
+                border-radius: 30px;
                 border: none;
             }}
             QPushButton:hover {{
@@ -56,13 +56,13 @@ class TitleSection(QWidget):
         
         # Settings button
         settings_button = QPushButton("⚙️")
-        settings_button.setFont(QFont('Arial', 16, QFont.Bold))
-        settings_button.setFixedSize(40, 40)
+        settings_button.setFont(QFont('Arial', 24, QFont.Bold))
+        settings_button.setFixedSize(60, 60)
         settings_button.setStyleSheet(f"""
             QPushButton {{
                 background-color: {self.parent.colors.primary};
                 color: white;
-                border-radius: 20px;
+                border-radius: 30px;
                 border: none;
             }}
             QPushButton:hover {{
@@ -152,6 +152,7 @@ class PPEGridSection(QWidget):
         
     def _init_ui(self):
         grid = QGridLayout(self)
+        grid.setSpacing(10)  # Add some spacing between buttons
         
         ppe_items = [
             ('Hard Hat', 'hardhat', 0, 0),
@@ -168,7 +169,7 @@ class PPEGridSection(QWidget):
             
             button = ColoredButton(label)
             button.setFont(QFont('Arial', 16, QFont.Bold))
-            button.setMinimumHeight(80)
+            button.setMinimumHeight(110)  # Increased from 80 to 100
             button.clicked.connect(lambda checked, k=key: self.parent.on_ppe_button_click(k))
             
             layout.addWidget(button)

@@ -2,6 +2,17 @@
 Changelog for package gui_package
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.1 (2025-02-11)
+------------------
+- Overall Fixes and UI Improvements
+- Fixed inventory timestamp display to standard format
+- Improved inventory table styling
+- Added proper inventory update handling
+- Added inventory memory
+- Increased overall UI sizes for better readability and touch target sizes 
+- Added dummy launch file to launch both included dummy nodes
+
+
 0.5.0 (2025-02-10)
 ------------------
 - Modular code architecture with improved maintainability

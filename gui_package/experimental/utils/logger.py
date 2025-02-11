@@ -16,6 +16,7 @@ class OverrideLogger:
         self.log_file = log_file
         self.logs = self._load_logs()
         
+    # Load the logs from a JSON file
     def _load_logs(self):
         if os.path.exists(self.log_file):
             try:
@@ -25,17 +26,21 @@ class OverrideLogger:
                 return []
         return []
         
+    # Log an override with standardized timestamp to a JSON file
     def log_override(self, reason=""):
+        """Log an override with standardized timestamp"""
         log_entry = {
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "reason": reason
         }
         self.logs.append(log_entry)
         self._save_logs()
         
+    # Save the logs to a JSON file
     def _save_logs(self):
         with open(self.log_file, 'w') as f:
             json.dump(self.logs, f, indent=2)
             
+    # Get the recent logs
     def get_recent_logs(self, limit=10):
         return self.logs[-limit:] 

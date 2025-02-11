@@ -29,6 +29,7 @@ class ColoredButton(QPushButton):
             self._animation.start()
             self._color = color
             
+    # Update the style sheet of the button
     def _updateStyleSheet(self, color):
         self.setStyleSheet(f"""
             QPushButton {{
@@ -45,9 +46,8 @@ class ColoredButton(QPushButton):
                 background-color: {self._darken(color, 0.2)};
             }}
         """)
-        
+    # Helper function to darken a color
     def _darken(self, color, factor=0.1):
-        # Helper function to darken a color
         c = QColor(color)
         h, s, v, a = c.getHsv()
         return QColor.fromHsv(h, s, int(v * (1 - factor)), a).name() 
