@@ -30,7 +30,7 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 
 ### Update Changelog
 
-For a detailed list of changes, bug fixes, and new features, please refer to the [CHANGELOG](CHANGELOG.rst).
+For a detailed list of changes, bug fixes, and new features, please refer to the [CHANGELOG](CHANGELOG.md).
 
 ## Dependencies
 
