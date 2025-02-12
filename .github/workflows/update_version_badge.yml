@@ -17,14 +17,18 @@ jobs:
         run: |
           VERSION=$(grep -oPm1 "(?<=<version>)[^<]+" package.xml)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+      
+      - name: Print badge line
+        run: grep 'https://img.shields.io/badge/Version' README.md || echo "Badge not found"
+        
 
       - name: Update README.md
         run: |
-          sed -i "s|![Version](https://img.shields.io/badge/Version-[^)]*-blue)|![Version](https://img.shields.io/badge/Version-${{ env.VERSION }}-blue)|g" README.md
+          sed -i "s|![Version](https://img.shields.io/badge/Version-[^ )]*-blue)|![Version](https://img.shields.io/badge/Version-${{ env.VERSION }}-blue)|g" README.md
 
       - name: Check for changes
         run: git diff README.md || echo "No differences detected"
-
+      
       - name: Commit changes
         run: |
           git config --local user.email "ckyb63@gmail.com"
