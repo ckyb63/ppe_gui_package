@@ -1,6 +1,3 @@
-# Override log file
-override_log.json
-
 # Python cache files
 __pycache__/
 *.py[cod]

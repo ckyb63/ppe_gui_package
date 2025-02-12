@@ -1,0 +1,31 @@
+name: Update Version Badge
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-badge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Extract version from package.xml
+        id: get_version
+        run: |
+          VERSION=$(grep -oPm1 "(?<=<version>)[^<]+" ros2_ws/src/gui_package/package.xml)
+          echo "::set-output name=version::$VERSION"
+
+      - name: Update README.md
+        run: |
+          sed -i "s|![Version](https://img.shields.io/badge/Version-.*-blue)|![Version](https://img.shields.io/badge/Version-${{ steps.get_version.outputs.version }}-blue)|" README.md
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "ckyb63@gmail.com"
+          git config --local user.name "Max Chen"
+          git add README.md
+          git commit -m "Update version badge to ${{ steps.get_version.outputs.version }}" || echo "No changes to commit"
+          git push

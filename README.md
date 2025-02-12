@@ -108,43 +108,45 @@ ros2 launch gui_package dummy_nodes.launch.py
 
 ### File Structure
 ```
-├── CHANGELOG.rst
+├── CHANGELOG.md
 ├── docs
-│   └── images//
+│   └── images >> (screenshots)
 ├── gui_package
-│   ├── dummy_inventory_publisher.py
-│   ├── dummy_ppe_status.py
-│   ├── experimental
-│   │   ├── __init__.py
-│   │   ├── main.py
-│   │   ├── main_window.py
-│   │   ├── README.md
-│   │   ├── ros_node.py
-│   │   ├── utils
-│   │   │   ├── colors.py
-│   │   │   ├── context.py
-│   │   │   ├── __init__.py
-│   │   │   └── logger.py
-│   │   └── widgets
-│   │       ├── buttons.py
-│   │       ├── dialogs.py
-│   │       ├── __init__.py
-│   │       ├── override_dialog.py
-│   │       ├── sections.py
-│   │       └── settings_dialog.py
-│   ├── __init__.py
-│   └── launch
+│   ├── dummy_test
+│   │   ├── dummy_inventory_publisher.py
+│   │   ├── dummy_ppe_status.py
+│   │   └── __init__.py
+│   ├── __init__.py
+│   ├── launch
+│   └── main_gui_modules
+│       ├── __init__.py
+│       ├── main.py
+│       ├── main_window.py
+│       ├── README.md
+│       ├── ros_node.py
+│       ├── utils
+│       │   ├── colors.py
+│       │   ├── context.py
+│       │   ├── __init__.py
+│       │   └── logger.py
+│       └── widgets
+│           ├── buttons.py
+│           ├── dialogs.py
+│           ├── __init__.py
+│           ├── override_dialog.py
+│           ├── sections.py
+│           └── settings_dialog.py
 ├── launch
-│   ├── dummy_nodes.launch.py
-│   └── experimental_gui.launch.py
+│   ├── dummy_nodes.launch.py
+│   └── main_ppe_gui.launch.py
 ├── override_log.json
 ├── package.xml
 ├── README.md
 ├── resource
-│   └── gui_package
+│   └── gui_package
 ├── setup.cfg
 ├── setup.py
-└── test//
+└── test >> (default test files)
 ```
 
 ### Building for Development

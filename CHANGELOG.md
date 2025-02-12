@@ -7,6 +7,10 @@
 ### Known issues
 - Styling issues with the settings dialog
 
+## [0.5.2] - 2025-02-12
+### Added
+- Added dynamic badges to the README.md
+
 ## [0.5.1] - 2025-02-11
 ### Added
 - Overall fixes and UI improvements
