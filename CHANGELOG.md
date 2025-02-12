@@ -7,9 +7,10 @@
 ### Known issues
 - Styling issues with the settings dialog
 
-## [0.5.2] - 2025-02-12
+## [0.5.1.2] - 2025-02-12
 ### Added
 - Added dynamic badges to the README.md
+- Tested Github Actions workflow to update the version badge   
 
 ## [0.5.1] - 2025-02-11
 ### Added
