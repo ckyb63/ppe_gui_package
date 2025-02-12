@@ -15,7 +15,7 @@ jobs:
       - name: Extract version from package.xml
         id: get_version
         run: |
-          VERSION=$(grep -oPm1 "(?<=<version>)[^<]+" ros2_ws/src/gui_package/package.xml)
+          VERSION=$(grep -oPm1 "(?<=<version>)[^<]+" package.xml)
           echo "::set-output name=version::$VERSION"
 
       - name: Update README.md
