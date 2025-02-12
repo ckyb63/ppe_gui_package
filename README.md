@@ -14,7 +14,7 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 - Simulation support for testing
 - Optomized for touch screen use
 
-### Latest Features (v0.5.0)
+### Latest Major Features (v0.5.0)
 - Modular code architecture with improved maintainability
 - Integrated inventory management system
 - Real-time inventory tracking and updates
