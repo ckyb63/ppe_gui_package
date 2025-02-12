@@ -1,6 +1,9 @@
 # GUI Package for PPE Vending Machine
 
-## Version 0.5.1
+![Version](https://img.shields.io/badge/Version-0.5.1-blue)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
+![PyQt5](https://img.shields.io/badge/PyQt5-5.15%2B-blue?logo=qt&logoColor=white)
+![ROS2](https://img.shields.io/badge/ROS2-Humble-orange?logo=ros&logoColor=white)
 
 A ROS2 package containing a PyQt5-based graphical user interface for controlling and monitoring a PPE (Personal Protective Equipment) vending machine.
 
