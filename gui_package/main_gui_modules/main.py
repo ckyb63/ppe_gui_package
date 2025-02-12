@@ -2,7 +2,7 @@
 Main entry point for the PPE Vending Machine GUI
 
 Author: Max Chen
-v0.5.0
+v0.5.1
 """
 import os
 import sys

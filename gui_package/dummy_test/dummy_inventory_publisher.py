@@ -81,10 +81,12 @@ def main(args=None):
     try:
         rclpy.spin(publisher)
     except KeyboardInterrupt:
-        pass
+        publisher.get_logger().info('Keyboard interrupt received, shutting down...')
     finally:
-        publisher.destroy_node()
-        rclpy.shutdown()
+        # Ensure that shutdown is called only once
+        if rclpy.ok():
+            publisher.destroy_node()
+            rclpy.shutdown()
 
 if __name__ == '__main__':
     main() 

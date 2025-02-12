@@ -5,7 +5,7 @@ This module provides a logger that overrides the default logging functionality.
 It allows for easy logging of overrides to a file.
 
 Author: Max Chen
-v0.5.0
+v0.5.1
 """
 import os
 import json

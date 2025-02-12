@@ -1,5 +1,8 @@
 """
 Widget components for the PPE GUI
+
+Author: Max Chen
+v0.5.1
 """
 from .buttons import ColoredButton
 from .dialogs import HelpDialog

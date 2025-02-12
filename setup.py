@@ -25,10 +25,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'ppe_gui = gui_package.ppe_gui:main',
-            'experimental_gui = gui_package.experimental.main:main',
-            'dummy_ppe = gui_package.dummy_ppe_status:main',
-            'dummy_inventory = gui_package.dummy_inventory_publisher:main',
+            'main_ppe_gui = gui_package.main_gui_modules.main:main',
+            'dummy_ppe = gui_package.dummy_test.dummy_ppe_status:main',
+            'dummy_inventory = gui_package.dummy_test.dummy_inventory_publisher:main',
         ],
     },
 )

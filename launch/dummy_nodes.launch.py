@@ -1,6 +1,9 @@
 """
 Launch file for dummy nodes used in testing
 Launches both the dummy PPE status publisher and dummy inventory publisher
+
+Author: Max Chen
+v0.5.1
 """
 from launch import LaunchDescription
 from launch_ros.actions import Node

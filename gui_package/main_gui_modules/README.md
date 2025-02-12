@@ -3,7 +3,7 @@
 This is a modular implementation of the PPE Vending Machine GUI. The code has been organized into the following structure:
 
 ```
-experimental/
+main_gui_modules/
 ├── __init__.py
 ├── main.py
 ├── main_window.py
@@ -39,15 +39,3 @@ experimental/
 - `override_dialog.py`: Override confirmation dialog
 - `sections.py`: Main GUI section widgets
 - `settings_dialog.py`: Settings dialog implementation
-
-## Usage
-
-Run the experimental GUI with:
-```bash
-ros2 run gui_package experimental_gui
-```
-
-Or use the launch file to start both the GUI and dummy PPE publisher:
-```bash
-ros2 launch gui_package experimental_gui.launch.py
-``` 

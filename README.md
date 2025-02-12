@@ -7,11 +7,12 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 ## Features
 
 ### Core Features
-- Real-time PPE detection status monitoring
-- Automated safety gate control
-- ROS2 integration for vending machine control
+- Real-time PPE detection status monitoring display
+- Automated safety gate control logic
+- ROS2 integration for interface with vending machine hardware and computer vision model
 - Administrative override system
 - Simulation support for testing
+- Optomized for touch screen use
 
 ### Latest Features (v0.5.0)
 - Modular code architecture with improved maintainability
@@ -22,17 +23,14 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 - Improved override system with user tracking and reason logging
 - Improved override content UI
 
-### Previous Features (v0.3.1)
-- Enhanced override system with user tracking and reason logging
-- Added user authentication for overrides
-- Detailed override logging with user and reason tracking
-- Improved override dialog UI with dropdown selections
-
 ### Accessibility Features
-- Toggle for O/X status indicators
+- Toggle for O/X status indicators, for users with visual impairments
 - Clear text labels
-- Consistent button sizing
 - Screen reader friendly layout
+
+### Update Changelog
+
+For a detailed list of changes, bug fixes, and new features, please refer to the [CHANGELOG](CHANGELOG.rst).
 
 ## Dependencies
 
@@ -74,11 +72,8 @@ source install/setup.bash
 ### Running the GUI
 
 ```bash
-# Launch the new modular main GUI (recommended)
-ros2 launch gui_package experimental_gui.launch.py
-
-# Run the experimental GUI (recommended)
-ros2 run gui_package experimental_gui
+# Launch the main GUI
+ros2 launch gui_package main_ppe_gui.launch.py
 
 # Run the dummy inventory publisher
 ros2 run gui_package dummy_inventory
@@ -86,8 +81,8 @@ ros2 run gui_package dummy_inventory
 # For testing without hardware
 ros2 run gui_package dummy_ppe
 
-# Run the older main GUI (deprecated)
-ros2 run gui_package ppe_gui
+# For testing both dummy nodes
+ros2 launch gui_package dummy_nodes.launch.py
 ```
 
 ## ROS2 Topics
@@ -110,27 +105,43 @@ ros2 run gui_package ppe_gui
 
 ### File Structure
 ```
+├── CHANGELOG.rst
+├── docs
+│   └── images//
 ├── gui_package
-│   ├── experimental/
-│   │   ├── utils/
-│   │   │   ├── colors.py
-│   │   │   ├── context.py
-│   │   │   └── logger.py
-│   │   ├── widgets/
-│   │   │   ├── buttons.py
-│   │   │   ├── sections.py
-│   │   │   └── dialogs.py
+│   ├── dummy_inventory_publisher.py
+│   ├── dummy_ppe_status.py
+│   ├── experimental
+│   │   ├── __init__.py
 │   │   ├── main.py
 │   │   ├── main_window.py
-│   │   └── ros_node.py
-│   ├── dummy_ppe_status.py
-│   ├── dummy_inventory_publisher.py
-│   └── ppe_gui.py
-├── launch/
+│   │   ├── README.md
+│   │   ├── ros_node.py
+│   │   ├── utils
+│   │   │   ├── colors.py
+│   │   │   ├── context.py
+│   │   │   ├── __init__.py
+│   │   │   └── logger.py
+│   │   └── widgets
+│   │       ├── buttons.py
+│   │       ├── dialogs.py
+│   │       ├── __init__.py
+│   │       ├── override_dialog.py
+│   │       ├── sections.py
+│   │       └── settings_dialog.py
+│   ├── __init__.py
+│   └── launch
+├── launch
+│   ├── dummy_nodes.launch.py
 │   └── experimental_gui.launch.py
+├── override_log.json
 ├── package.xml
 ├── README.md
-└── setup.py
+├── resource
+│   └── gui_package
+├── setup.cfg
+├── setup.py
+└── test//
 ```
 
 ### Building for Development
@@ -151,8 +162,8 @@ colcon build --packages-select gui_package --symlink-install
 
 <table>
 <tr>
-    <td width="50%"><img src="docs/images/main_gui_window.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/dark_theme_with_OX.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/main_gui_window_5.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/dark_theme_with_OX_5.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
     <td><em>Standard interface with PPE status indicators</em></td>
@@ -165,7 +176,7 @@ colcon build --packages-select gui_package --symlink-install
 <details>
 <summary>Override System</summary>
 
-![Override Dialog](docs/images/override_content.png)
+![Override Dialog](docs/images/override_content_5.png)
 
 *Enhanced override dialog with user authentication and reason tracking*
 
@@ -176,8 +187,8 @@ colcon build --packages-select gui_package --symlink-install
 
 <table>
 <tr>
-    <td width="50%"><img src="docs/images/settings_content.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/settings_inventory.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_content_5.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_inventory_5.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
     <td><em>Main settings configuration panel</em></td>
@@ -187,8 +198,8 @@ colcon build --packages-select gui_package --symlink-install
 
 <table>
 <tr>
-    <td width="50%"><img src="docs/images/settings_override_log.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/settings_timing.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_override_log_5.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_timing_5.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
     <td><em>Override logging and configuration</em></td>
@@ -201,7 +212,7 @@ colcon build --packages-select gui_package --symlink-install
 <details>
 <summary>Help Documentation</summary>
 
-![User Help Guide](docs/images/user_help_content.png)
+![User Help Guide](docs/images/user_help_content_5.png)
 
 *Comprehensive user help guide with feature explanations*
 

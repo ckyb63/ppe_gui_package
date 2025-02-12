@@ -4,6 +4,7 @@ Main window implementation for the PPE Vending Machine GUI
 Author: Max Chen
 v0.5.1
 """
+
 import os
 import sys
 import threading
