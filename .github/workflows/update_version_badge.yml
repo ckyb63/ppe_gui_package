@@ -16,18 +16,19 @@ jobs:
         id: get_version
         run: |
           VERSION=$(grep -oPm1 "(?<=<version>)[^<]+" package.xml)
-          echo "::set-output name=version::$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Update README.md
         run: |
-          sed -i "s|![Version](https://img.shields.io/badge/Version-.*-blue)|![Version](https://img.shields.io/badge/Version-${{ steps.get_version.outputs.version }}-blue)|" README.md
+          sed -i "s|![Version](https://img.shields.io/badge/Version-[^)]*-blue)|![Version](https://img.shields.io/badge/Version-${{ env.VERSION }}-blue)|g" README.md
+
+      - name: Check for changes
+        run: git diff README.md || echo "No differences detected"
 
       - name: Commit changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         run: |
           git config --local user.email "ckyb63@gmail.com"
           git config --local user.name "ckyb63"
           git add README.md
-          git commit -m "Update version badge to ${{ steps.get_version.outputs.version }}" || echo "No changes to commit"
+          git commit -m "Update version badge to ${{ env.VERSION }}" || echo "No changes to commit"
           git push
