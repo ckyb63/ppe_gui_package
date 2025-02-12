@@ -21,11 +21,16 @@ jobs:
       - name: Print badge line
         run: grep 'https://img.shields.io/badge/Version' README.md || echo "Badge not found"
         
-
+      - name: Normalize line endings
+        run: sed -i 's/\r//' README.md
+      
       - name: Update README.md
         run: |
-          sed -i "s|![Version](https://img.shields.io/badge/Version-[^ )]*-blue)|![Version](https://img.shields.io/badge/Version-${{ env.VERSION }}-blue)|g" README.md
+          sed -i 's|https://img.shields.io/badge/Version-[^)-]*-blue|https://img.shields.io/badge/Version-${{ env.VERSION }}-blue|g' README.md
 
+      - name: Print README.md after update
+        run: cat README.md
+        
       - name: Check for changes
         run: git diff README.md || echo "No differences detected"
       
