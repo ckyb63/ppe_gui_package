@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 Launch file for dummy nodes used in testing
 Launches both the dummy PPE status publisher and dummy inventory publisher

@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
+
 """
 ROS2 Node implementation for PPE GUI
 
 Author: Max Chen
-v0.5.0
+v0.5.6
 """
 import rclpy
 from rclpy.node import Node

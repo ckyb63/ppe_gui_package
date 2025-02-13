@@ -17,14 +17,10 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 - Simulation support for testing
 - Optomized for touch screen use
 
-### Latest Major Features (v0.5.0)
-- Modular code architecture with improved maintainability
-- Integrated inventory management system
-- Real-time inventory tracking and updates
-- Inventory request and response system
-- Improved settings interface with tabbed organization
-- Improved override system with user tracking and reason logging
-- Improved override content UI
+### Latest Major Features (v0.5.6)
+- Added Safety Gate Controller to the package
+- Improved Settings styling overall
+- Various bug fixes and optimizations
 
 ### Accessibility Features
 - Toggle for O/X status indicators, for users with visual impairments
@@ -86,6 +82,9 @@ ros2 run gui_package dummy_ppe
 
 # For testing both dummy nodes
 ros2 launch gui_package dummy_nodes.launch.py
+
+# For running with Demo Gate hardware (ESP32 connected with USB over Serial)
+ros2 launch gui_package gate_demo.launch.py
 ```
 
 ## ROS2 Topics
@@ -110,43 +109,47 @@ ros2 launch gui_package dummy_nodes.launch.py
 ```
 ├── CHANGELOG.md
 ├── docs
-│   └── images >> (screenshots)
+│   └── images >> Screenshots of the GUI for README
+├── gate
+│   ├── ESP32_Bluetooth_Comms
+│   │   └── ESP32_Bluetooth_Comms.ino >> Arduino code for ESP32 Bluetooth communication
+│   ├── __init__.py
+│   └── safety_gate_controller.py >> Safety gate controller implementation
 ├── gui_package
-│   ├── dummy_test
-│   │   ├── dummy_inventory_publisher.py
-│   │   ├── dummy_ppe_status.py
-│   │   └── __init__.py
-│   ├── __init__.py
-│   ├── launch
-│   └── main_gui_modules
-│       ├── __init__.py
-│       ├── main.py
-│       ├── main_window.py
-│       ├── README.md
-│       ├── ros_node.py
-│       ├── utils
-│       │   ├── colors.py
-│       │   ├── context.py
-│       │   ├── __init__.py
-│       │   └── logger.py
-│       └── widgets
-│           ├── buttons.py
-│           ├── dialogs.py
-│           ├── __init__.py
-│           ├── override_dialog.py
-│           ├── sections.py
-│           └── settings_dialog.py
+│   ├── dummy_test
+│   │   ├── dummy_inventory_publisher.py
+│   │   ├── dummy_ppe_status.py
+│   │   └── __init__.py
+│   ├── __init__.py
+│   ├── launch
+│   └── main_gui_modules
+│       ├── __init__.py
+│       ├── main.py
+│       ├── main_window.py
+│       ├── README.md
+│       ├── ros_node.py
+│       ├── utils
+│       │   ├── colors.py
+│       │   ├── context.py
+│       │   ├── __init__.py
+│       │   └── logger.py
+│       └── widgets
+│           ├── buttons.py
+│           ├── dialogs.py
+│           ├── __init__.py
+│           ├── override_dialog.py
+│           ├── sections.py
+│           └── settings_dialog.py
 ├── launch
-│   ├── dummy_nodes.launch.py
-│   └── main_ppe_gui.launch.py
-├── override_log.json
+│   ├── dummy_nodes.launch.py
+│   └── main_ppe_gui.launch.py
 ├── package.xml
 ├── README.md
 ├── resource
-│   └── gui_package
+│   └── gui_package
 ├── setup.cfg
 ├── setup.py
-└── test >> (default test files)
+└── test >> Default ROS2 test folder
 ```
 
 ### Building for Development
@@ -167,8 +170,8 @@ colcon build --packages-select gui_package --symlink-install
 
 <table>
 <tr>
-    <td width="50%"><img src="docs/images/main_gui_window_5.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/dark_theme_with_OX_5.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/main_gui_window_5_6.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/dark_theme_with_OX_5_6.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
     <td><em>Standard interface with PPE status indicators</em></td>
@@ -181,7 +184,7 @@ colcon build --packages-select gui_package --symlink-install
 <details>
 <summary>Override System</summary>
 
-![Override Dialog](docs/images/override_content_5.png)
+![Override Dialog](docs/images/override_content_5_6.png)
 
 *Enhanced override dialog with user authentication and reason tracking*
 
@@ -192,8 +195,8 @@ colcon build --packages-select gui_package --symlink-install
 
 <table>
 <tr>
-    <td width="50%"><img src="docs/images/settings_content_5.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/settings_inventory_5.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_content_5_6.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_inventory_5_6.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
     <td><em>Main settings configuration panel</em></td>
@@ -203,12 +206,12 @@ colcon build --packages-select gui_package --symlink-install
 
 <table>
 <tr>
-    <td width="50%"><img src="docs/images/settings_override_log_5.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/settings_timing_5.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_timing_5_6.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_override_log_5_6.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
-    <td><em>Override logging and configuration</em></td>
     <td><em>System timing and delay settings</em></td>
+    <td><em>Override logging and configuration</em></td>
 </tr>
 </table>
 
@@ -217,7 +220,7 @@ colcon build --packages-select gui_package --symlink-install
 <details>
 <summary>Help Documentation</summary>
 
-![User Help Guide](docs/images/user_help_content_5.png)
+![User Help Guide](docs/images/user_help_content_5_6.png)
 
 *Comprehensive user help guide with feature explanations*
 

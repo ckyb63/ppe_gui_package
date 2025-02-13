@@ -1,22 +1,21 @@
+#!/usr/bin/env python3
+
 """
 Main window implementation for the PPE Vending Machine GUI
 
 Author: Max Chen
-v0.5.1
+v0.5.6
 """
 
 import os
-import sys
-import threading
-import signal
 import time
 import json
 from datetime import datetime
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
                             QApplication, QLabel, QPushButton, QComboBox, 
-                            QFormLayout, QTabWidget, QFrame, QTextEdit, QSpinBox, QDoubleSpinBox, QTableWidget, QTableWidgetItem, QHeaderView)
+                            QFormLayout, QTabWidget, QFrame, QSpinBox, QDoubleSpinBox, QTableWidget, QTableWidgetItem, QHeaderView)
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QPalette, QColor
 
 from .widgets.sections import TitleSection, StatusSection, CameraSection, PPEGridSection
 from .utils.colors import ColorScheme
@@ -461,12 +460,21 @@ class PPEVendingMachineGUI(QMainWindow):
         
         # Color scheme section
         scheme_label = QLabel("Color Scheme:")
-        scheme_label.setFont(QFont('Arial', 16))
+        scheme_label.setFont(QFont('Arial', 18))
         layout.addWidget(scheme_label)
         
         self.color_scheme_combo = QComboBox()
         self.color_scheme_combo.setObjectName("color_scheme")
-        self.color_scheme_combo.setFont(QFont('Arial', 14))
+        self.color_scheme_combo.setFont(QFont('Arial', 20))  # Increase font size for better visibility
+        self.color_scheme_combo.setMinimumHeight(70)  # Set minimum height for touch friendliness
+        self.color_scheme_combo.setFixedHeight(50)  # Set fixed height for consistency
+        self.color_scheme_combo.setStyleSheet("""
+            QComboBox {
+                padding: 10px;  /* Add padding for better touch area */
+                min-width: 200px; /* Set minimum width */
+                font-size: 24px; /* Increase font size */
+            }
+        """)
         self.color_scheme_combo.addItems(["Light", "Dark"])
         self.color_scheme_combo.setCurrentText("Dark" if self.colors.is_dark else "Light")
         self.color_scheme_combo.currentTextChanged.connect(self._apply_theme_preview)
@@ -480,14 +488,14 @@ class PPEVendingMachineGUI(QMainWindow):
         
         # Accessibility section
         access_label = QLabel("Accessibility:")
-        access_label.setFont(QFont('Arial', 16))
+        access_label.setFont(QFont('Arial', 18))
         layout.addWidget(access_label)
         
         self.settings_toggle_button = QPushButton(
             "Accessibility O/X OFF" if not self.accessibility_mode else "Accessibility O/X ON"
         )
-        self.settings_toggle_button.setFont(QFont('Arial', 14, QFont.Bold))
-        self.settings_toggle_button.setFixedHeight(50)
+        self.settings_toggle_button.setFont(QFont('Arial', 24, QFont.Bold))
+        self.settings_toggle_button.setFixedHeight(90)  # Set fixed height for button
         self._update_settings_toggle_button_style()
         self.settings_toggle_button.clicked.connect(self.toggle_accessibility_settings)
         layout.addWidget(self.settings_toggle_button)
@@ -498,63 +506,148 @@ class PPEVendingMachineGUI(QMainWindow):
     def _create_timing_tab(self):
         """Create timing tab for settings"""
         widget = QWidget()
-        layout = QFormLayout(widget)
+        layout = QVBoxLayout(widget)
         layout.setSpacing(40)
         layout.setContentsMargins(30, 30, 30, 30)
         
-        # Style for labels
-        label_style = f"""
-            QLabel {{
-                font-size: 36px;  # Increased from 28px
-                min-height: 100px;  # Increased from 80px
-                color: {self.colors.text};
-                padding: 15px;
-                font-weight: bold;  # Added bold weight
-            }}
-        """
+        # Override Duration Section
+        override_section = QWidget()
+        override_layout = QVBoxLayout(override_section)
+        override_layout.setSpacing(10)
         
-        # Style for spin boxes
-        spinbox_style = f"""
-            QSpinBox, QDoubleSpinBox {{
-                min-height: 100px;  # Increased from 80px
-                min-width: 250px;  # Increased from 200px
-                font-size: 36px;  # Increased from 28px
-                padding: 15px;
-                background-color: {self.colors.surface};
-                color: {self.colors.text};
-                border: 3px solid {self.colors.neutral};
-                border-radius: 15px;
-                font-weight: bold;  # Added bold weight
-            }}
-            QSpinBox::up-button, QDoubleSpinBox::up-button,
-            QSpinBox::down-button, QDoubleSpinBox::down-button {{
-                width: 50px;  # Increased from 40px
-                height: 50px;  # Increased from 40px
-            }}
-        """
+        override_title = QLabel("Override Duration (s)")
+        override_title.setFont(QFont('Arial', 24, QFont.Bold))
+        override_title.setPalette(self._create_palette(self.colors.text))
+        override_title.setWordWrap(True)
         
-        # Create spinboxes with labels
-        override_label = QLabel("Override Duration (s):")
-        override_label.setStyleSheet(label_style)
         self.override_duration_spin = QSpinBox()
-        self.override_duration_spin.setStyleSheet(spinbox_style)
+        self.override_duration_spin.setFont(QFont('Arial', 20, QFont.Bold))
+        self.override_duration_spin.setMinimumHeight(100)
+        self.override_duration_spin.setMinimumWidth(250)
         self.override_duration_spin.setRange(5, 30)
         self.override_duration_spin.setValue(int(self.override_duration))
+        self._style_spinbox(self.override_duration_spin)
         
-        cooldown_label = QLabel("Cooldown Time (s):")
-        cooldown_label.setStyleSheet(label_style)
+        # Set stylesheet for the increment buttons
+        self.override_duration_spin.setStyleSheet("""
+            QSpinBox {
+                padding: 10px;  /* Add padding to the spin box */
+            }
+            QAbstractSpinBox::up-button {
+                width: 50px;  /* Set the width of the up button */
+                height: 50px; /* Set the height of the up button */
+                background-color: #28a745; /* Green color for the up button */
+                color: white; /* Button text color */
+                border: none; /* Remove border */
+                border-radius: 5px; /* Rounded corners */
+            }
+            QAbstractSpinBox::down-button {
+                width: 50px;  /* Set the width of the down button */
+                height: 50px; /* Set the height of the down button */
+                background-color: #dc3545; /* Red color for the down button */
+                color: white; /* Button text color */
+                border: none; /* Remove border */
+                border-radius: 5px; /* Rounded corners */
+            }
+            QAbstractSpinBox::up-button:hover {
+                background-color: #218838; /* Darker green on hover */
+            }
+            QAbstractSpinBox::down-button:hover {
+                background-color: #c82333; /* Darker red on hover */
+            }
+        """)
+        
+        override_layout.addWidget(override_title)
+        override_layout.addWidget(self.override_duration_spin)
+        
+        # Cooldown Time Section
+        cooldown_section = QWidget()
+        cooldown_layout = QVBoxLayout(cooldown_section)
+        cooldown_layout.setSpacing(10)
+        
+        cooldown_title = QLabel("PPE Request Cooldown Time (s)")
+        cooldown_title.setFont(QFont('Arial', 24, QFont.Bold))
+        cooldown_title.setPalette(self._create_palette(self.colors.text))
+        cooldown_title.setWordWrap(True)
+        
         self.cooldown_time_spin = QDoubleSpinBox()
-        self.cooldown_time_spin.setStyleSheet(spinbox_style)
+        self.cooldown_time_spin.setFont(QFont('Arial', 20, QFont.Bold))
+        self.cooldown_time_spin.setMinimumHeight(100)
+        self.cooldown_time_spin.setMinimumWidth(250)
         self.cooldown_time_spin.setRange(0.5, 5.0)
+        self.cooldown_time_spin.setSingleStep(0.5)
         self.cooldown_time_spin.setValue(self.dispense_cooldown)
+        self._style_spinbox(self.cooldown_time_spin)
         
-        # Add more vertical spacing between rows
-        layout.setVerticalSpacing(60)  # Increased from 50
+        # Set stylesheet for the increment buttons
+        self.cooldown_time_spin.setStyleSheet("""
+            QDoubleSpinBox {
+                padding: 10px;  /* Add padding to the spin box */
+            }
+            QAbstractSpinBox::up-button {
+                width: 50px;  /* Set the width of the up button */
+                height: 50px; /* Set the height of the up button */
+                background-color: #28a745; /* Green color for the up button */
+                color: white; /* Button text color */
+                border: none; /* Remove border */
+                border-radius: 5px; /* Rounded corners */
+            }
+            QAbstractSpinBox::down-button {
+                width: 50px;  /* Set the width of the down button */
+                height: 50px; /* Set the height of the down button */
+                background-color: #dc3545; /* Red color for the down button */
+                color: white; /* Button text color */
+                border: none; /* Remove border */
+                border-radius: 5px; /* Rounded corners */
+            }
+            QAbstractSpinBox::up-button:hover {
+                background-color: #218838; /* Darker green on hover */
+            }
+            QAbstractSpinBox::down-button:hover {
+                background-color: #c82333; /* Darker red on hover */
+            }
+        """)
         
-        layout.addRow(override_label, self.override_duration_spin)
-        layout.addRow(cooldown_label, self.cooldown_time_spin)
+        cooldown_layout.addWidget(cooldown_title)
+        cooldown_layout.addWidget(self.cooldown_time_spin)
+
+        # Add sections to main layout
+        layout.addWidget(override_section)
+        layout.addSpacing(30)  # Space between sections
+        layout.addWidget(cooldown_section)
+        layout.addStretch()  # Push everything to the top
         
         return widget
+
+    def _style_spinbox(self, spinbox):
+        """Apply common styling to spinbox widgets"""
+        # Set colors using palette
+        palette = QPalette()
+        palette.setColor(QPalette.Text, QColor(self.colors.text))
+        palette.setColor(QPalette.Base, QColor(self.colors.surface))
+        palette.setColor(QPalette.Button, QColor(self.colors.surface))
+        spinbox.setPalette(palette)
+        
+        # Set frame and alignment
+        spinbox.setFrame(True)
+        spinbox.setAlignment(Qt.AlignCenter)
+        
+        # Style the buttons
+        spinbox.setButtonSymbols(QSpinBox.UpDownArrows)
+        
+        # Make buttons more touch-friendly
+        if hasattr(spinbox, 'findChild'):
+            up_button = spinbox.findChild(QWidget, 'qt_spinbox_upbutton')
+            down_button = spinbox.findChild(QWidget, 'qt_spinbox_downbutton')
+            if up_button and down_button:
+                up_button.setMinimumSize(50, 50)
+                down_button.setMinimumSize(50, 50)
+
+    def _create_palette(self, color):
+        """Create a palette with the specified text color"""
+        palette = QPalette()
+        palette.setColor(QPalette.WindowText, QColor(color))
+        return palette
 
     def _create_inventory_tab(self):
         """Create inventory tab for settings"""
@@ -648,27 +741,74 @@ class PPEVendingMachineGUI(QMainWindow):
         """Create override log tab for settings"""
         widget = QWidget()
         layout = QVBoxLayout(widget)
+        layout.setSpacing(20)
         
-        log_text = QTextEdit()
-        log_text.setReadOnly(True)
-        log_text.setStyleSheet(f"""
-            QTextEdit {{
+        # Create table
+        log_table = QTableWidget()
+        log_table.setColumnCount(3)  # Three columns: Timestamp, User, Reason
+        log_table.setHorizontalHeaderLabels(['Timestamp', 'User', 'Reason'])  # Update header labels
+        
+        # Set up table properties
+        log_table.setFont(QFont('Arial', 12))
+        log_table.verticalHeader().setVisible(False)
+        log_table.verticalHeader().setDefaultSectionSize(30)
+        log_table.horizontalHeader().setMinimumHeight(40)
+        log_table.setMinimumHeight(200)
+        log_table.setStyleSheet(f"""
+            QTableWidget {{
                 background-color: {self.colors.surface};
                 color: {self.colors.text};
                 border: 1px solid {self.colors.neutral};
                 border-radius: 5px;
+                padding: 5px;
+            }}
+            QHeaderView::section {{
+                background-color: {self.colors.primary};
+                color: white;
                 padding: 10px;
-                font-size: 12pt;
+                font-size: 16px;
+                border: none;
             }}
         """)
         
+        # Set column widths
+        header = log_table.horizontalHeader()
+        header.setSectionResizeMode(0, QHeaderView.Fixed)
+        header.setSectionResizeMode(1, QHeaderView.Fixed)  # Fixed width for User
+        header.setSectionResizeMode(2, QHeaderView.Stretch)  # Stretch for Reason
+        log_table.setColumnWidth(0, 170)  # Fixed width for Timestamp
+        log_table.setColumnWidth(1, 100)  # Fixed width for User
+
+        # Add log entries
         recent_logs = self.override_logger.get_recent_logs()
-        log_text.setText("\n".join([
-            f"{log['timestamp']}: {log['reason']}"
-            for log in recent_logs
-        ]))
+        log_table.setRowCount(len(recent_logs))
         
-        layout.addWidget(log_text)
+        for i, log in enumerate(recent_logs):
+            # Timestamp
+            time_item = QTableWidgetItem(log['timestamp'])
+            time_item.setFlags(time_item.flags() & ~Qt.ItemIsEditable)
+            time_item.setTextAlignment(Qt.AlignLeft)
+            log_table.setItem(i, 0, time_item)
+            
+            # Extract User from Reason
+            reason_text = log['reason']
+            user = reason_text.split(" - ")[0].replace("User: ", "").strip()  # Extract user
+            reason = reason_text.split(" - ")[1].replace("Reason: ", "").strip()  # Extract reason
+            
+            # User
+            user_item = QTableWidgetItem(user)
+            user_item.setFlags(user_item.flags() & ~Qt.ItemIsEditable)
+            user_item.setTextAlignment(Qt.AlignLeft)
+            log_table.setItem(i, 1, user_item)
+            
+            # Reason
+            details_item = QTableWidgetItem(reason)
+            details_item.setFlags(details_item.flags() & ~Qt.ItemIsEditable)
+            details_item.setTextAlignment(Qt.AlignLeft)
+            log_table.setItem(i, 2, details_item)
+        
+        layout.addWidget(log_table)
+        
         return widget
 
     def _handle_settings_save(self):

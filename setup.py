@@ -6,7 +6,7 @@ package_name = 'gui_package'
 
 setup(
     name=package_name,
-    version='0.5.0',
+    version='0.5.6',
     packages=find_packages(),
     data_files=[
         # Explicitly specify the marker file installation
@@ -28,6 +28,7 @@ setup(
             'main_ppe_gui = gui_package.main_gui_modules.main:main',
             'dummy_ppe = gui_package.dummy_test.dummy_ppe_status:main',
             'dummy_inventory = gui_package.dummy_test.dummy_inventory_publisher:main',
+            'safety_gate_controller = gate.safety_gate_controller:main',    
         ],
     },
 )

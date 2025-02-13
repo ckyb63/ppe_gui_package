@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Color scheme management for the GUI
 

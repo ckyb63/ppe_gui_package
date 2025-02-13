@@ -39,5 +39,5 @@ jobs:
           git config --local user.email "ckyb63@gmail.com"
           git config --local user.name "ckyb63"
           git add README.md
-          git commit -m "Update version badge to ${{ env.VERSION }}" || echo "No changes to commit"
+          git commit -m "Update version badge to ${{ env.VERSION }}" || echo "No changes to commit" 
           git push

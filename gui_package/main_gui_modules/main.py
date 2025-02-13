@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
+
 """
 Main entry point for the PPE Vending Machine GUI
 
 Author: Max Chen
-v0.5.1
+v0.5.6
 """
 import os
 import sys

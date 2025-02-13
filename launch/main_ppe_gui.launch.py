@@ -1,4 +1,6 @@
-"""
+#!/usr/bin/env python3
+
+""" 
 Launch file for the main PPE GUI
 
 Author: Max Chen

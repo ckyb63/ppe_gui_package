@@ -1,11 +1,25 @@
 # Changelog
 
 ## [Unreleased]
-### To be added
-- Camera Feed to the Main GUI window
+### Planned
+- Camera Feed to the Main GUI window for a Live feed of the user in front of the vending machine
+- Upgrade and migrate from PyQt5 to PyQt6
+- Code scripts cleanup
+- Remove window control buttons from the GUI
 
-### Known issues
-- Styling issues with the settings dialog
+## [0.5.6] - 2025-02-13
+### Added
+- Added Safety Gate Controller to the package
+- Added ESP32 Bluetooth Communication Code to the package
+
+### Changed
+- Improved the overall styling of each tab in the settings dialog for better readability and touch targets
+
+### Fixed
+- Fixed the override log display in the settings dialog
+- Fixed the styling issues with the settings dialog
+- Fixed the ROS2 shutdown issue in the dummy nodes
+- Python version and inclusion in scripts
 
 ## [0.5.1.2] - 2025-02-12
 ### Added
