@@ -6,6 +6,7 @@
 - Upgrade and migrate from PyQt5 to PyQt6
 - Code scripts cleanup
 - Remove window control buttons from the GUI
+- Add a open gate button to the settings override tab
 
 ## [0.5.6] - 2025-02-13
 ### Added
