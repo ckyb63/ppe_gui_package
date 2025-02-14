@@ -809,7 +809,46 @@ class PPEVendingMachineGUI(QMainWindow):
         
         layout.addWidget(log_table)
         
+        # Add separator
+        separator = QFrame()
+        separator.setFrameShape(QFrame.HLine)
+        separator.setStyleSheet(f"background-color: {self.colors.neutral};")
+        layout.addWidget(separator)
+        
+        # Add gate override toggle section at the bottom
+        gate_override_widget = QWidget()
+        gate_override_layout = QHBoxLayout(gate_override_widget)
+        gate_override_layout.setAlignment(Qt.AlignCenter)
+        
+        # Gate override toggle button
+        self.temp_gate_override_button = QPushButton("GATE LOCKED")
+        self.temp_gate_override_button.setFont(QFont('Arial', 20, QFont.Bold))
+        self.temp_gate_override_button.setMinimumSize(300, 60)
+        self.temp_gate_override_button.setCheckable(True)
+        self.temp_gate_override_button.setChecked(not self.safety_gate_locked)  # Set initial state
+        self._update_temp_gate_override_button_style()
+        self.temp_gate_override_button.clicked.connect(self._update_temp_gate_override_button_style)
+        
+        gate_override_layout.addWidget(self.temp_gate_override_button)
+        layout.addWidget(gate_override_widget)
+        
         return widget
+
+    def _update_temp_gate_override_button_style(self):
+        """Update temporary gate override button style based on state"""
+        is_unlocked = self.temp_gate_override_button.isChecked()
+        self.temp_gate_override_button.setText("GATE UNLOCKED" if is_unlocked else "GATE LOCKED")
+        self.temp_gate_override_button.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {self.colors.warning if is_unlocked else self.colors.success};
+                color: white;
+                border: none;
+                border-radius: 10px;
+            }}
+            QPushButton:hover {{
+                background-color: {'#f57c00' if is_unlocked else '#1b5e20'};
+            }}
+        """)
 
     def _handle_settings_save(self):
         """Save settings and return to main view"""
@@ -824,11 +863,32 @@ class PPEVendingMachineGUI(QMainWindow):
         self.override_duration = float(self.override_duration_spin.value())
         self.dispense_cooldown = float(self.cooldown_time_spin.value())
         
+        # Apply gate override if changed
+        if hasattr(self, 'temp_gate_override_button'):
+            is_unlocked = self.temp_gate_override_button.isChecked()
+            if is_unlocked != (not self.safety_gate_locked):  # If state has changed
+                self.safety_gate_locked = not is_unlocked
+                self.ros_node.publish_gate_status(self.safety_gate_locked)
+                
+                # Log the change
+                action = "unlocked" if is_unlocked else "locked"
+                self.override_logger.log_override(
+                    f"User: Admin - Reason: Gate manually {action} from settings"
+                )
+                
+                # Show status message
+                self.show_status(f"Gate manually {action}", "orange" if is_unlocked else "green")
+        
         # Return to main view
         self.switchContent()
 
     def _handle_settings_cancel(self):
         """Cancel settings changes and return to main view"""
+        # Reset gate override button state if it exists
+        if hasattr(self, 'temp_gate_override_button'):
+            self.temp_gate_override_button.setChecked(not self.safety_gate_locked)
+            self._update_temp_gate_override_button_style()
+        
         self.switchContent()
 
     def _sync_accessibility_buttons(self):

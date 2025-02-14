@@ -1,54 +1,69 @@
 // The is the code for the ESP32 microcontroller to communicate through a bluetooth terminal.
 // It is used to unlock the gate based on the serial input from the safety gate controller.
+// Currently this needs to be uploaded to the ESP32 microcontroller via the Arduino IDE, ran with a windows machine.
 
 // Author: Max Chen
-// Date: 2025-02-12
-// v0.1.0
+// Date: 2025-02-13
+// v0.1.1
 
+// This is the code for the ESP32 microcontroller to communicate through a bluetooth terminal.
 #include <BluetoothSerial.h>
 
 BluetoothSerial ESP_BT;
 const int ledPin = 2;  // Onboard LED pin (usually pin 2 on ESP32)
 
-void setup() {
+// Define states
+enum State { LOCKED, UNLOCKED };
+State currentState = UNLOCKED;  // Initial state
+
+void setup() 
+{
   Serial.begin(115200);  // Start serial communication at 115200 baud
   pinMode(ledPin, OUTPUT);
-  ESP_BT.begin("ESP32_TISA_GATEEE");  // Start Bluetooth with a name
+  ESP_BT.begin("I_AM_A_GATE-ESP32");  // Start Bluetooth with a name
   Serial.println("Bluetooth device is ready to pair.");
   Serial.println("Enter 'send' to send a message over Bluetooth.");
 }
 
-void loop() {
+void loop() 
+{
   // Check if data is available in the serial buffer
-  if (Serial.available()) {
+  if (Serial.available())  
+  {
     String input = Serial.readStringUntil('\n');  // Read the serial input until a newline character
     
     // Trim any leading/trailing whitespace and convert to lowercase
     input.trim();
     
-    // Check if the input matches the word "send"
-    if (input == "unlock") {
+    // Check if the input matches the word "unlock"
+    if (input == "unlock" && currentState != UNLOCKED) 
+    {
       // Send Bluetooth message
       ESP_BT.println("OPEN THE GATE!");
       Serial.println("Message sent!");
+      currentState = UNLOCKED;  // Update state
 
       // Blink the LED after sending the message
-      blinkLED();
+      dotdotdot();
     }
 
-        // Check if the input matches the word "send"
-    if (input == "lock") {
+    // Check if the input matches the word "lock"
+    if (input == "lock" && currentState != LOCKED) 
+    {
       // Send Bluetooth message
       ESP_BT.println("LOCK THE GATE!");
       Serial.println("Message sent!");
+      currentState = LOCKED;  // Update state
 
       // Blink the LED after sending the message
-      blinkLED_LONG();
+      dashDot();
     }
   }
 }
 
-void blinkLED_LONG(){
+// Blink the LED for -.
+void dashDot()
+{
   digitalWrite(ledPin, HIGH);  // Turn LED on
   delay(175);                   // Wait for 100ms
   digitalWrite(ledPin, LOW);    // Turn LED off
@@ -59,17 +74,14 @@ void blinkLED_LONG(){
   delay(75); 
 }
 
-void blinkLED() {
-  digitalWrite(ledPin, HIGH);  // Turn LED on
-  delay(75);                   // Wait for 100ms
-  digitalWrite(ledPin, LOW);    // Turn LED off
-  delay(75);                   // Wait for 100ms
-  digitalWrite(ledPin, HIGH);  // Turn LED on
-  delay(75);                   // Wait for 100ms
-  digitalWrite(ledPin, LOW);    // Turn LED off
-  delay(75);                   // Wait for 100ms  
-  digitalWrite(ledPin, HIGH);  // Turn LED on
-  delay(75);                   // Wait for 100ms
-  digitalWrite(ledPin, LOW);    // Turn LED off
-  delay(75);                   // Wait for 100ms
+// Blink the LED for ...
+void dotdotdot() 
+{
+  for (int i = 0; i <= 3; i++) 
+  {
+    digitalWrite(ledPin, HIGH);  // Turn LED on
+    delay(75);                   // Wait for 100ms
+    digitalWrite(ledPin, LOW);   // Turn LED off
+    delay(75);                   // Wait for 100ms
+  }
 }

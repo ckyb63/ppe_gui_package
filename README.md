@@ -4,6 +4,7 @@
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
 ![PyQt5](https://img.shields.io/badge/PyQt5-5.15%2B-blue?logo=qt&logoColor=white)
 ![ROS2](https://img.shields.io/badge/ROS2-Humble-orange?logo=ros&logoColor=white)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-20.04-orange?logo=ubuntu&logoColor=white)
 
 A ROS2 package containing a PyQt5-based graphical user interface for controlling and monitoring a PPE (Personal Protective Equipment) vending machine.
 
@@ -207,7 +208,7 @@ colcon build --packages-select gui_package --symlink-install
 <table>
 <tr>
     <td width="50%"><img src="docs/images/settings_timing_5_6.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/settings_override_log_5_6.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_override_log_5_7.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
     <td><em>System timing and delay settings</em></td>

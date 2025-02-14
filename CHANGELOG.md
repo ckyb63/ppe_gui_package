@@ -4,9 +4,13 @@
 ### Planned
 - Camera Feed to the Main GUI window for a Live feed of the user in front of the vending machine
 - Upgrade and migrate from PyQt5 to PyQt6
-- Code scripts cleanup
+- Scripts cleanup
 - Remove window control buttons from the GUI
-- Add a open gate button to the settings override tab
+
+## [0.5.7] - 2025-02-14
+### Added
+- Added state logic to the ESP32 code. 
+- Added a open gate button to the settings override tab
 
 ## [0.5.6] - 2025-02-13
 ### Added
