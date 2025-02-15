@@ -9,8 +9,6 @@ The color scheme is defined in the update_colors method, which sets the colors f
 light and dark modes.
 
 Author: Max Chen
-v0.5.0
-
 """
 
 class ColorScheme:

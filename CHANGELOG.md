@@ -4,8 +4,19 @@
 ### Planned
 - Camera Feed to the Main GUI window for a Live feed of the user in front of the vending machine
 - Upgrade and migrate from PyQt5 to PyQt6
-- Scripts cleanup
 - Remove window control buttons from the GUI
+
+## [0.5.8] - 2025-02-14
+### Added
+- Added a skeleton script for the camera feed
+
+### Changed
+- How the .json files for the inventory and PPE status are saved.
+
+### Fixed
+- Fixed the inventory display to parse the "Safety Glasses" item correctly
+- FIxed Help page's accessibility toggle overlapping with the OK button
+- Fixed landscape mode to work properly
 
 ## [0.5.7] - 2025-02-14
 ### Added

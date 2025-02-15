@@ -110,47 +110,50 @@ ros2 launch gui_package gate_demo.launch.py
 ```
 ├── CHANGELOG.md
 ├── docs
-│   └── images >> Screenshots of the GUI for README
+│   └── images >> Images for the README
 ├── gate
-│   ├── ESP32_Bluetooth_Comms
-│   │   └── ESP32_Bluetooth_Comms.ino >> Arduino code for ESP32 Bluetooth communication
-│   ├── __init__.py
-│   └── safety_gate_controller.py >> Safety gate controller implementation
+│   ├── ESP32_Bluetooth_Comms
+│   │   └── ESP32_Bluetooth_Comms.ino
+│   ├── __init__.py
+│   └── safety_gate_controller.py
 ├── gui_package
-│   ├── dummy_test
-│   │   ├── dummy_inventory_publisher.py
-│   │   ├── dummy_ppe_status.py
-│   │   └── __init__.py
-│   ├── __init__.py
-│   ├── launch
-│   └── main_gui_modules
-│       ├── __init__.py
-│       ├── main.py
-│       ├── main_window.py
-│       ├── README.md
-│       ├── ros_node.py
-│       ├── utils
-│       │   ├── colors.py
-│       │   ├── context.py
-│       │   ├── __init__.py
-│       │   └── logger.py
-│       └── widgets
-│           ├── buttons.py
-│           ├── dialogs.py
-│           ├── __init__.py
-│           ├── override_dialog.py
-│           ├── sections.py
-│           └── settings_dialog.py
+│   ├── dummy_test
+│   │   ├── dummy_inventory_publisher.py
+│   │   ├── dummy_ppe_status.py
+│   │   └── __init__.py
+│   ├── __init__.py
+│   └── main_gui_modules
+│       ├── camera_feed.py
+│       ├── __init__.py
+│       ├── jsonSupport >> JSON files for the inventory and override log
+│       │   ├── inventory_data.json
+│       │   └── override_log.json
+│       ├── main.py >> Main entry point for the GUI
+│       ├── main_window.py
+│       ├── README.md
+│       ├── ros_node.py
+│       ├── utils
+│       │   ├── colors.py
+│       │   ├── context.py
+│       │   ├── __init__.py
+│       │   └── logger.py
+│       └── widgets
+│           ├── buttons.py
+│           ├── dialogs.py
+│           ├── __init__.py
+│           ├── override_dialog.py
+│           ├── sections.py
+│           └── settings_dialog.py
 ├── launch
-│   ├── dummy_nodes.launch.py
-│   └── main_ppe_gui.launch.py
+│   ├── dummy_nodes.launch.py
+│   └── main_ppe_gui.launch.py
 ├── package.xml
 ├── README.md
 ├── resource
-│   └── gui_package
+│   └── gui_package
 ├── setup.cfg
 ├── setup.py
-└── test >> Default ROS2 test folder
+└── test >> Default test folder for ROS2 Packages
 ```
 
 ### Building for Development
@@ -175,8 +178,8 @@ colcon build --packages-select gui_package --symlink-install
     <td width="50%"><img src="docs/images/dark_theme_with_OX_5_6.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
-    <td><em>Standard interface with PPE status indicators</em></td>
-    <td><em>Dark theme with accessibility features</em></td>
+    <td><em>Standard interface with PPE status indicators v0.5.6</em></td>
+    <td><em>Dark theme with accessibility features v0.5.6</em></td>
 </tr>
 </table>
 
@@ -187,7 +190,7 @@ colcon build --packages-select gui_package --symlink-install
 
 ![Override Dialog](docs/images/override_content_5_6.png)
 
-*Enhanced override dialog with user authentication and reason tracking*
+*Enhanced override dialog with user authentication and reason tracking v0.5.6*
 
 </details>
 
@@ -200,8 +203,8 @@ colcon build --packages-select gui_package --symlink-install
     <td width="50%"><img src="docs/images/settings_inventory_5_6.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
-    <td><em>Main settings configuration panel</em></td>
-    <td><em>Inventory management settings</em></td>
+    <td><em>Main settings configuration panel v0.5.6</em></td>
+    <td><em>Inventory management settings v0.5.6</em></td>
 </tr>
 </table>
 
@@ -211,8 +214,8 @@ colcon build --packages-select gui_package --symlink-install
     <td width="50%"><img src="docs/images/settings_override_log_5_7.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
-    <td><em>System timing and delay settings</em></td>
-    <td><em>Override logging and configuration</em></td>
+    <td><em>System timing and delay settings v0.5.6</em></td>
+    <td><em>Override logging and configuration v0.5.7</em></td>
 </tr>
 </table>
 
@@ -223,6 +226,6 @@ colcon build --packages-select gui_package --symlink-install
 
 ![User Help Guide](docs/images/user_help_content_5_6.png)
 
-*Comprehensive user help guide with feature explanations*
+*Comprehensive user help guide with feature explanations v0.5.6*
 
 </details>

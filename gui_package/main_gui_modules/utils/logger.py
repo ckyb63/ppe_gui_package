@@ -7,16 +7,23 @@ This module provides a logger that overrides the default logging functionality.
 It allows for easy logging of overrides to a file.
 
 Author: Max Chen
-v0.5.1
 """
 import os
 import json
 from datetime import datetime
 
 class OverrideLogger:
-    def __init__(self, log_file="override_log.json"):
-        self.log_file = log_file
+    def __init__(self, log_dir="jsonSupport", log_file="override_log.json"):
+        # Use the current working directory to construct the path
+        self.log_dir = os.path.join(os.getcwd(), "src", "ppe_gui_package", "gui_package", "main_gui_modules", log_dir)
+        self.log_file = os.path.join(self.log_dir, log_file)
         self.logs = self._load_logs()
+        self._ensure_log_directory_exists()
+        
+    def _ensure_log_directory_exists(self):
+        """Ensure the log directory exists."""
+        if not os.path.exists(self.log_dir):
+            os.makedirs(self.log_dir)
         
     # Load the logs from a JSON file
     def _load_logs(self):

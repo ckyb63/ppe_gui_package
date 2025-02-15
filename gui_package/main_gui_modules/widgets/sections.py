@@ -2,7 +2,6 @@
 Main GUI sections for the PPE Vending Machine interface
 
 Author: Max Chen
-v0.5.1
 """
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                             QPushButton, QGridLayout)

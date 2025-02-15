@@ -2,7 +2,6 @@
 Override confirmation dialog
 
 Author: Max Chen
-v0.5.0
 """
 from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
                             QPushButton, QComboBox, QWidget, QFormLayout)

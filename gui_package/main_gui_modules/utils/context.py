@@ -7,7 +7,6 @@ This module provides a context manager for ROS2 initialization and shutdown.
 It allows for easy initialization and shutdown of ROS2 nodes.
 
 Author: Max Chen
-v0.5.0
 """
 import rclpy
 from contextlib import contextmanager

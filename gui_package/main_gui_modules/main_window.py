@@ -4,7 +4,6 @@
 Main window implementation for the PPE Vending Machine GUI
 
 Author: Max Chen
-v0.5.6
 """
 
 import os
@@ -38,8 +37,14 @@ class PPEVendingMachineGUI(QMainWindow):
         self.colors = ColorScheme()
         self.accessibility_mode = False
         
+        # Use the current working directory to construct the path
+        self.inventory_log_dir = os.path.join(os.getcwd(), "src", "ppe_gui_package", "gui_package", "main_gui_modules", "jsonSupport")
+        self.inventory_file = os.path.join(self.inventory_log_dir, "inventory_data.json")
+        
+        # Ensure the jsonSupport directory exists
+        self._ensure_json_support_directory_exists()
+        
         # Load saved inventory data and timestamp
-        self.inventory_file = "inventory_data.json"
         inventory_data = self._load_inventory_data()
         self.last_inventory = inventory_data['inventory']
         self.last_update_time = inventory_data['last_update']
@@ -49,7 +54,7 @@ class PPEVendingMachineGUI(QMainWindow):
             'hardhat': False,
             'beardnet': False,
             'gloves': False,
-            'glasses': False,
+            'safetyglasses': False,
             'earplugs': False
         }
         self.safety_gate_locked = True
@@ -273,22 +278,22 @@ class PPEVendingMachineGUI(QMainWindow):
         help_text = """
         <h2>PPE Detection:</h2>
         <ul style='font-size: 14pt;'>
-        <li>The camera will detect the presence of required PPE</li>
+        <li>The AI will use the camera to detect the presence of required PPE</li>
+        <li>The user may need to rotate head slightly to ensure all required PPE are detected</li>
         <li>Green buttons (O) indicate detected PPE</li>
         <li>Red buttons (X) indicate missing PPE</li>
-        <li>The user may need to rotate head to fully detect all required PPE</li>
         </ul>
 
         <h2>Dispensing:</h2>
         <ul style='font-size: 14pt;'>
-        <li>Click any PPE button to dispense that item</li>
+        <li>Click on the PPE item you want to dispense if you don't have it</li>
         <li>The safety gate remains locked until all required PPE is detected</li>
         </ul>
 
         <h2>Safety Override:</h2>
         <ul style='font-size: 14pt;'>
-        <li>Orange OVERRIDE button for emergency or administrative override</li>
-        <li>It will log the user and time of the override</li>
+        <li>Orange OVERRIDE button for emergency or administrative override of the system</li>
+        <li>It will log the user, reason, and time of the override</li>
         </ul>
         """
         text_label = QLabel(help_text)
@@ -315,7 +320,7 @@ class PPEVendingMachineGUI(QMainWindow):
             "Accessibility O/X OFF" if not self.accessibility_mode else "Accessibility O/X ON"
         )
         self.help_toggle_button.setFont(QFont('Arial', 20, QFont.Bold))
-        self.help_toggle_button.setFixedSize(400, 80)
+        self.help_toggle_button.setFixedSize(300, 80)
         self._update_help_toggle_button_style()
         self.help_toggle_button.clicked.connect(self.toggle_accessibility_help)
         
@@ -1404,6 +1409,11 @@ class PPEVendingMachineGUI(QMainWindow):
                 qty_item.setTextAlignment(Qt.AlignCenter)
                 self.inventory_table.setItem(row, 1, qty_item)
 
+    def _ensure_json_support_directory_exists(self):
+        """Ensure the jsonSupport directory exists."""
+        if not os.path.exists(self.inventory_log_dir):
+            os.makedirs(self.inventory_log_dir)
+
     def _load_inventory_data(self):
         """Load inventory data from file"""
         try:
@@ -1437,7 +1447,7 @@ class PPEVendingMachineGUI(QMainWindow):
             'hardhat': '--',
             'beardnet': '--',
             'gloves': '--',
-            'glasses': '--',
+            'safetyglasses': '--',
             'earplugs': '--'
         }
 

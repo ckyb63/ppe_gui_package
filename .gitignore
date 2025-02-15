@@ -12,6 +12,3 @@ install/
 
 # System files
 .DS_Store
-
-# Json files
-*.json

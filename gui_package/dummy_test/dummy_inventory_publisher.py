@@ -37,7 +37,7 @@ class DummyInventoryPublisher(Node):
             'hardhat': 50,
             'beardnet': 75,
             'gloves': 100,
-            'glasses': 60,
+            'safetyglasses': 60,
             'earplugs': 200
         }
         

@@ -2,7 +2,6 @@
 Settings Dialog for PPE GUI
 
 Author: Max Chen
-v0.5.1
 """
 from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
                             QPushButton, QComboBox, QWidget, QTextEdit,

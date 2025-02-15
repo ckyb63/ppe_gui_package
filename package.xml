@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>gui_package</name>
-  <version>0.5.7</version>
+  <version>0.5.8</version>
   <description>
     PPE Vending Machine GUI package with modular architecture, inventory management,
     improved accessibility features, and enhanced UI functionality
