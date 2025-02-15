@@ -6,6 +6,13 @@
 - Upgrade and migrate from PyQt5 to PyQt6
 - Remove window control buttons from the GUI
 
+## [0.5.9] - 2025-02-15
+### Added
+- Comments to the code and removed unused, and redundant code
+
+### Fixed
+- Readme and related documentation
+
 ## [0.5.8] - 2025-02-14
 ### Added
 - Added a skeleton script for the camera feed

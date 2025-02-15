@@ -6,33 +6,34 @@ Simulates a PPE inventory system by responding to inventory requests
 with mock inventory data.
 
 Author: Max Chen
-v0.1.0
+v0.1.1
 """
 
-import rclpy
-from rclpy.node import Node
-from std_msgs.msg import String
-import json
-import random
+import rclpy  # Import the ROS 2 Python client library
+from rclpy.node import Node  # Import the Node class for creating ROS nodes
+from std_msgs.msg import String  # Import the String message type
+import json  # Import the JSON library for data serialization
+import random  # Import the random library for generating random numbers
 
 class DummyInventoryPublisher(Node):
     def __init__(self):
+        # Initialize the ROS node with the name 'dummy_inventory_publisher'
         super().__init__('dummy_inventory_publisher')
         
-        # Create subscriber for inventory requests
+        # Create a subscriber for inventory requests on the 'ppeInventory' topic
         self.subscription = self.create_subscription(
             String,
             'ppeInventory',
             self.handle_request,
-            10)
+            10)  # Queue size of 10 for incoming messages
             
-        # Create publisher for inventory status
+        # Create a publisher for inventory status on the 'ppeInventoryStatus' topic
         self.publisher = self.create_publisher(
             String,
             'ppeInventoryStatus',
-            10)
+            10)  # Queue size of 10 for outgoing messages
             
-        # Initialize mock inventory
+        # Initialize a mock inventory with item quantities
         self.inventory = {
             'hardhat': 50,
             'beardnet': 75,
@@ -41,52 +42,54 @@ class DummyInventoryPublisher(Node):
             'earplugs': 200
         }
         
-        # Create timer for random inventory changes
+        # Create a timer that triggers the random_inventory_change method every 5 seconds
         self.create_timer(5.0, self.random_inventory_change)
         
+        # Log a message indicating that the node has been initialized
         self.get_logger().info('Dummy Inventory Publisher initialized')
         
     def handle_request(self, msg):
-        """Handle inventory request messages"""
-        if msg.data == "request":
-            self.publish_inventory()
-            self.get_logger().info('Received inventory request')
+        """Handle incoming inventory request messages."""
+        if msg.data == "request":  # Check if the message data is a request
+            self.publish_inventory()  # Call the method to publish the current inventory
+            self.get_logger().info('Received inventory request')  # Log the request
             
     def publish_inventory(self):
-        """Publish current inventory status"""
-        msg = String()
-        msg.data = json.dumps(self.inventory)
-        self.publisher.publish(msg)
-        self.get_logger().info(f'Published inventory: {msg.data}')
+        """Publish the current inventory status as a JSON string."""
+        msg = String()  # Create a new String message
+        msg.data = json.dumps(self.inventory)  # Serialize the inventory dictionary to JSON
+        self.publisher.publish(msg)  # Publish the message to the 'ppeInventoryStatus' topic
+        self.get_logger().info(f'Published inventory: {msg.data}')  # Log the published inventory
         
     def random_inventory_change(self):
-        """Randomly modify inventory levels to simulate usage"""
-        # Randomly select an item
+        """Randomly modify inventory levels to simulate usage."""
+        # Randomly select an item from the inventory
         item = random.choice(list(self.inventory.keys()))
         
-        # Randomly increase or decrease by 1-5 units
+        # Randomly determine a change in inventory (between -5 and +5 units)
         change = random.randint(-5, 5)
         
-        # Apply change but keep inventory between 0 and 200
+        # Apply the change while ensuring inventory levels remain between 0 and 200
         self.inventory[item] = max(0, min(200, self.inventory[item] + change))
         
-        # Log the change
+        # Log the change made to the inventory
         self.get_logger().info(f'Random inventory change: {item} {"+"+str(change) if change > 0 else change}')
         
 def main(args=None):
-    rclpy.init(args=args)
+    """Main function to initialize and run the ROS node."""
+    rclpy.init(args=args)  # Initialize the ROS 2 Python client library
     
-    publisher = DummyInventoryPublisher()
+    publisher = DummyInventoryPublisher()  # Create an instance of the DummyInventoryPublisher class
     
     try:
-        rclpy.spin(publisher)
+        rclpy.spin(publisher)  # Keep the node running and processing callbacks
     except KeyboardInterrupt:
-        publisher.get_logger().info('Keyboard interrupt received, shutting down...')
+        publisher.get_logger().info('Keyboard interrupt received, shutting down...')  # Log shutdown message
     finally:
         # Ensure that shutdown is called only once
         if rclpy.ok():
-            publisher.destroy_node()
-            rclpy.shutdown()
+            publisher.destroy_node()  # Clean up the node
+            rclpy.shutdown()  # Shutdown the ROS 2 client library
 
 if __name__ == '__main__':
-    main() 
+    main()  # Execute the main function when the script is run 

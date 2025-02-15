@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
 ![PyQt5](https://img.shields.io/badge/PyQt5-5.15%2B-blue?logo=qt&logoColor=white)
 ![ROS2](https://img.shields.io/badge/ROS2-Humble-orange?logo=ros&logoColor=white)
-![Ubuntu](https://img.shields.io/badge/Ubuntu-20.04-orange?logo=ubuntu&logoColor=white)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-orange?logo=ubuntu&logoColor=white)
 
 A ROS2 package containing a PyQt5-based graphical user interface for controlling and monitoring a PPE (Personal Protective Equipment) vending machine.
 
@@ -19,8 +19,8 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 - Optomized for touch screen use
 
 ### Latest Major Features (v0.5.6)
-- Added Safety Gate Controller to the package
-- Improved Settings styling overall
+- Safety Gate Controller with an ESP32 microcontroller
+- Improved Overall styling and user experience optmized for touch screen use
 - Various bug fixes and optimizations
 
 ### Accessibility Features
