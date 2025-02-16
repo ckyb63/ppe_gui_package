@@ -11,25 +11,23 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 ## Features
 
 ### Core Features
-- Real-time PPE detection status monitoring display
-- Automated safety gate control logic
-- ROS2 integration for interface with vending machine hardware and computer vision model
-- Administrative override system
-- Simulation support for testing
-- Optomized for touch screen use
+- **Real-time PPE Detection**: Monitor PPE detection status in real-time for immediate feedback.
+- **Automated Safety Gate Control**: Implement logic for automatic control of the safety gate.
+- **ROS2 Integration**: Seamlessly interface with vending machine hardware and computer vision models using ROS2.
+- **Safety Gate Override System**: Allow the safety gate to be overriden provided user and reason information.
+- **Simulation Support**: Test nodes are provided to simulate and test the GUI for demonstrations.
+- **Touchscreen Friendly**: GUI is developed with a touchscreen in mind with large touch targets and clear text labels.
+- **ESP32 Safety Gate Controller**: A ESP32 microcontroller is used to control the safety gate.
+- **Inventory Management**: Inventory is managed with a JSON file and can be viewed live from the GUI.
+- **Theme Support**: The GUI supports a dark theme and a light theme.
+- **Accessibility Features**: The GUI supports a toggle for O/X status indicators, for users with visual impairments.
 
-### Latest Major Features (v0.5.6)
-- Safety Gate Controller with an ESP32 microcontroller
-- Improved Overall styling and user experience optmized for touch screen use
-- Various bug fixes and optimizations
-
-### Accessibility Features
-- Toggle for O/X status indicators, for users with visual impairments
-- Clear text labels
-- Screen reader friendly layout
+### Future Features (Planned)
+- **Camera Feed**: A camera feed will be added to the GUI to display the PPE detection in real-time.
+- **User Authentication**: User authentication will be added to the GUI to allow for user specific settings and permissions.
+- **Reporting and Analytics**: Reporting and analytics will be added to the GUI to allow for reporting and analytics on the PPE usage.
 
 ### Update Changelog
-
 For a detailed list of changes, bug fixes, and new features, please refer to the [CHANGELOG](CHANGELOG.md).
 
 ## Dependencies
@@ -43,29 +41,40 @@ For a detailed list of changes, bug fixes, and new features, please refer to the
 ## Installation
 
 1. Create a ROS2 workspace (if you don't have one):
-```bash
-mkdir -p ~/ros2_ws/src
-cd ~/ros2_ws
-```
+    ```bash
+    mkdir -p ~/ros2_ws/src
+    cd ~/ros2_ws
+    ```
 
 2. Clone this package:
-```bash
-cd src
-git clone https://github.com/ckyb63/ppe_gui_package.git
-```
+    ```bash
+    cd src
+    git clone https://github.com/ckyb63/ppe_gui_package.git
+    ```
 
-3. Install dependencies:
-```bash
-sudo apt update
-sudo apt install python3-pyqt5
-```
+3. Install dependencies using `rosdep`:
+    ```bash
+    cd ~/ros2_ws
+    rosdep install --from-paths src --ignore-src -r -y
+    ```
 
-4. Build and source:
-```bash
-cd ~/ros2_ws
-colcon build
-source install/setup.bash
-```
+4. Install additional dependencies:
+    ```bash
+    sudo apt update
+    sudo apt install python3-pyqt5
+    ```
+
+5. Build and source the workspace:
+    ```bash
+    cd ~/ros2_ws
+    colcon build
+    source install/setup.bash
+    ```
+
+6. Run the GUI:
+    ```bash
+    ros2 launch gui_package main_ppe_gui.launch.py
+    ```
 
 ## Usage
 

@@ -18,6 +18,10 @@ jobs:
           VERSION=$(grep -oPm1 "(?<=<version>)[^<]+" package.xml)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       
+      - name: Update setup.py version
+        run: |
+          sed -i "s/version='[0-999]*\.[0-9999]*\.[0-999]*'/version='${{ env.VERSION }}'/" setup.py
+
       - name: Print badge line
         run: grep 'https://img.shields.io/badge/Version' README.md || echo "Badge not found"
         
@@ -38,6 +42,6 @@ jobs:
         run: |
           git config --local user.email "ckyb63@gmail.com"
           git config --local user.name "ckyb63"
-          git add README.md
-          git commit -m "Update version badge to ${{ env.VERSION }}" || echo "No changes to commit" 
+          git add README.md setup.py  # Add setup.py to the commit
+          git commit -m "Update version to ${{ env.VERSION }}" || echo "No changes to commit" 
           git push

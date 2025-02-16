@@ -1,19 +1,27 @@
 # Changelog
 
-## [Unreleased]
+## [Unreleased - Future Plans]
 ### Planned
-- Camera Feed to the Main GUI window for a Live feed of the user in front of the vending machine
+- Main GUI Window to contain a live Camera Feed
+    - Live Camera Feed to the Main GUI window to show the PPE detection with highlighted PPE items
 - Upgrade and migrate from PyQt5 to PyQt6
+    - PyQt5 is reaching its end of life.
 - Remove window control buttons from the GUI
+    - So the GUI opens in full screen and can only be closed from the terminal or an admin button. 
+- User Authentication
+    - Implement either facial recognition or a QR code scanner to authenticate the user, firstly for the admins, and then for employees (users).
+- Reporting and Analytics
+    - Add functionality to generate reports on inventory usage and user interactions.
 
-## [0.5.9] - 2025-02-15
+## [0.7.3] - 2025-02-15
 ### Added
 - Comments to the code and removed unused, and redundant code
+- Detailed future plans to the CHANGELOG.md and additional details to the README.md
 
-### Fixed
-- Readme and related documentation
+### Changed
+- Revised the version numbers to follow Semantic Versioning (MAJOR.MINOR.PATCH)
 
-## [0.5.8] - 2025-02-14
+## [0.7.2] - 2025-02-14
 ### Added
 - Added a skeleton script for the camera feed
 
@@ -25,12 +33,12 @@
 - FIxed Help page's accessibility toggle overlapping with the OK button
 - Fixed landscape mode to work properly
 
-## [0.5.7] - 2025-02-14
+## [0.7.1] - 2025-02-14
 ### Added
 - Added state logic to the ESP32 code. 
 - Added a open gate button to the settings override tab
 
-## [0.5.6] - 2025-02-13
+## [0.7.0] - 2025-02-13
 ### Added
 - Added Safety Gate Controller to the package
 - Added ESP32 Bluetooth Communication Code to the package
@@ -44,12 +52,12 @@
 - Fixed the ROS2 shutdown issue in the dummy nodes
 - Python version and inclusion in scripts
 
-## [0.5.1.2] - 2025-02-12
+## [0.6.1] - 2025-02-12
 ### Added
 - Added dynamic badges to the README.md
 - Tested Github Actions workflow to update the version badge   
 
-## [0.5.1] - 2025-02-11
+## [0.6.0] - 2025-02-11
 ### Added
 - Overall fixes and UI improvements
 - Added proper inventory update handling
@@ -86,25 +94,20 @@
 
 ## [0.3.1] - 2025-02-07
 ### Added
-- Enhanced override system with user authentication
-- Added user selection dropdown for overrides
+- Enhanced override system with user detailed user and reason information logging
+    - Added user selection dropdown for overrides
 - Added reason tracking for override actions
 - Enhanced override dialog UI with themed dropdowns
 - Added validation for override user and reason selection
 
-### Fixed
-- Improved override logging with detailed user and reason information
-
 ## [0.3.0] - 2025-02-07
 ### Added
-- Integrated accessibility mode with O/X indicators in buttons
+- Integrated accessibility mode with O/X indicators beside the buttons
 - Improved button readability with larger fonts and better spacing
-- Added settings
-- Added cancellable settings
-- Added proper theme handling in settings dialog: Dark Theme!
-- Added proper window sizing and centering
-- Added proper settings cancellation and state restoration
-- Added dark theme!
+- Added settings dialog
+- Added memory to settings allowing for settings to be cancelled.
+- Added theme handling in settings dialog: Dark Theme!
+- Added proper window sizing and centering on startup
 - Added override logging
 - Reworked help dialog
 
@@ -129,7 +132,7 @@
 - Added configurable window sizing
 - Implemented responsive camera feed placeholder
 - Added basic accessibility mode with O/X indicators for color-blind users located beside the buttons
-- GUI development switched to PyQt5
+- GUI development switched to PyQt5 from Streamlit
 
 ## [0.1.0] - 2025-01-29
 ### Added
