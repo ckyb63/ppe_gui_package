@@ -8,6 +8,9 @@ Author: Max Chen
 import rclpy  # Import the ROS 2 Python client library
 from rclpy.node import Node  # Import the Node class for creating ROS nodes
 from std_msgs.msg import String, Bool  # Import message types for String and Bool
+import json
+import os
+from datetime import datetime
 
 class PPEGuiNode(Node):
     def __init__(self):
@@ -65,8 +68,10 @@ class PPEGuiNode(Node):
         msg = String()  # Create a new String message
         msg.data = ppe_name  # Set the message data to the PPE item name
         self.dispense_publisher.publish(msg)  # Publish the dispense request
-        # Log the published dispense request
-        self.get_logger().info(f'Published dispense request for: {ppe_name}')
+        self.get_logger().info(f'Published dispense request for: {ppe_name}')  # Log the published dispense request
+        
+        # Log the dispense event
+        self.log_dispense_event(ppe_name)  # Ensure this function is called
 
     def publish_gate_status(self, is_locked):
         """Publish the safety gate status."""
@@ -88,4 +93,48 @@ class PPEGuiNode(Node):
         msg.data = "request"  # Set the message data to indicate a request
         self.inventory_publisher.publish(msg)  # Publish the inventory update request
         # Log the published inventory update request
-        self.get_logger().info('Published inventory update request') 
+        self.get_logger().info('Published inventory update request')
+
+    def handle_dispense_complete(self, ppe_name):
+        """Handle completion of dispense action"""
+        self.get_logger().info(f'Handling dispense complete for: {ppe_name}')  # Log for debugging
+        # Re-enable button
+        self.ppe_grid.buttons[ppe_name].setEnabled(True)
+        
+        # Log the dispense event
+        self.log_dispense_event(ppe_name)  # Ensure this method is called
+        
+        # Show completion message
+        self.show_status(f"{ppe_name.title()} Dispensed!", "green")
+        
+        # Start auto-reset timer
+        self.status_timer.start(3000)
+
+    def log_dispense_event(self, ppe_name):
+        """Log the dispense event to the dispensing log."""
+        log_entry = {
+            "item": ppe_name,
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        log_file_path = os.path.join(os.getcwd(), "src", "ppe_gui_package", "gui_package", "main_gui_modules", "jsonSupport", "dispensing_log.json")
+        
+        try:
+            # Read existing log entries
+            if os.path.exists(log_file_path):
+                with open(log_file_path, 'r') as log_file:
+                    try:
+                        existing_entries = json.load(log_file)  # Load existing entries
+                    except json.JSONDecodeError:
+                        existing_entries = []  # If the file is empty or corrupted, start with an empty list
+            else:
+                existing_entries = []  # If the file does not exist, start with an empty list
+
+            # Append the new log entry
+            existing_entries.append(log_entry)
+
+            # Write the updated entries back to the log file
+            with open(log_file_path, 'w') as log_file:
+                json.dump(existing_entries, log_file, indent=4)  # Write as a JSON array with indentation
+                print(f'Successfully logged dispense event: {log_entry}')  # Confirm logging
+        except Exception as e:
+            print(f"Error logging dispense event: {e}")  # Log the error 

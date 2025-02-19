@@ -5,6 +5,8 @@ __pycache__/
 # Build directories
 build/
 install/
+log/
+logs/
 
 # IDE files
 .vscode/

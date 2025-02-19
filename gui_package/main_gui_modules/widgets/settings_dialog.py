@@ -6,9 +6,12 @@ Author: Max Chen
 from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
                             QPushButton, QComboBox, QWidget, QTextEdit,
                             QTabWidget, QFormLayout, QSpinBox, QDoubleSpinBox,
-                            QFrame)
+                            QFrame, QTableWidget, QTableWidgetItem)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
+
+# Import the generate_report function
+from ..jsonSupport.reporting import generate_report
 
 class SettingsDialog(QDialog):
     def __init__(self, parent=None):
@@ -42,6 +45,7 @@ class SettingsDialog(QDialog):
         tabs.addTab(self._create_inventory_tab(), "Inventory")
         tabs.addTab(self._create_timing_tab(), "Timing")
         tabs.addTab(self._create_override_log_tab(), "Override Log")
+        tabs.addTab(self._create_report_tab(), "Report")
         
         layout.addWidget(tabs)
         
@@ -181,6 +185,27 @@ class SettingsDialog(QDialog):
         
         layout.addWidget(log_text)
         return widget
+
+    def _create_report_tab(self):
+        """Create the report tab."""
+        report_widget = QWidget()
+        report_layout = QVBoxLayout(report_widget)
+        
+        report_label = QLabel("PPE Dispensing Report")
+        report_label.setFont(QFont('Arial', 16, QFont.Bold))
+        
+        # Create a text area to display the report
+        report_text = QTextEdit()
+        report_text.setReadOnly(True)  # Make it read-only
+        
+        # Generate the report and set it in the text area
+        report = generate_report()
+        report_text.setPlainText(report)
+        
+        report_layout.addWidget(report_label)
+        report_layout.addWidget(report_text)
+        
+        return report_widget
 
     def _create_button_section(self, layout):
         button_container = QWidget()

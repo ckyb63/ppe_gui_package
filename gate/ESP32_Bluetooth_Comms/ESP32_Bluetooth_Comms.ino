@@ -11,6 +11,8 @@
 
 BluetoothSerial ESP_BT;
 const int ledPin = 2;  // Onboard LED pin (usually pin 2 on ESP32)
+const int greenLEDPin = 16;  // Green LED pin for Unlocked state
+const int redLEDPin = 17;    // Red LED pin for Locked state
 
 // Define states
 enum State { LOCKED, UNLOCKED };
@@ -20,6 +22,8 @@ void setup()
 {
   Serial.begin(115200);  // Start serial communication at 115200 baud
   pinMode(ledPin, OUTPUT);
+  pinMode(greenLEDPin, OUTPUT);  // Set green LED pin as output
+  pinMode(redLEDPin, OUTPUT);    // Set red LED pin as output
   ESP_BT.begin("I_AM_A_GATE-ESP32");  // Start Bluetooth with a name
   Serial.println("Bluetooth device is ready to pair.");
   Serial.println("Enter 'send' to send a message over Bluetooth.");
@@ -45,6 +49,8 @@ void loop()
 
       // Blink the LED after sending the message
       dotdotdot();
+      digitalWrite(greenLEDPin, HIGH);  // Turn on green LED
+      digitalWrite(redLEDPin, LOW);      // Turn off red LED
     }
 
     // Check if the input matches the word "lock"
@@ -57,31 +63,33 @@ void loop()
 
       // Blink the LED after sending the message
       dashDot();
+      digitalWrite(greenLEDPin, LOW);   // Turn off green LED
+      digitalWrite(redLEDPin, HIGH);     // Turn on red LED
     }
   }
 }
 
-// Blink the LED for -.
+// Blink the Onboard LED for -.
 void dashDot()
 {
   digitalWrite(ledPin, HIGH);  // Turn LED on
-  delay(175);                   // Wait for 100ms
+  delay(175);                   // Wait for 175ms
   digitalWrite(ledPin, LOW);    // Turn LED off
-  delay(75);                   // Wait for 100ms
+  delay(75);                   // Wait for 75ms
   digitalWrite(ledPin, HIGH);  // Turn LED on
-  delay(75);                   // Wait for 100ms
+  delay(75);                   // Wait for 75ms
   digitalWrite(ledPin, LOW);    // Turn LED off
   delay(75); 
 }
 
-// Blink the LED for ...
+// Blink the Onboard LED for ...
 void dotdotdot() 
 {
   for (int i = 0; i <= 3; i++) 
   {
     digitalWrite(ledPin, HIGH);  // Turn LED on
-    delay(75);                   // Wait for 100ms
+    delay(75);                   // Wait for 75ms
     digitalWrite(ledPin, LOW);   // Turn LED off
-    delay(75);                   // Wait for 100ms
+    delay(75);                   // Wait for 75ms
   }
 }

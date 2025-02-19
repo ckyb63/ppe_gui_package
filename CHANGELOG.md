@@ -6,12 +6,35 @@
     - Live Camera Feed to the Main GUI window to show the PPE detection with highlighted PPE items
 - Upgrade and migrate from PyQt5 to PyQt6
     - PyQt5 is reaching its end of life.
-- Remove window control buttons from the GUI
-    - So the GUI opens in full screen and can only be closed from the terminal or an admin button. 
+- Properly Modularize the code scripts
+
+### Future Next Steps    
 - User Authentication
     - Implement either facial recognition or a QR code scanner to authenticate the user, firstly for the admins, and then for employees (users).
 - Reporting and Analytics
-    - Add functionality to generate reports on inventory usage and user interactions.
+    - Add functionality to generate reports on inventory usage and user interactions with ROS2 bag files.
+
+## [0.7.5] - 2025-02-18
+### Added
+- Added Green and Red LED indicators to the ESP32 code to show the state of the gate.
+- Added a report tab to the main GUI window to show the dispensing report.
+- Added a Pi chart and a bar chart to show the recorded PPE dispensing events.
+- Added a button to export the dispensing report as a .CSV file saved in the jsonSupport folder.
+- Added a button to clear the stored dispensing report.
+- Added related scripts for generating, and displaying a report on dispensing events, it is currently safed as a .json file; still working on getting the analytical data into a rosbag file for uploading to AWS eventualy.
+- Added an info tab to the settings detailing each tab and its purpose.
+- Preparatory work for subscribing a camera feed to the main GUI window, it is in sections.py > CameraSection class.
+
+### Changed
+- Improved overall styling of the Settings
+- Settings tab now has numbers instead of long text labels.
+- Updated screenshots in README.md
+
+### Fixed
+- Fixed safety glasses button display to update status, this was because it was originally just called glases. Previous update to safety glasses was not fully updated across the scripts.
+
+### Removed
+- Removed Camerafeed.py as that is outside the scope of this package.
 
 ## [0.7.3] - 2025-02-15
 ### Added

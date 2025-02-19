@@ -21,11 +21,13 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 - **Inventory Management**: Inventory is managed with a JSON file and can be viewed live from the GUI.
 - **Theme Support**: The GUI supports a dark theme and a light theme.
 - **Accessibility Features**: The GUI supports a toggle for O/X status indicators, for users with visual impairments.
+- **Analytical Reporting**: Generate insightful reports with visualizations of PPE dispensing activities, including pie and bar charts, to aid in inventory management and decision-making.
 
 ### Future Features (Planned)
 - **Camera Feed**: A camera feed will be added to the GUI to display the PPE detection in real-time.
+
+### Future Next Steps
 - **User Authentication**: User authentication will be added to the GUI to allow for user specific settings and permissions.
-- **Reporting and Analytics**: Reporting and analytics will be added to the GUI to allow for reporting and analytics on the PPE usage.
 
 ### Update Changelog
 For a detailed list of changes, bug fixes, and new features, please refer to the [CHANGELOG](CHANGELOG.md).
@@ -78,23 +80,23 @@ For a detailed list of changes, bug fixes, and new features, please refer to the
 
 ## Usage
 
-### Running the GUI
+### Running the nodes
 
 ```bash
 # Launch the main GUI
 ros2 launch gui_package main_ppe_gui.launch.py
 
-# Run the dummy inventory publisher
+# Run the dummy inventory publisher which simulates the inventory level of the PPE vending machine
 ros2 run gui_package dummy_inventory
 
-# For testing without hardware
+# Run the dummy PPE dispenser which simulates random PPE detection
 ros2 run gui_package dummy_ppe
 
-# For testing both dummy nodes
+# For testing both dummy nodes together
 ros2 launch gui_package dummy_nodes.launch.py
 
 # For running with Demo Gate hardware (ESP32 connected with USB over Serial)
-ros2 launch gui_package gate_demo.launch.py
+ros2 run gui_package safety_gate_controller.py
 ```
 
 ## ROS2 Topics
@@ -115,66 +117,28 @@ ros2 launch gui_package gate_demo.launch.py
 
 ## Development
 
-### File Structure
-```
-├── CHANGELOG.md
-├── docs
-│   └── images >> Images for the README
-├── gate
-│   ├── ESP32_Bluetooth_Comms
-│   │   └── ESP32_Bluetooth_Comms.ino
-│   ├── __init__.py
-│   └── safety_gate_controller.py
-├── gui_package
-│   ├── dummy_test
-│   │   ├── dummy_inventory_publisher.py
-│   │   ├── dummy_ppe_status.py
-│   │   └── __init__.py
-│   ├── __init__.py
-│   └── main_gui_modules
-│       ├── camera_feed.py
-│       ├── __init__.py
-│       ├── jsonSupport >> JSON files for the inventory and override log
-│       │   ├── inventory_data.json
-│       │   └── override_log.json
-│       ├── main.py >> Main entry point for the GUI
-│       ├── main_window.py
-│       ├── README.md
-│       ├── ros_node.py
-│       ├── utils
-│       │   ├── colors.py
-│       │   ├── context.py
-│       │   ├── __init__.py
-│       │   └── logger.py
-│       └── widgets
-│           ├── buttons.py
-│           ├── dialogs.py
-│           ├── __init__.py
-│           ├── override_dialog.py
-│           ├── sections.py
-│           └── settings_dialog.py
-├── launch
-│   ├── dummy_nodes.launch.py
-│   └── main_ppe_gui.launch.py
-├── package.xml
-├── README.md
-├── resource
-│   └── gui_package
-├── setup.cfg
-├── setup.py
-└── test >> Default test folder for ROS2 Packages
-```
+### Using as a Submodule
+
+If you want to include this PPE GUI package as a submodule in your main repository, follow these steps:
+
+1. **Add the Submodule**: Navigate to your main repository's root directory (or straight to the src folder) and run the following command to add this repository as a submodule:
+   ```bash
+   git submodule add https://github.com/ckyb63/ppe_gui_package.git "your_workspace"/src/ppe_gui_package
+   ```
+
+2. **Initialize and Update Submodules**: After cloning your main repository, initialize and update the submodules with the following commands:
+   ```bash
+   git submodule init
+   git submodule update
+   ```
+Then you can build the workspace and run ROS 2 as normal.
+
 
 ### Building for Development
 ```bash
-cd ~/ros2_ws
+cd "your_workspace"
 colcon build --packages-select gui_package --symlink-install
 ```
-
-## Author
-
-- Max Chen
-- Email: ckyb63@gmail.com
 
 ## Screenshots
 
@@ -183,12 +147,12 @@ colcon build --packages-select gui_package --symlink-install
 
 <table>
 <tr>
-    <td width="50%"><img src="docs/images/main_gui_window_5_6.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/dark_theme_with_OX_5_6.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/main_gui_window_75.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/dark_theme_with_OX_75.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
-    <td><em>Standard interface with PPE status indicators v0.5.6</em></td>
-    <td><em>Dark theme with accessibility features v0.5.6</em></td>
+    <td><em>Standard interface with PPE status indicators</em></td>
+    <td><em>Dark theme with accessibility features</em></td>
 </tr>
 </table>
 
@@ -197,9 +161,9 @@ colcon build --packages-select gui_package --symlink-install
 <details>
 <summary>Override System</summary>
 
-![Override Dialog](docs/images/override_content_5_6.png)
+![Override Dialog](docs/images/override_content_75.png)
 
-*Enhanced override dialog with user authentication and reason tracking v0.5.6*
+*Enhanced override dialog with user authentication and reason tracking*
 
 </details>
 
@@ -208,23 +172,34 @@ colcon build --packages-select gui_package --symlink-install
 
 <table>
 <tr>
-    <td width="50%"><img src="docs/images/settings_content_5_6.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/settings_inventory_5_6.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_appearance.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_inventory_75.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
-    <td><em>Main settings configuration panel v0.5.6</em></td>
-    <td><em>Inventory management settings v0.5.6</em></td>
+    <td><em>Main settings configuration panel</em></td>
+    <td><em>Inventory management settings</em></td>
 </tr>
 </table>
 
 <table>
 <tr>
-    <td width="50%"><img src="docs/images/settings_timing_5_6.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/settings_override_log_5_7.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_timing_75.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_override_log_75.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
-    <td><em>System timing and delay settings v0.5.6</em></td>
-    <td><em>Override logging and configuration v0.5.7</em></td>
+    <td><em>System timing and delay settings</em></td>
+    <td><em>Override logging and configuration</em></td>
+</tr>
+</table>
+
+<table>
+<tr>
+    <td width="50%"><img src="docs/images/settings_info.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="docs/images/settings_report.png" width="100%" style="max-width:400px"/></td>
+</tr>
+<tr>
+    <td><em>Settings tab Info</em></td>
+    <td><em>Dispensing report and analytics</em></td>
 </tr>
 </table>
 
@@ -233,8 +208,13 @@ colcon build --packages-select gui_package --symlink-install
 <details>
 <summary>Help Documentation</summary>
 
-![User Help Guide](docs/images/user_help_content_5_6.png)
+![User Help Guide](docs/images/user_help_content_75.png)
 
-*Comprehensive user help guide with feature explanations v0.5.6*
+*Comprehensive user help guide with feature explanations*
 
 </details>
+
+## Author
+
+- Max Chen
+- Email: ckyb63@gmail.com

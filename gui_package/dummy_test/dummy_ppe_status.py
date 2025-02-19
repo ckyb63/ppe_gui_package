@@ -52,7 +52,7 @@ class DummyPPEPublisher(Node):
             return  # Exit the method if shutting down
             
         # Define a list of PPE items to simulate detection
-        ppe_items = ['hardhat', 'beardnet', 'gloves', 'glasses', 'earplugs']
+        ppe_items = ['hardhat', 'beardnet', 'gloves', 'safetyglasses', 'earplugs']
         status = []  # Initialize a list to hold the status of each PPE item
         
         # Generate random status for each PPE item

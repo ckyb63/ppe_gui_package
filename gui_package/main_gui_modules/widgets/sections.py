@@ -121,6 +121,9 @@ class CameraSection(QWidget):
         self.parent = parent
         self._init_ui()
         
+        # ROS2 Subscriber for Camera Feed
+        #self.create_camera_subscriber()
+
     def _init_ui(self):
         camera_layout = QVBoxLayout(self)
         
@@ -131,6 +134,23 @@ class CameraSection(QWidget):
         self.camera_placeholder.setAlignment(Qt.AlignCenter)
         camera_layout.addWidget(self.camera_placeholder)
         
+    def create_camera_subscriber(self):
+        """Create a ROS2 subscriber for the camera feed."""
+        #self.subscription = self.parent.create_subscription(
+        #    Image,  # Assuming the camera feed is of type sensor_msgs/Image
+        #    'camera_feed_topic',  # Replace with your actual camera feed topic
+        #    self.camera_feed_callback,
+        #    10
+        #)
+
+    def camera_feed_callback(self, msg):
+        """Callback function to handle incoming camera feed messages."""
+        # Convert the ROS image message to a format suitable for QLabel
+        # This may involve converting the image to QImage or similar
+        # Example:
+        # image = self.convert_ros_image_to_qimage(msg)
+        # self.camera_placeholder.setPixmap(QPixmap.fromImage(image))
+
     def update_styling(self):
         self.camera_placeholder.setStyleSheet(f"""
             QLabel {{
@@ -157,7 +177,7 @@ class PPEGridSection(QWidget):
             ('Hard Hat', 'hardhat', 0, 0),
             ('Beard Net', 'beardnet', 0, 1),
             ('Gloves', 'gloves', 0, 2),
-            ('Safety Glasses', 'glasses', 1, 0),
+            ('Safety Glasses', 'safetyglasses', 1, 0),
             ('Ear Plugs', 'earplugs', 1, 1),
             ('OVERRIDE', 'override', 1, 2)
         ]

@@ -6,5 +6,57 @@
   {
     "timestamp": "2025-02-14 19:34:06",
     "reason": "User: Admin - Reason: Gate manually locked from settings"
+  },
+  {
+    "timestamp": "2025-02-18 11:12:23",
+    "reason": "User: Admin - Reason: Gate manually unlocked from settings"
+  },
+  {
+    "timestamp": "2025-02-18 11:12:30",
+    "reason": "User: Admin - Reason: Gate manually locked from settings"
+  },
+  {
+    "timestamp": "2025-02-18 17:18:08",
+    "reason": "User: Supervisor - Reason: Admin Access"
+  },
+  {
+    "timestamp": "2025-02-18 17:26:30",
+    "reason": "User: Admin - Reason: Gate manually unlocked from settings"
+  },
+  {
+    "timestamp": "2025-02-18 17:26:40",
+    "reason": "User: Admin - Reason: Gate manually locked from settings"
+  },
+  {
+    "timestamp": "2025-02-18 20:56:37",
+    "reason": "User: Supervisor - Reason: PPE Not Detected"
+  },
+  {
+    "timestamp": "2025-02-18 20:56:49",
+    "reason": "User: Supervisor - Reason: Emergency Override"
+  },
+  {
+    "timestamp": "2025-02-18 20:57:03",
+    "reason": "User: Admin - Reason: Gate manually unlocked from settings"
+  },
+  {
+    "timestamp": "2025-02-18 20:57:07",
+    "reason": "User: Admin - Reason: Gate manually locked from settings"
+  },
+  {
+    "timestamp": "2025-02-18 20:57:22",
+    "reason": "User: Operator - Reason: PPE Not Detected"
+  },
+  {
+    "timestamp": "2025-02-18 20:59:03",
+    "reason": "User: Operator - Reason: PPE Not Detected"
+  },
+  {
+    "timestamp": "2025-02-18 21:04:21",
+    "reason": "User: Operator - Reason: PPE Not Detected"
+  },
+  {
+    "timestamp": "2025-02-18 21:08:29",
+    "reason": "User: Operator - Reason: PPE Not Detected"
   }
 ]

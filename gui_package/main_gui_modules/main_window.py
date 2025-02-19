@@ -12,13 +12,20 @@ import json
 from datetime import datetime
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
                             QApplication, QLabel, QPushButton, QComboBox, 
-                            QFormLayout, QTabWidget, QFrame, QSpinBox, QDoubleSpinBox, QTableWidget, QTableWidgetItem, QHeaderView)
+                            QFormLayout, QTabWidget, QFrame, QSpinBox, QDoubleSpinBox, 
+                            QTableWidget, QTableWidgetItem, QHeaderView, QDialog, QTextEdit, QMessageBox)
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
 from PyQt5.QtGui import QFont, QPalette, QColor
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from collections import Counter
+import matplotlib.dates as mdates
+import csv
 
 from .widgets.sections import TitleSection, StatusSection, CameraSection, PPEGridSection
 from .utils.colors import ColorScheme
 from .utils.logger import OverrideLogger
+from .jsonSupport.reporting import generate_report
 
 class PPEVendingMachineGUI(QMainWindow):
     # Add signals for thread-safe updates
@@ -92,7 +99,7 @@ class PPEVendingMachineGUI(QMainWindow):
         # Set window properties
         self.setWindowTitle('PPE Vending Machine')
         self.setMinimumSize(300, 240)
-        self.setFixedSize(600, 900)
+        self.setFixedSize(600, 950)
         self.center()
         
         # Initial layout update
@@ -380,36 +387,38 @@ class PPEVendingMachineGUI(QMainWindow):
         title_layout.addWidget(title_text)
         layout.addWidget(title_widget)
         
-        # Create tabs with larger size
-        tabs = QTabWidget()
-        tabs.setFont(QFont('Arial', 18))
-        tabs.setStyleSheet("""
-            QTabWidget::pane {
-                border: 1px solid #cccccc;
-                padding: 20px;
-            }
+        # Create tabs with custom styling
+        self.tabs = QTabWidget()  # Define tabs as an instance variable
+        self.tabs.setFont(QFont('Arial', 18))
+        
+        # Custom tab bar
+        tab_bar = self.tabs.tabBar()
+        tab_bar.setStyleSheet("""
             QTabBar::tab {
+                background: #007bff;  /* Default color */
+                color: white;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-bottom: none;
                 min-width: 75px;
-                min-height: 60px;
-                padding: 10px 20px;
-                font-size: 24px;
             }
             QTabBar::tab:selected {
-                background: #007bff;
-                color: white;
+                background: #0056b3;  /* Selected color */
             }
-            QTabBar::tab:hover {
-                background: #0056b3;
-                color: white;
+            QTabBar::tab:!selected {
+                background: #007bff;  /* Unselected color */
             }
         """)
         
-        tabs.addTab(self._create_colors_tab(), "Appearance")
-        tabs.addTab(self._create_inventory_tab(), "Inventory")
-        tabs.addTab(self._create_timing_tab(), "Timing")
-        tabs.addTab(self._create_override_log_tab(), "Override Log")
+        # Add numbered tabs with titles
+        self.tabs.addTab(self._create_info_tab(), "Info.") # Info
+        self.tabs.addTab(self._create_colors_tab(), "1.") # Appearance
+        self.tabs.addTab(self._create_inventory_tab(), "2.") # Inventory
+        self.tabs.addTab(self._create_timing_tab(), "3.") # Timing
+        self.tabs.addTab(self._create_override_log_tab(), "4.") # Override Log
+        self.tabs.addTab(self._create_report_tab(), "5.") # Report
         
-        layout.addWidget(tabs)
+        layout.addWidget(self.tabs)
         
         # Button container
         button_container = QWidget()
@@ -453,7 +462,7 @@ class PPEVendingMachineGUI(QMainWindow):
         button_layout.addWidget(cancel_button)
         button_layout.addWidget(save_button)
         layout.addWidget(button_container)
-        
+
         return widget
 
     def _create_colors_tab(self):
@@ -462,6 +471,11 @@ class PPEVendingMachineGUI(QMainWindow):
         layout = QVBoxLayout(widget)
         layout.setAlignment(Qt.AlignTop)
         layout.setSpacing(20)
+
+        # Create tab title
+        colors_label = QLabel("Appearance")
+        colors_label.setFont(QFont('Arial', 24, QFont.Bold))
+        layout.addWidget(colors_label)  # Add title to the layout
         
         # Color scheme section
         scheme_label = QLabel("Color Scheme:")
@@ -514,6 +528,11 @@ class PPEVendingMachineGUI(QMainWindow):
         layout = QVBoxLayout(widget)
         layout.setSpacing(40)
         layout.setContentsMargins(30, 30, 30, 30)
+
+        # Create tab title
+        timing_label = QLabel("Timing")
+        timing_label.setFont(QFont('Arial', 24, QFont.Bold))
+        layout.addWidget(timing_label)  # Add title to the layout 
         
         # Override Duration Section
         override_section = QWidget()
@@ -659,6 +678,11 @@ class PPEVendingMachineGUI(QMainWindow):
         widget = QWidget()
         layout = QVBoxLayout(widget)
         layout.setSpacing(20)
+
+        # Create tab title
+        inventory_label = QLabel("Inventory")
+        inventory_label.setFont(QFont('Arial', 24, QFont.Bold))
+        layout.addWidget(inventory_label)
         
         # Create table
         self.inventory_table = QTableWidget()
@@ -747,6 +771,11 @@ class PPEVendingMachineGUI(QMainWindow):
         widget = QWidget()
         layout = QVBoxLayout(widget)
         layout.setSpacing(20)
+
+        # Create tab title
+        override_label = QLabel("Override Log")
+        override_label.setFont(QFont('Arial', 24, QFont.Bold))
+        layout.addWidget(override_label)  # Add title to the layout
         
         # Create table
         log_table = QTableWidget()
@@ -1463,16 +1492,170 @@ class PPEVendingMachineGUI(QMainWindow):
         except Exception as e:
             print(f"Error saving inventory data: {e}")
 
-    def _update_settings_toggle_button_style(self):
-        """Update settings toggle button styling"""
-        self.settings_toggle_button.setStyleSheet(f"""
+    def _create_report_tab(self):
+        """Create the report tab."""
+        report_widget = QWidget()
+        report_layout = QVBoxLayout(report_widget)
+        
+        # Add title for the reporting tab
+        report_label = QLabel("PPE Dispensing Report")
+        report_label.setFont(QFont('Arial', 24, QFont.Bold))
+        report_layout.addWidget(report_label)  # Add title to the layout
+        
+        # Generate the report data
+        report_data = generate_report()
+        
+        # Create charts using the item counts
+        items = list(report_data["data"].keys())
+        counts = list(report_data["data"].values())
+        timestamps = [event['timestamp'] for event in report_data["events"]]  # Get timestamps
+        
+        # Create a vertical layout for the charts
+        chart_layout = QVBoxLayout()  # Changed to vertical layout to stack charts
+        
+        # Create a figure for the pie chart
+        fig, ax = plt.subplots()
+        wedges, texts, autotexts = ax.pie(
+            counts, 
+            labels=items, 
+            autopct=lambda p: f'{p:.1f}%\n({int(p * sum(counts) / 100)})', 
+            startangle=90
+        )
+        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        
+        # Customize the pie chart text
+        for text in autotexts:
+            text.set_color('white')  # Set the color of the percentage text to white
+        
+        # Create a canvas to display the pie chart
+        pie_canvas = FigureCanvas(fig)
+        chart_layout.addWidget(pie_canvas)  # Add to layout without fixed size
+        
+        # Create a bar chart for total counts
+        bar_fig, bar_ax = plt.subplots()
+        bar_ax.bar(items, counts)
+        bar_ax.set_xlabel('PPE Items')
+        bar_ax.set_ylabel('Count')
+        bar_ax.set_title('Total PPE Dispensed Count')
+        
+        # Create a canvas to display the bar chart
+        bar_canvas = FigureCanvas(bar_fig)
+        chart_layout.addWidget(bar_canvas)  # Add to layout without fixed size
+        
+        # Add the chart layout to the main report layout
+        report_layout.addLayout(chart_layout)
+        
+        # Create the Format button
+        format_button = QPushButton("Format Report Memory")
+        format_button.setFont(QFont('Arial', 20, QFont.Bold))
+        format_button.setStyleSheet(f"""
             QPushButton {{
-                background-color: {self.colors.success if self.accessibility_mode else self.colors.neutral};
+                background-color: {self.colors.primary};
                 color: white;
                 border: none;
                 border-radius: 10px;
             }}
             QPushButton:hover {{
-                background-color: {self.colors.success if self.accessibility_mode else '#555'};
+                background-color: {self.colors.primary_dark};
             }}
-        """) 
+        """)
+        format_button.clicked.connect(self.clear_dispensing_log)  # Connect to the clear function
+        
+        report_layout.addWidget(format_button)  # Add the button to the layout
+        
+        # Create the Export button
+        export_button = QPushButton("Export as .CSV")
+        export_button.setFont(QFont('Arial', 20, QFont.Bold))
+        export_button.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {self.colors.primary};
+                color: white;
+                border: none;
+                border-radius: 10px;
+            }}
+            QPushButton:hover {{
+                background-color: {self.colors.primary_dark};
+            }}
+        """)
+        export_button.clicked.connect(self.export_report_to_csv)  # Connect to the export function
+        
+        report_layout.addWidget(export_button)  # Add the export button to the layout
+        
+        report_widget.update()  # Update the report widget
+        return report_widget 
+
+    def export_report_to_csv(self):
+        """Export the report data to a CSV file."""
+        report_data = generate_report()
+        items = list(report_data["data"].keys())
+        counts = list(report_data["data"].values())
+        timestamps = [event['timestamp'] for event in report_data["events"]]  # Get timestamps
+        
+        # Define the CSV file path
+        filename = "ppe_dispensing_report.csv"
+
+        # Construct the path to the JsonSupport directory
+        json_support_dir = os.path.join(os.getcwd(), "src", "ppe_gui_package", "gui_package", "main_gui_modules", "jsonSupport")
+
+        # Ensure the directory exists
+        os.makedirs(json_support_dir, exist_ok=True)
+
+        # Construct the full file path
+        csv_file_path = os.path.join(json_support_dir, filename)
+        
+        # Write to CSV
+        with open(csv_file_path, 'w', newline='') as csvfile:
+            csv_writer = csv.writer(csvfile)
+            csv_writer.writerow(['Item', 'Count', 'Timestamp'])  # Write header
+            for item, count, timestamp in zip(items, counts, timestamps):
+                csv_writer.writerow([item, count, timestamp])  # Write data rows
+        
+        # Optionally, you can log the export action or update the UI in some way
+        print(f"The report has been exported to {csv_file_path}.")  # Log to console for debugging
+
+    def clear_dispensing_log(self):
+        """Clear the dispensing log."""
+        log_file_path = os.path.join(os.getcwd(), "src", "ppe_gui_package", "gui_package", "main_gui_modules", "jsonSupport", "dispensing_log.json")
+        
+        # Clear the log file
+        with open(log_file_path, 'w') as log_file:
+            log_file.write('[]')  # Write an empty JSON array to clear the log
+        
+        # Update the report tab to reflect the cleared log
+        self.update_report_tab() 
+
+    def update_report_tab(self):
+        """Update the report tab to reflect the current state of the dispensing log."""
+        report_tab_index = 4  # Adjust this index based on your tab order
+        self.tabs.setCurrentIndex(report_tab_index)  # Switch to the report tab
+        self.tabs.widget(report_tab_index).setParent(None)  # Remove the current report widget
+        self.tabs.addTab(self._create_report_tab(), "5.")  # Recreate and add the report tab
+
+    def _create_info_tab(self):
+        """Create the info tab for settings content."""
+        info_page = QWidget()
+        info_layout = QVBoxLayout(info_page)
+        
+        # Set a background color for the info page
+        #info_page.setStyleSheet("background-color: #f0f0f0;")  # Light gray background
+
+        info_label = QLabel("Settings Tabs Overview")
+        info_label.setFont(QFont('Arial', 24, QFont.Bold))
+        info_label.setStyleSheet("color: #333;")  # Dark text color
+        info_layout.addWidget(info_label)
+
+        # List of tabs and their descriptions
+        tab_info = [
+            ("1. ", "Appearance settings including color schemes."),
+            ("2. ", "Inventory management settings."),
+            ("3. ", "Timing and delay settings."),
+            ("4. ", "Override logging and configuration."),
+            ("5. ", "Report generation and analytics.")
+        ]
+
+        for tab_name, description in tab_info:
+            label = QLabel(f"{tab_name} {description}")
+            label.setFont(QFont('Arial', 16))  # Slightly smaller font for descriptions
+            label.setStyleSheet("color: #555; padding: 5px;")  # Medium gray text with padding
+            info_layout.addWidget(label)
+        return info_page
