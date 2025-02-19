@@ -6,9 +6,12 @@ It subscribes to the gate topic and sends commands to the ESP32 microcontroller 
 
 Note: Should check the serial port for the ESP32 microcontroller connection. 
 
+Updated: 2025-02-19: Added a check to only send the command if it has changed to prevent spamming the ESP32 microcontroller.
+
 Author: Max Chen
 Date: 2025-02-12
-v0.1.2
+
+v0.1.3
 """
 
 import rclpy
@@ -37,6 +40,7 @@ class ESP32ControlNode(Node):
 
         # Initialize the serial connection
         self.serial_connection()
+        self.last_command = None  # Initialize last_command to track the previous state
 
     # This function initializes the serial connection to the ESP32 microcontroller
     def serial_connection(self):
@@ -50,13 +54,19 @@ class ESP32ControlNode(Node):
     def gate_callback(self, msg):
         """Handle gate status messages (Bool)
         True = locked, False = unlocked"""
-        try:
-            command = 'lock' if msg.data else 'unlock'
-            self.get_logger().info(f"Received command: {command}")
-            self.ser.write(command.encode('utf-8'))
-            self.get_logger().info(f"Sent '{command}' to ESP32")
-        except Exception as e:
-            self.get_logger().error(f"Error handling gate command: {e}")
+        command = 'lock' if msg.data else 'unlock'
+        
+        # Only send command if it has changed
+        if command != self.last_command:
+            try:
+                self.get_logger().info(f"Received command: {command}")
+                self.ser.write(command.encode('utf-8'))
+                self.get_logger().info(f"Sent '{command}' to ESP32")
+                self.last_command = command  # Update last_command to the current command
+            except Exception as e:
+                self.get_logger().error(f"Error handling gate command: {e}")
+        else:
+            self.get_logger().info("Command unchanged; not sending to ESP32.")
 
     def cleanup(self):
         """Cleanup function to close serial connection"""

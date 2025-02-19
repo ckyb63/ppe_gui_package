@@ -3,16 +3,18 @@
 // Currently this needs to be uploaded to the ESP32 microcontroller via the Arduino IDE, ran with a windows machine.
 
 // Author: Max Chen
-// Date: 2025-02-13
-// v0.1.1
+// Date: 2025-02-19
+// v0.1.2
+
+// Wiring: ESP32 Pin DX -- Resistor -- LED -- GND
 
 // This is the code for the ESP32 microcontroller to communicate through a bluetooth terminal.
 #include <BluetoothSerial.h>
 
 BluetoothSerial ESP_BT;
 const int ledPin = 2;  // Onboard LED pin (usually pin 2 on ESP32)
-const int greenLEDPin = 16;  // Green LED pin for Unlocked state
-const int redLEDPin = 17;    // Red LED pin for Locked state
+const int greenLEDPin = 5;  // Green LED pin for Unlocked state on Pin D5
+const int redLEDPin = 25;    // Red LED pin for Locked state on Pin D25
 
 // Define states
 enum State { LOCKED, UNLOCKED };

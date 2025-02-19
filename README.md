@@ -21,7 +21,7 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 - **Inventory Management**: Inventory is managed with a JSON file and can be viewed live from the GUI.
 - **Theme Support**: The GUI supports a dark theme and a light theme.
 - **Accessibility Features**: The GUI supports a toggle for O/X status indicators, for users with visual impairments.
-- **Analytical Reporting**: Generate insightful reports with visualizations of PPE dispensing activities, including pie and bar charts, to aid in inventory management and decision-making.
+- **Analytical Reporting**: Generate insightful reports with visualizations of PPE dispensing activities, including pie and bar charts, to aid in inventory management and decision-making, a ros bag file is also recorded for later analysis using services such as AWS S3.
 
 ### Future Features (Planned)
 - **Camera Feed**: A camera feed will be added to the GUI to display the PPE detection in real-time.

@@ -6,13 +6,20 @@
     - Live Camera Feed to the Main GUI window to show the PPE detection with highlighted PPE items
 - Upgrade and migrate from PyQt5 to PyQt6
     - PyQt5 is reaching its end of life.
-- Properly Modularize the code scripts
+- Properly Modularize the code scripts and reorder the scripts to follow a proper logical structure
 
 ### Future Next Steps    
 - User Authentication
     - Implement either facial recognition or a QR code scanner to authenticate the user, firstly for the admins, and then for employees (users).
-- Reporting and Analytics
-    - Add functionality to generate reports on inventory usage and user interactions with ROS2 bag files.
+
+## [0.7.6] - 2025-02-19
+### Added
+- Added a check to only send the command if it has changed to prevent spamming the ESP32 microcontroller.
+- Added Proper LED to the ESP32 to better show the state of the gate.
+- Added a Node to record the /pleaseDispense topic to a ROS2 bag file (.db3) for later analysis using services such as AWS S3.
+
+### Fixed
+- Fixed the issue where the ESP32 would not reset the gate if the command is the same as the current state.
 
 ## [0.7.5] - 2025-02-18
 ### Added
