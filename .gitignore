@@ -13,3 +13,10 @@ log/
 
 # System files
 .DS_Store
+
+# json files
+*.json
+
+# ros bag files
+*.bag
+*.db3

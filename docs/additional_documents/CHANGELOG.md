@@ -12,6 +12,14 @@
 - User Authentication
     - Implement either facial recognition or a QR code scanner to authenticate the user, firstly for the admins, and then for employees (users).
 
+## [0.7.7] - 2025-02-19
+### Added
+- New details to the README.md including a table of contents and a secton on provided nodes and launch files.
+
+### Fixed
+- Fixed main_gui launch file to shutdown the three nodes together when the main GUI is closed.
+- Reverted some major but kept minor structure changes so the package isn't just completely broken. 
+
 ## [0.7.6] - 2025-02-19
 ### Added
 - Added a check to only send the command if it has changed to prevent spamming the ESP32 microcontroller.

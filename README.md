@@ -8,6 +8,30 @@
 
 A ROS2 package containing a PyQt5-based graphical user interface for controlling and monitoring a PPE (Personal Protective Equipment) vending machine.
 
+<details>
+<summary><span style="font-size: 1.2em;">Table of Contents</span></summary>
+
+- [Features](#features)
+  - [Core Features](#core-features)
+  - [Future Features (Planned)](#future-features-planned)
+  - [Future Next Steps](#future-next-steps)
+- [Update Changelog](#update-changelog)
+- [Dependencies](#dependencies)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Provided Nodes](#provided-nodes)
+  - [Provided Launch Files](#provided-launch-files)
+- [ROS2 Topics](#ros2-topics)
+  - [Subscribed Topics](#subscribed-topics)
+  - [Published Topics](#published-topics)
+- [Development](#development)
+  - [Using as a Submodule](#using-as-a-submodule)
+  - [Building for Development](#building-for-development)
+- [Screenshots](#screenshots)
+- [Author](#author)
+
+</details>
+
 ## Features
 
 ### Core Features
@@ -30,7 +54,7 @@ A ROS2 package containing a PyQt5-based graphical user interface for controlling
 - **User Authentication**: User authentication will be added to the GUI to allow for user specific settings and permissions.
 
 ### Update Changelog
-For a detailed list of changes, bug fixes, and new features, please refer to the [CHANGELOG](CHANGELOG.md).
+For a detailed list of changes, bug fixes, and new features, please refer to the [CHANGELOG](docs/additional_documents/CHANGELOG.md).
 
 ## Dependencies
 
@@ -80,23 +104,33 @@ For a detailed list of changes, bug fixes, and new features, please refer to the
 
 ## Usage
 
-### Running the nodes
+### Provided Nodes
 
 ```bash
-# Launch the main GUI
-ros2 launch gui_package main_ppe_gui.launch.py
+# Run the main GUI
+main_ppe_gui
 
 # Run the dummy inventory publisher which simulates the inventory level of the PPE vending machine
-ros2 run gui_package dummy_inventory
+dummy_inventory
 
 # Run the dummy PPE dispenser which simulates random PPE detection
-ros2 run gui_package dummy_ppe
-
-# For testing both dummy nodes together
-ros2 launch gui_package dummy_nodes.launch.py
+dummy_ppe
 
 # For running with Demo Gate hardware (ESP32 connected with USB over Serial)
-ros2 run gui_package safety_gate_controller.py
+safety_gate_controller
+
+# For recording the dispense bag
+record_dispense_bag
+```
+
+### Provided Launch Files
+
+```bash
+# Launch the main GUI with the gate controller and ros bag recording node
+main_ppe_gui.launch.py
+
+# Launch the dummy nodes together
+dummy_nodes.launch.py
 ```
 
 ## ROS2 Topics
