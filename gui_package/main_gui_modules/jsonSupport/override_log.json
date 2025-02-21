@@ -118,5 +118,37 @@
   {
     "timestamp": "2025-02-19 15:20:01",
     "reason": "User: Admin - Reason: Emergency Override"
+  },
+  {
+    "timestamp": "2025-02-20 16:38:35",
+    "reason": "User: Admin - Reason: Gate manually unlocked from settings"
+  },
+  {
+    "timestamp": "2025-02-20 16:39:04",
+    "reason": "User: Admin - Reason: Gate manually locked from settings"
+  },
+  {
+    "timestamp": "2025-02-20 16:39:10",
+    "reason": "User: Admin - Reason: Gate manually unlocked from settings"
+  },
+  {
+    "timestamp": "2025-02-20 16:39:15",
+    "reason": "User: Admin - Reason: Gate manually locked from settings"
+  },
+  {
+    "timestamp": "2025-02-20 16:53:41",
+    "reason": "User: Supervisor - Reason: System Maintenance"
+  },
+  {
+    "timestamp": "2025-02-20 17:05:58",
+    "reason": "User: Admin - Reason: Gate manually unlocked from settings"
+  },
+  {
+    "timestamp": "2025-02-20 17:06:04",
+    "reason": "User: Admin - Reason: Gate manually locked from settings"
+  },
+  {
+    "timestamp": "2025-02-20 17:08:11",
+    "reason": "User: Supervisor - Reason: Emergency Override"
   }
 ]

@@ -4,13 +4,22 @@
 ### Planned
 - Main GUI Window to contain a live Camera Feed
     - Live Camera Feed to the Main GUI window to show the PPE detection with highlighted PPE items
-- Upgrade and migrate from PyQt5 to PyQt6
-    - PyQt5 is reaching its end of life.
-- Properly Modularize the code scripts and reorder the scripts to follow a proper logical structure
 
-### Future Next Steps    
+### Possible Next Steps    
 - User Authentication
-    - Implement either facial recognition or a QR code scanner to authenticate the user, firstly for the admins, and then for employees (users).
+    - Implement either facial recognition or a QR/bar code scanner to authenticate the users (admins/employees).
+- Upgrade and migrate from PyQt5 to PyQt6
+
+## [Latest Release]
+
+## [0.7.7-a] - 2025-02-20
+### Added
+- Linked the Latest Release section from the CHANGELOG.md file in the README.md file.
+
+### Changed
+- Moved the location of the README.md file to the docs folder.
+- Modified the formating and descriptions of the README.md file.
+- Modified the help content text to be more concise and to the point.
 
 ## [0.7.7] - 2025-02-19
 ### Added
@@ -57,7 +66,7 @@
 - Detailed future plans to the CHANGELOG.md and additional details to the README.md
 
 ### Changed
-- Revised the version numbers to follow Semantic Versioning (MAJOR.MINOR.PATCH)
+- Revised the version numbers to follow regular versioning (MAJOR.MINOR.PATCH-additions)
 
 ## [0.7.2] - 2025-02-14
 ### Added

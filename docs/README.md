@@ -1,68 +1,60 @@
 # GUI Package for PPE Vending Machine
 
-![Version](https://img.shields.io/badge/Version-0.7.7-blue)
+![Version](https://img.shields.io/badge/Version-0.7.7_a-blue)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
 ![PyQt5](https://img.shields.io/badge/PyQt5-5.15%2B-blue?logo=qt&logoColor=white)
 ![ROS2](https://img.shields.io/badge/ROS2-Humble-orange?logo=ros&logoColor=white)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-orange?logo=ubuntu&logoColor=white)
 
-A ROS2 package containing a PyQt5-based graphical user interface for controlling and monitoring a PPE (Personal Protective Equipment) vending machine.
-
 <details>
-<summary><span style="font-size: 1.2em;">Table of Contents</span></summary>
+<summary>Table of Contents</summary>
 
+- [Introduction](#introduction)
 - [Features](#features)
-  - [Core Features](#core-features)
-  - [Future Features (Planned)](#future-features-planned)
-  - [Future Next Steps](#future-next-steps)
 - [Update Changelog](#update-changelog)
 - [Dependencies](#dependencies)
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Provided Nodes](#provided-nodes)
-  - [Provided Launch Files](#provided-launch-files)
-- [ROS2 Topics](#ros2-topics)
-  - [Subscribed Topics](#subscribed-topics)
-  - [Published Topics](#published-topics)
-- [Development](#development)
-  - [Using as a Submodule](#using-as-a-submodule)
-  - [Building for Development](#building-for-development)
+- [Topics](#topics)
 - [Screenshots](#screenshots)
 - [Author](#author)
 
 </details>
 
+## Introduction
+
+The **PPE Vending Machine GUI Package** is a ROS2-based application designed to provide an intuitive graphical user interface (GUI) for controlling and monitoring Personal Protective Equipment (PPE) vending machines. Built with PyQt5, this package enables real-time interaction with the vending machine hardware, allowing users to efficiently manage PPE dispensing, monitor inventory levels, and ensure safety compliance. The GUI is tailored for ease of use, featuring touchscreen compatibility and accessibility options to accommodate a wide range of users.
+
 ## Features
 
-### Core Features
+#### Detection and Control
 - **Real-time PPE Detection**: Monitor PPE detection status in real-time for immediate feedback.
 - **Automated Safety Gate Control**: Implement logic for automatic control of the safety gate.
+- **Safety Gate Override System**: Allow the safety gate to be overridden provided user and reason information.
+- **PPE Dispensing System**: Send PPE dispense requests to the vending machine hardware based on GUI inputs.
+
+#### Integration and Simulation
 - **ROS2 Integration**: Seamlessly interface with vending machine hardware and computer vision models using ROS2.
-- **Safety Gate Override System**: Allow the safety gate to be overriden provided user and reason information.
 - **Simulation Support**: Test nodes are provided to simulate and test the GUI for demonstrations.
+
+#### User Experience
 - **Touchscreen Friendly**: GUI is developed with a touchscreen in mind with large touch targets and clear text labels.
-- **ESP32 Safety Gate Controller**: A ESP32 microcontroller is used to control the safety gate.
-- **Inventory Management**: Inventory is managed with a JSON file and can be viewed live from the GUI.
 - **Theme Support**: The GUI supports a dark theme and a light theme.
 - **Accessibility Features**: The GUI supports a toggle for O/X status indicators, for users with visual impairments.
-- **Analytical Reporting**: Generate insightful reports with visualizations of PPE dispensing activities, including pie and bar charts, to aid in inventory management and decision-making, a ros bag file is also recorded for later analysis using services such as AWS S3.
 
-### Future Features (Planned)
-- **Camera Feed**: A camera feed will be added to the GUI to display the PPE detection in real-time.
-
-### Future Next Steps
-- **User Authentication**: User authentication will be added to the GUI to allow for user specific settings and permissions.
+#### Management and Reporting
+- **ESP32 Safety Gate Controller**: An ESP32 microcontroller is used to control the safety gate.
+- **Inventory Management**: Inventory is managed with a JSON file and can be viewed live from the GUI.
+- **Analytical Reporting**: Generate insightful reports with visualizations of PPE dispensing activities, including pie and bar charts, to aid in inventory management and decision-making. A ROS bag file is also recorded for later analysis using services such as AWS S3.
 
 ### Update Changelog
-For a detailed list of changes, bug fixes, and new features, please refer to the [CHANGELOG](docs/additional_documents/CHANGELOG.md).
+For a detailed list of changes, bug fixes, new features, and the [Latest Release](CHANGELOG.md#latest-release), please refer to the [CHANGELOG](CHANGELOG.md).
 
 ## Dependencies
 
 - ROS2 Humble
 - Python 3.10+
 - PyQt5 5.15+
-- rclpy
-- std_msgs
 
 ## Installation
 
@@ -93,7 +85,7 @@ For a detailed list of changes, bug fixes, and new features, please refer to the
 5. Build and source the workspace:
     ```bash
     cd ~/ros2_ws
-    colcon build
+    colcon build --packages-select gui_package --symlink-install
     source install/setup.bash
     ```
 
@@ -104,10 +96,10 @@ For a detailed list of changes, bug fixes, and new features, please refer to the
 
 ## Usage
 
-### Provided Nodes
+### Provided Nodes for use with ```ros2 run```
 
 ```bash
-# Run the main GUI
+# Run the main GUI which is a PyQt5-based GUI for controlling and monitoring the PPE vending machine
 main_ppe_gui
 
 # Run the dummy inventory publisher which simulates the inventory level of the PPE vending machine
@@ -123,7 +115,7 @@ safety_gate_controller
 record_dispense_bag
 ```
 
-### Provided Launch Files
+### Provided Launch Files for use with ```ros2 launch```
 
 ```bash
 # Launch the main GUI with the gate controller and ros bag recording node
@@ -133,46 +125,24 @@ main_ppe_gui.launch.py
 dummy_nodes.launch.py
 ```
 
-## ROS2 Topics
+## Topics
 
 ### Subscribed Topics
 - `ppe_status` (std_msgs/String): Receives PPE detection status
   - Format: "hardhat:true, beardnet:false, gloves:true, glasses:true, earplugs:false"
+
 - `ppeInventoryStatus` (std_msgs/String): Receives inventory status updates
   - Format: JSON string with inventory levels
 
 ### Published Topics
 - `pleaseDispense` (std_msgs/String): Sends dispense requests
   - Values: "hardhat", "beardnet", "gloves", "glasses", "earplugs", "OVERRIDE"
+
 - `gate` (std_msgs/Bool): Controls safety gate status
   - true = locked, false = unlocked
+
 - `ppeInventory` (std_msgs/String): Sends inventory update requests
   - Value: "request"
-
-## Development
-
-### Using as a Submodule
-
-If you want to include this PPE GUI package as a submodule in your main repository, follow these steps:
-
-1. **Add the Submodule**: Navigate to your main repository's root directory (or straight to the src folder) and run the following command to add this repository as a submodule:
-   ```bash
-   git submodule add https://github.com/ckyb63/ppe_gui_package.git "your_workspace"/src/ppe_gui_package
-   ```
-
-2. **Initialize and Update Submodules**: After cloning your main repository, initialize and update the submodules with the following commands:
-   ```bash
-   git submodule init
-   git submodule update
-   ```
-Then you can build the workspace and run ROS 2 as normal.
-
-
-### Building for Development
-```bash
-cd "your_workspace"
-colcon build --packages-select gui_package --symlink-install
-```
 
 ## Screenshots
 
@@ -181,8 +151,8 @@ colcon build --packages-select gui_package --symlink-install
 
 <table>
 <tr>
-    <td width="50%"><img src="docs/images/main_gui_window_75.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/dark_theme_with_OX_75.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="images/main_gui_window_75.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="images/dark_theme_with_OX_75.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
     <td><em>Standard interface with PPE status indicators</em></td>
@@ -193,11 +163,11 @@ colcon build --packages-select gui_package --symlink-install
 </details>
 
 <details>
-<summary>Override System</summary>
+<summary>Safety Gate Override</summary>
 
-![Override Dialog](docs/images/override_content_75.png)
+![Override Dialog](images/override_content_75.png)
 
-*Enhanced override dialog with user authentication and reason tracking*
+*Enhanced override page with user authentication and reason tracking*
 
 </details>
 
@@ -206,8 +176,8 @@ colcon build --packages-select gui_package --symlink-install
 
 <table>
 <tr>
-    <td width="50%"><img src="docs/images/settings_appearance.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/settings_inventory_75.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="images/settings_appearance.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="images/settings_inventory_75.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
     <td><em>Main settings configuration panel</em></td>
@@ -217,8 +187,8 @@ colcon build --packages-select gui_package --symlink-install
 
 <table>
 <tr>
-    <td width="50%"><img src="docs/images/settings_timing_75.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/settings_override_log_75.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="images/settings_timing_75.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="images/settings_override_log_75.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
     <td><em>System timing and delay settings</em></td>
@@ -228,8 +198,8 @@ colcon build --packages-select gui_package --symlink-install
 
 <table>
 <tr>
-    <td width="50%"><img src="docs/images/settings_info.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="docs/images/settings_report.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="images/settings_info.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="images/settings_report.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
     <td><em>Settings tab Info</em></td>
@@ -240,9 +210,9 @@ colcon build --packages-select gui_package --symlink-install
 </details>
 
 <details>
-<summary>Help Documentation</summary>
+<summary>Integrated User Help Guide</summary>
 
-![User Help Guide](docs/images/user_help_content_75.png)
+![User Help Guide](images/user_help_content_77a.png)
 
 *Comprehensive user help guide with feature explanations*
 

@@ -285,22 +285,21 @@ class PPEVendingMachineGUI(QMainWindow):
         help_text = """
         <h2>PPE Detection:</h2>
         <ul style='font-size: 14pt;'>
-        <li>The AI will use the camera to detect the presence of required PPE</li>
-        <li>The user may need to rotate head slightly to ensure all required PPE are detected</li>
-        <li>Green buttons (O) indicate detected PPE</li>
-        <li>Red buttons (X) indicate missing PPE</li>
+        <li>The AI detects required PPE using the camera.</li>
+        <li>Rotate your head slightly to ensure all PPE is visible.</li>
+        <li>Green buttons (O) indicate detected PPE; red buttons (X) indicate missing PPE.</li>
         </ul>
 
-        <h2>Dispensing:</h2>
+        <h2>Dispensing PPE:</h2>
         <ul style='font-size: 14pt;'>
-        <li>Click on the PPE item you want to dispense if you don't have it</li>
-        <li>The safety gate remains locked until all required PPE is detected</li>
+        <li>Click on the PPE item to dispense if you do not have it.</li>
+        <li>The safety gate will remain locked until all required PPE is detected.</li>
         </ul>
 
         <h2>Safety Override:</h2>
         <ul style='font-size: 14pt;'>
-        <li>Orange OVERRIDE button for emergency or administrative override of the system</li>
-        <li>It will log the user, reason, and time of the override</li>
+        <li>Use the orange OVERRIDE button for emergency or administrative overrides.</li>
+        <li>All overrides are logged with the user, reason, and timestamp.</li>
         </ul>
         """
         text_label = QLabel(help_text)
