@@ -12,7 +12,7 @@
 
 ## [Latest Release]
 
-## [0.7.7-a] - 2025-02-20
+## [0.8.3] - 2025-02-20
 ### Added
 - Linked the Latest Release section from the CHANGELOG.md file in the README.md file.
 
@@ -21,7 +21,11 @@
 - Modified the formating and descriptions of the README.md file.
 - Modified the help content text to be more concise and to the point.
 
-## [0.7.7] - 2025-02-19
+### Fixed
+- Fixed Versioning again, (MAJOR.Feature_Addition.Fix/Change)
+- Fixed Github Actions workflow.
+
+## [0.8.2] - 2025-02-19
 ### Added
 - New details to the README.md including a table of contents and a secton on provided nodes and launch files.
 
@@ -29,7 +33,7 @@
 - Fixed main_gui launch file to shutdown the three nodes together when the main GUI is closed.
 - Reverted some major but kept minor structure changes so the package isn't just completely broken. 
 
-## [0.7.6] - 2025-02-19
+## [0.8.1] - 2025-02-19
 ### Added
 - Added a check to only send the command if it has changed to prevent spamming the ESP32 microcontroller.
 - Added Proper LED to the ESP32 to better show the state of the gate.
@@ -38,7 +42,7 @@
 ### Fixed
 - Fixed the issue where the ESP32 would not reset the gate if the command is the same as the current state.
 
-## [0.7.5] - 2025-02-18
+## [0.8.0] - 2025-02-18
 ### Added
 - Added Green and Red LED indicators to the ESP32 code to show the state of the gate.
 - Added a report tab to the main GUI window to show the dispensing report.
@@ -66,7 +70,7 @@
 - Detailed future plans to the CHANGELOG.md and additional details to the README.md
 
 ### Changed
-- Revised the version numbers to follow regular versioning (MAJOR.MINOR.PATCH-additions)
+- Revised the version numbers to follow regular versioning (MAJOR.MINOR.PATCH)
 
 ## [0.7.2] - 2025-02-14
 ### Added
