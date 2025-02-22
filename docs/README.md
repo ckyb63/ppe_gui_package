@@ -3,6 +3,7 @@
 ![Version](https://img.shields.io/badge/Version-0.9.0-blue)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
 ![PyQt5](https://img.shields.io/badge/PyQt5-5.15%2B-blue?logo=qt&logoColor=white)
+![AVend API](https://img.shields.io/badge/AVend%20API-v1.2.2-blue?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyek0xMiAyMGMtNC40MiAwLTgtMy41OC04LThzMy41OC04IDgtOCA4IDMuNTggOCA4LTMuNTggOC04IDh6Ii8+PC9zdmc+)
 ![ROS2](https://img.shields.io/badge/ROS2-Humble-orange?logo=ros&logoColor=white)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-orange?logo=ubuntu&logoColor=white)
 
@@ -143,6 +144,14 @@ dummy_nodes.launch.py
 
 - `ppeInventory` (std_msgs/String): Sends inventory update requests
   - Value: "request"
+
+## Node and Topic Relationships
+
+The following chart illustrates the current relationship between the nodes and topics in the PPE Vending Machine GUI Package:
+
+![Node and Topic Chart](images/GUI_ROS2_Node_NT.png)
+
+This chart provides a visual representation of how the various nodes communicate through topics which is helpful for understanding what this package is about.
 
 ## Screenshots
 

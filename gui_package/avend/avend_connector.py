@@ -1,43 +1,60 @@
 #!/usr/bin/env python3
 
 """
-ROS2 Node for interfacing with Avend Smart Vending API
+ROS2 Node for interfacing with Avend Local Vending API
 
 This node handles:
-1. Dispensing commands via API calls
-2. Inventory status reporting
-3. Error handling and status updates
+1. Dispensing commands via local API calls
+2. Session management
+3. Multi-vend cart functionality
+4. Health monitoring
+5. Error handling and status updates
 
 Author: Max Chen
 
-
-Notes: 
-   export AVEND_API_KEY='your_api_key_here'
-   export AVEND_MACHINE_ID='your_machine_id_here'
+Notes:
+    export AVEND_HOST='your_host_ip'  # default: 127.0.0.1
+    export AVEND_PORT='your_port'     # default: 8080
 """
 
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String, Bool
+from std_srvs.srv import Trigger
 import requests
 import json
 from datetime import datetime
 import os
+from urllib.parse import quote
+from .utils.logger import AvendLogger
+import yaml
+import time
 
 class AvendConnector(Node):
     def __init__(self):
         super().__init__('avend_connector')
         
-        # Initialize API configuration
-        self.api_base_url = "https://api.avendvending.com/v1"  # Replace with actual API URL
-        self.api_key = os.getenv('AVEND_API_KEY', 'default_key')  # Get API key from environment variable
-        self.machine_id = os.getenv('AVEND_MACHINE_ID', 'default_id')
+        # Load configuration
+        self.load_configuration()
         
-        # Headers for API requests
-        self.headers = {
-            'Authorization': f'Bearer {self.api_key}',
-            'Content-Type': 'application/json'
-        }
+        # Initialize logger
+        self.logger = AvendLogger(
+            log_level=self.get_parameter('log_level').value,
+            log_to_file=self.get_parameter('log_to_file').value,
+            log_file_path=self.get_parameter('log_file_path').value
+        )
+        
+        # Initialize API configuration
+        self.host = self.get_parameter('host').value
+        self.port = self.get_parameter('port').value
+        self.api_base_url = f"http://{self.host}:{self.port}/avend"
+        
+        # Session management
+        self.session_active = False
+        self.session_timer = None
+        
+        # Cart management
+        self.cart_items = []
         
         # Initialize subscribers
         self.dispense_sub = self.create_subscription(
@@ -48,124 +65,213 @@ class AvendConnector(Node):
         )
         
         # Initialize publishers
-        self.inventory_pub = self.create_publisher(
-            String,
-            'inventoryStatus',
-            10
-        )
-        
         self.dispense_status_pub = self.create_publisher(
             Bool,
             'dispenseStatus',
             10
         )
         
-        # Create timer for periodic inventory updates
-        self.inventory_timer = self.create_timer(
-            300.0,  # 5 minutes
-            self.publish_inventory_status
+        self.health_status_pub = self.create_publisher(
+            String,
+            'vendingHealth',
+            10
         )
         
-        self.get_logger().info('Avend Connector Node initialized')
+        # Initialize services
+        self.clear_cart_srv = self.create_service(
+            Trigger,
+            'clear_cart',
+            self.handle_clear_cart
+        )
+
+        # Initialize the inventory status publisher
+        self.inventory_status_pub = self.create_publisher(
+            String,
+            'ppeInventoryStatus',
+            10
+        )
+        
+        # Create timers
+        self.setup_timers()
+        
+        self.logger.info('Avend Connector Node initialized')
+
+    def load_configuration(self):
+        """Load configuration parameters"""
+        self.declare_parameters(
+            namespace='',
+            parameters=[
+                ('host', '127.0.0.1'),
+                ('port', '8080'),
+                ('request_timeout', 5.0),
+                ('session_refresh_interval', 270.0),
+                ('max_retries', 3),
+                ('retry_delay', 1.0),
+                ('slot_mapping', {}),
+                ('health_check_interval', 60.0),
+                ('log_level', 'info'),
+                ('log_to_file', True),
+                ('log_file_path', 'logs/avend_connector.log')
+            ]
+        )
+
+    def setup_timers(self):
+        """Initialize all timers"""
+        # Session refresh timer
+        self.session_refresh_timer = self.create_timer(
+            self.get_parameter('session_refresh_interval').value,
+            self.refresh_session
+        )
+        
+        # Health check timer
+        self.health_check_timer = self.create_timer(
+            self.get_parameter('health_check_interval').value,
+            self.check_health
+        )
+
+    def check_health(self):
+        """Check vending machine health status"""
+        try:
+            response = requests.get(
+                f"{self.api_base_url}?action=info",
+                timeout=self.get_parameter('request_timeout').value
+            )
+            
+            health_msg = String()
+            if response.status_code == 200:
+                health_msg.data = "healthy"
+                self.logger.debug("Health check passed")
+            else:
+                health_msg.data = "unhealthy"
+                self.logger.warning(f"Health check failed: {response.text}")
+            
+            self.health_status_pub.publish(health_msg)
+            
+        except requests.exceptions.RequestException as e:
+            self.logger.error(f"Health check failed: {str(e)}")
+            health_msg = String()
+            health_msg.data = "unreachable"
+            self.health_status_pub.publish(health_msg)
+
+    def make_api_request(self, endpoint, method='get', **kwargs):
+        """Make API request with retry logic"""
+        max_retries = self.get_parameter('max_retries').value
+        retry_delay = self.get_parameter('retry_delay').value
+        
+        for attempt in range(max_retries):
+            try:
+                response = requests.request(
+                    method,
+                    endpoint,
+                    timeout=self.get_parameter('request_timeout').value,
+                    **kwargs
+                )
+                return response
+            except requests.exceptions.RequestException as e:
+                if attempt == max_retries - 1:
+                    raise e
+                self.logger.warning(f"Request failed, retrying... ({attempt + 1}/{max_retries})")
+                time.sleep(retry_delay)
+
+    def start_session(self):
+        """Start a new vending session"""
+        try:
+            response = self.make_api_request(f"{self.api_base_url}?action=start")
+            if response.status_code == 200:
+                self.session_active = True
+                self.logger.info('Session started successfully')
+                return True
+            else:
+                self.logger.error(f'Failed to start session: {response.text}')
+                return False
+        except requests.exceptions.RequestException as e:
+            self.logger.error(f'Session start request failed: {str(e)}')
+            return False
 
     def handle_dispense_request(self, msg):
         """Handle incoming dispense requests"""
         try:
-            # Parse the dispense request
             ppe_item = msg.data.lower()
-            
-            # Map PPE items to Avend slot numbers
-            slot_mapping = {
-                'hardhat': '1',
-                'beardnet': '2',
-                'gloves': '3',
-                'safetyglasses': '4',
-                'earplugs': '5'
-            }
+            slot_mapping = self.get_parameter('slot_mapping').value
             
             if ppe_item not in slot_mapping:
-                self.get_logger().error(f'Invalid PPE item requested: {ppe_item}')
+                self.logger.error(f'Invalid PPE item requested: {ppe_item}')
                 self.publish_dispense_status(False)
                 return
             
-            # Make API call to dispense item
-            response = self.dispense_item(slot_mapping[ppe_item])
+            # Add item to cart
+            self.cart_items.append(slot_mapping[ppe_item])
+            self.logger.info(f'Added {ppe_item} to cart')
             
-            # Handle the response
-            if response.status_code == 200:
-                self.get_logger().info(f'Successfully dispensed {ppe_item}')
-                self.publish_dispense_status(True)
-                # Trigger an immediate inventory update
-                self.publish_inventory_status()
-            else:
-                self.get_logger().error(f'Failed to dispense {ppe_item}: {response.text}')
-                self.publish_dispense_status(False)
-                
+            # Dispense items in cart
+            success = self.dispense_cart()
+            self.publish_dispense_status(success)
+            
         except Exception as e:
-            self.get_logger().error(f'Error handling dispense request: {str(e)}')
+            self.logger.error(f'Error handling dispense request: {str(e)}')
             self.publish_dispense_status(False)
 
-    def dispense_item(self, slot_number):
-        """Make API call to dispense item"""
-        endpoint = f"{self.api_base_url}/machines/{self.machine_id}/dispense"
-        payload = {
-            'slot': slot_number,
-            'timestamp': datetime.utcnow().isoformat()
-        }
-        
+    def dispense_cart(self):
+        """Dispense all items in cart"""
         try:
-            response = requests.post(
-                endpoint,
-                headers=self.headers,
-                json=payload,
-                timeout=5.0
-            )
-            return response
-        except requests.exceptions.RequestException as e:
-            self.get_logger().error(f'API request failed: {str(e)}')
-            return None
-
-    def get_inventory_status(self):
-        """Get inventory status from Avend API"""
-        endpoint = f"{self.api_base_url}/machines/{self.machine_id}/inventory"
-        
-        try:
-            response = requests.get(
-                endpoint,
-                headers=self.headers,
-                timeout=5.0
-            )
+            if not self.cart_items:
+                self.logger.warning('Cart is empty')
+                return False
             
-            if response.status_code == 200:
-                inventory_data = response.json()
-                # Map API response to our inventory format
-                formatted_inventory = {
-                    'hardhat': str(inventory_data.get('1', '0')),
-                    'beardnet': str(inventory_data.get('2', '0')),
-                    'gloves': str(inventory_data.get('3', '0')),
-                    'safetyglasses': str(inventory_data.get('4', '0')),
-                    'earplugs': str(inventory_data.get('5', '0'))
-                }
-                return formatted_inventory
+            # Ensure active session
+            if not self.session_active and not self.start_session():
+                return False
+            
+            # Add all items to vending machine cart
+            for slot_code in self.cart_items:
+                encoded_code = quote(slot_code)
+                response = self.make_api_request(
+                    f"{self.api_base_url}?action=add&code={encoded_code}"
+                )
+                if not response or response.status_code != 200:
+                    self.logger.error(f'Failed to add item {slot_code} to cart')
+                    return False
+            
+            # Dispense all items
+            response = self.make_api_request(f"{self.api_base_url}?action=dispense")
+            success = response and response.status_code == 200
+            
+            if success:
+                self.logger.info('Successfully dispensed all items')
+                self.cart_items.clear()
             else:
-                self.get_logger().error(f'Failed to get inventory: {response.text}')
-                return None
-                
-        except requests.exceptions.RequestException as e:
-            self.get_logger().error(f'Inventory API request failed: {str(e)}')
-            return None
+                self.logger.error('Failed to dispense items')
+            
+            return success
+            
+        except Exception as e:
+            self.logger.error(f'Error dispensing cart: {str(e)}')
+            return False
 
-    def publish_inventory_status(self):
-        """Publish current inventory status"""
-        inventory = self.get_inventory_status()
-        if inventory:
-            # Convert inventory dict to JSON string
-            inventory_msg = String()
-            inventory_msg.data = json.dumps(inventory)
-            self.inventory_pub.publish(inventory_msg)
-            self.get_logger().debug('Published inventory status')
-        else:
-            self.get_logger().warn('Failed to publish inventory status')
+    def handle_clear_cart(self, request, response):
+        """Service handler for clearing the cart"""
+        try:
+            # Clear local cart
+            self.cart_items.clear()
+            
+            # Clear vending machine cart
+            api_response = self.make_api_request(f"{self.api_base_url}?action=clear")
+            
+            response.success = api_response and api_response.status_code == 200
+            response.message = "Cart cleared successfully" if response.success else "Failed to clear cart"
+            
+            return response
+            
+        except Exception as e:
+            self.logger.error(f'Error clearing cart: {str(e)}')
+            response.success = False
+            response.message = str(e)
+            return response
+
+    def refresh_session(self):
+        """Refresh the session to prevent timeout"""
+        if self.session_active:
+            self.start_session()
 
     def publish_dispense_status(self, success):
         """Publish dispense status"""

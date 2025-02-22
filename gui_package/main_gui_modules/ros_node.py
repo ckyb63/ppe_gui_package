@@ -49,6 +49,13 @@ class PPEGuiNode(Node):
             self.inventory_status_callback,  # Callback method to handle incoming messages
             10)  # Queue size for incoming messages
         
+        # Create a subscriber for Camera Feed
+        #self.camera_subscription = self.create_subscription(
+        #    String,
+        #    'cameraFeed',  # Topic name for camera feed
+        #    self.camera_feed_callback,  # Callback method to handle incoming messages
+        #     10)  # Queue size for incoming messages
+        
         # Reference to GUI (will be set later)
         self.gui = None
         
@@ -138,3 +145,9 @@ class PPEGuiNode(Node):
                 print(f'Successfully logged dispense event: {log_entry}')  # Confirm logging
         except Exception as e:
             print(f"Error logging dispense event: {e}")  # Log the error 
+
+    def camera_feed_callback(self, msg):
+        """Handle incoming camera feed messages."""
+        if self.gui and not self.gui.is_shutting_down:  # Check if GUI is available and not shutting down
+            # Emit a signal to update the GUI with the received camera feed
+            self.gui.camera_feed_signal.emit(msg.data)

@@ -12,6 +12,21 @@
 
 ## [Latest Release]
 
+## [0.9.1] - 2025-02-22
+### Added
+- Readme file info.
+- Launch file for the Avend Connector Node
+- Configuration file for the Avend Connector Node
+- Logger for the Avend Connector Node
+- The temporary avend node is now complete and will be improved in future releases after testing with real hardware.
+- Added a subscriber for the Camera Feed to the main GUI window, but it is not fully implemented. 
+- Added a graphical chart of the nodes and topic relationships to the README.md file.
+
+### Notes
+- The Avend Connector Node is not fully completed, the logger.py is untested.
+- The Camera Feed is on hold until the hardware situation is resolved.
+- The main_window.py file is undergoing the process of being refactored to be more modular and easier to maintain.
+
 ## [0.9.0] - 2025-02-21
 ### Added 
 - Added the node for the GUI to interface with the Avend Smart Vending API for Dispensing and Inventory Status. It will be fully implemented in the following releases. 
@@ -26,7 +41,8 @@
 - Modified the help content text to be more concise and to the point.
 
 ### Fixed
-- Fixed Versioning again, (MAJOR.Feature_Addition.Fix/Change)
+- Fixed Versioning again, (MAJOR.Feature_Addition.Fix/Change/File_Update_Addition)
+- Fixed changelog from now on to follow the format: Added, Changed, Fixed, Removed, Notes.
 - Fixed Github Actions workflow.
 
 ## [0.8.2] - 2025-02-19
@@ -127,7 +143,7 @@
 - Updated screenshots in README.md
 
 ### Removed
-- Removed experimental_ppe_GUI.py and ppe_gui.py scripts as they are deprecated from the package
+- Removed experimental_ppe_GUI.py and ppe_gui.py scripts as they are deprecated from the package.
 
 ### Fixed
 - Fixed inventory timestamp display to standard format
@@ -193,9 +209,6 @@
 ### Added
 - Initial release
 - Basic PPE vending machine GUI
-- ROS2 integration for status monitoring
-- Safety gate control system
-- Administrative override functionality
 - Basic status displays
 - PPE dispensing controls
-- Streamlit GUI
+- GUI developed with Streamlit

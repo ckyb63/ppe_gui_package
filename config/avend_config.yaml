@@ -1,0 +1,25 @@
+avend_connector:
+  ros__parameters:
+    # API Configuration
+    host: "127.0.0.1"
+    port: "8080"
+    request_timeout: 5.0
+    session_refresh_interval: 270.0  # 4.5 minutes
+    max_retries: 3
+    retry_delay: 1.0  # seconds
+
+    # Slot Mapping
+    slot_mapping:
+      hardhat: "01"
+      beardnet: "02"
+      gloves: "03"
+      safetyglasses: "04"
+      earplugs: "05"
+
+    # Health Check
+    health_check_interval: 60.0  # 1 minute
+    
+    # Logging
+    log_level: "info"
+    log_to_file: true
+    log_file_path: "logs/avend_connector.log" 
