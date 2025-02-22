@@ -12,6 +12,10 @@
 
 ## [Latest Release]
 
+## [0.9.0] - 2025-02-21
+### Added 
+- Added the node for the GUI to interface with the Avend Smart Vending API for Dispensing and Inventory Status. It will be fully implemented in the following releases. 
+
 ## [0.8.3] - 2025-02-20
 ### Added
 - Linked the Latest Release section from the CHANGELOG.md file in the README.md file.

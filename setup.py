@@ -30,6 +30,7 @@ setup(
             'dummy_inventory = gui_package.dummy_test.dummy_inventory_publisher:main',
             'safety_gate_controller = gui_package.gate.safety_gate_controller:main',  
             'record_dispense_bag = gui_package.main_gui_modules.recordedBags.record_dispense_bag:main',  
+            'avend_connector = gui_package.avend.avend_connector:main',
         ],
     },
 )
