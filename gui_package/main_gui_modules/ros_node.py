@@ -119,32 +119,21 @@ class PPEGuiNode(Node):
 
     def log_dispense_event(self, ppe_name):
         """Log the dispense event to the dispensing log."""
-        log_entry = {
-            "item": ppe_name,
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        }
-        log_file_path = os.path.join(os.getcwd(), "src", "ppe_gui_package", "gui_package", "main_gui_modules", "jsonSupport", "dispensing_log.json")
-        
         try:
-            # Read existing log entries
-            if os.path.exists(log_file_path):
-                with open(log_file_path, 'r') as log_file:
-                    try:
-                        existing_entries = json.load(log_file)  # Load existing entries
-                    except json.JSONDecodeError:
-                        existing_entries = []  # If the file is empty or corrupted, start with an empty list
+            # Create the event data
+            event_data = {
+                "item": ppe_name,
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+            
+            # Use the GUI's JsonHandler to log the event
+            if self.gui:
+                self.gui.json_handler.append_to_json("dispensing_log.json", event_data)
             else:
-                existing_entries = []  # If the file does not exist, start with an empty list
-
-            # Append the new log entry
-            existing_entries.append(log_entry)
-
-            # Write the updated entries back to the log file
-            with open(log_file_path, 'w') as log_file:
-                json.dump(existing_entries, log_file, indent=4)  # Write as a JSON array with indentation
-                print(f'Successfully logged dispense event: {log_entry}')  # Confirm logging
+                print("GUI reference not available for logging")
+                
         except Exception as e:
-            print(f"Error logging dispense event: {e}")  # Log the error 
+            print(f"Error logging dispense event: {e}")
 
     def camera_feed_callback(self, msg):
         """Handle incoming camera feed messages."""

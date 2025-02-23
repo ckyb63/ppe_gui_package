@@ -2,22 +2,20 @@
 Widget components for the PPE GUI
 
 Author: Max Chen
-v0.5.1
 """
 from .buttons import ColoredButton
-from .dialogs import HelpDialog
-from .settings_dialog import SettingsDialog
-from .override_dialog import OverrideDialog
-from .sections import (TitleSection, StatusSection, 
-                      CameraSection, PPEGridSection)
+from .settings import SettingsContent
+from .override import OverrideContent
+from .sections import (TitleSection, StatusSection, CameraSection, PPEGridSection)
+from .help import HelpContent
 
 __all__ = [
     'ColoredButton',
-    'HelpDialog',
-    'SettingsDialog',
-    'OverrideDialog',
+    'SettingsContent',
+    'OverrideContent',
     'TitleSection',
     'StatusSection',
     'CameraSection',
     'PPEGridSection',
+    'HelpContent',
 ] 

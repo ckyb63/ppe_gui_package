@@ -1,19 +1,17 @@
 """
-Override confirmation dialog
+Override content widget
 
 Author: Max Chen
 """
-from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
-                            QPushButton, QComboBox, QWidget, QFormLayout)
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
+                            QPushButton, QComboBox, QFormLayout)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 
-class OverrideDialog(QDialog):
+class OverrideContent(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
-        self.setWindowTitle("Confirm Override")
-        self.setModal(True)
         self._init_ui()
         
     def _init_ui(self):
@@ -21,24 +19,6 @@ class OverrideDialog(QDialog):
         layout.setSpacing(20)
         
         # Warning section
-        self._create_warning_section(layout)
-        
-        # Message section
-        self._create_message_section(layout)
-        
-        # Form section
-        self._create_form_section(layout)
-        
-        # Button section
-        self._create_button_section(layout)
-        
-        # Set dialog styling
-        self._apply_styling()
-        
-        # Set size and position
-        self._set_geometry()
-        
-    def _create_warning_section(self, layout):
         warning_widget = QWidget()
         warning_layout = QHBoxLayout(warning_widget)
         warning_layout.setAlignment(Qt.AlignCenter)
@@ -55,7 +35,7 @@ class OverrideDialog(QDialog):
         
         layout.addWidget(warning_widget)
         
-    def _create_message_section(self, layout):
+        # Message section
         message = QLabel("Are you sure you want to override\nthe safety system?")
         message.setFont(QFont('Arial', 24))
         message.setAlignment(Qt.AlignCenter)
@@ -63,14 +43,14 @@ class OverrideDialog(QDialog):
         message.setStyleSheet(f"color: {self.parent.colors.text};")
         layout.addWidget(message)
         
-        info_text = QLabel("This will unlock the safety gate for 10 seconds.")
+        info_text = QLabel(f"This will unlock the safety gate for {int(self.parent.override_duration)} seconds.")
         info_text.setFont(QFont('Arial', 18))
         info_text.setAlignment(Qt.AlignCenter)
         info_text.setWordWrap(True)
         info_text.setStyleSheet(f"color: {self.parent.colors.text_secondary};")
         layout.addWidget(info_text)
         
-    def _create_form_section(self, layout):
+        # Form section
         form_widget = QWidget()
         form_layout = QFormLayout(form_widget)
         form_layout.setSpacing(15)
@@ -107,7 +87,7 @@ class OverrideDialog(QDialog):
             
         layout.addWidget(form_widget)
         
-    def _create_button_section(self, layout):
+        # Button section
         button_widget = QWidget()
         button_layout = QHBoxLayout(button_widget)
         button_layout.setSpacing(20)
@@ -127,7 +107,7 @@ class OverrideDialog(QDialog):
                 background-color: #555;
             }}
         """)
-        no_button.clicked.connect(self.reject)
+        no_button.clicked.connect(lambda: self.parent.switchContent())
         
         # Yes button
         yes_button = QPushButton("YES")
@@ -144,13 +124,14 @@ class OverrideDialog(QDialog):
                 background-color: #f57c00;
             }}
         """)
-        yes_button.clicked.connect(self._handle_accept)
+        yes_button.clicked.connect(self._handle_override_accept)
         
         button_layout.addWidget(no_button)
         button_layout.addWidget(yes_button)
         layout.addWidget(button_widget)
-        
+
     def _style_combo_box(self, combo):
+        """Style a combo box widget"""
         combo.setStyleSheet(f"""
             QComboBox {{
                 background-color: {self.parent.colors.surface};
@@ -162,28 +143,9 @@ class OverrideDialog(QDialog):
                 min-height: 40px;
             }}
         """)
-        
-    def _apply_styling(self):
-        self.setStyleSheet(f"""
-            QDialog {{
-                background: {self.parent.colors.background};
-                min-width: 600px;
-                min-height: 500px;
-            }}
-        """)
-        
-    def _set_geometry(self):
-        parent_geometry = self.parent.geometry()
-        dialog_width = 600
-        dialog_height = 500
-        
-        x = parent_geometry.x() + (parent_geometry.width() - dialog_width) // 2
-        y = parent_geometry.y() + (parent_geometry.height() - dialog_height) // 2
-        
-        self.setGeometry(x, y, dialog_width, dialog_height)
-        
-    def _handle_accept(self):
-        """Validate and handle acceptance"""
+
+    def _handle_override_accept(self):
+        """Handle override acceptance"""
         if self.user_combo.currentText() == "Select User":
             self.parent.show_status("Please select a user", "red")
             return
@@ -195,4 +157,23 @@ class OverrideDialog(QDialog):
         self.parent.override_logger.log_override(
             f"User: {self.user_combo.currentText()} - Reason: {self.reason_combo.currentText()}"
         )
-        self.accept() 
+        
+        # Apply override
+        for ppe in self.parent.ppe_status:
+            self.parent.ppe_status[ppe] = True
+        self.parent.safety_gate_locked = False
+        
+        self.parent.ros_node.publish_dispense_request('OVERRIDE')
+        self.parent.ros_node.publish_gate_status(self.parent.safety_gate_locked)
+        
+        self.parent.ppe_grid.buttons['override'].setEnabled(False)
+        self.parent.override_timer.start(int(self.parent.override_duration * 1000))
+        
+        self.parent.time_remaining = self.parent.override_duration
+        self.parent.update_countdown()
+        self.parent.countdown_timer.start()
+        
+        # Switch back to main content
+        self.parent.switchContent()
+        
+        self.parent.show_status(f"Override activated for {int(self.parent.override_duration)}s!", "orange") 

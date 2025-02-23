@@ -150,5 +150,45 @@
   {
     "timestamp": "2025-02-20 17:08:11",
     "reason": "User: Supervisor - Reason: Emergency Override"
+  },
+  {
+    "timestamp": "2025-02-22 14:04:28",
+    "reason": "User: Operator - Reason: System Maintenance"
+  },
+  {
+    "timestamp": "2025-02-22 15:07:50",
+    "reason": "User: Admin - Reason: Gate manually unlocked from settings"
+  },
+  {
+    "timestamp": "2025-02-22 15:07:52",
+    "reason": "User: Admin - Reason: Gate manually unlocked from settings"
+  },
+  {
+    "timestamp": "2025-02-22 15:07:56",
+    "reason": "User: Admin - Reason: Gate manually unlocked from settings"
+  },
+  {
+    "timestamp": "2025-02-22 15:07:57",
+    "reason": "User: Admin - Reason: Gate manually locked from settings"
+  },
+  {
+    "timestamp": "2025-02-22 15:07:58",
+    "reason": "User: Admin - Reason: Gate manually unlocked from settings"
+  },
+  {
+    "timestamp": "2025-02-22 15:07:58",
+    "reason": "User: Admin - Reason: Gate manually locked from settings"
+  },
+  {
+    "timestamp": "2025-02-22 15:08:08",
+    "reason": "User: Admin - Reason: Gate manually unlocked from settings"
+  },
+  {
+    "timestamp": "2025-02-22 15:08:10",
+    "reason": "User: Admin - Reason: Gate manually unlocked from settings"
+  },
+  {
+    "timestamp": "2025-02-22 15:40:24",
+    "reason": "User: Supervisor - Reason: PPE Not Detected"
   }
 ]

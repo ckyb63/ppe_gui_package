@@ -3,34 +3,45 @@ import os
 from collections import Counter
 
 def generate_report():
-    """Generate a report of dispensing events."""
-    log_file_path = os.path.join(os.getcwd(), "src", "ppe_gui_package", "gui_package", "main_gui_modules", "jsonSupport", "dispensing_log.json")
-    
-    # Check if the log file exists
-    if not os.path.exists(log_file_path):
-        return {"error": "No dispensing events recorded.", "data": {}, "events": []}
-
-    # Try to read the log file
+    """Generate a report from the dispensing log"""
     try:
-        with open(log_file_path, 'r') as log_file:
-            events = json.load(log_file)  # Load the entire JSON array
-            print(f"Loaded events: {events}")  # Debugging output
-    except json.JSONDecodeError:
-        return {"error": "Error reading dispensing log. The file may be corrupted.", "data": {}, "events": []}
+        # Get the log file path using the same path as JsonHandler
+        log_file = os.path.join(os.getcwd(), "src", "ppe_gui_package", "gui_package", 
+                               "main_gui_modules", "jsonSupport", "dispensing_log.json")
+        print(f"Looking for log file at: {log_file}")  # Debug print
+        
+        if not os.path.exists(log_file):
+            print("Log file not found")  # Debug print
+            #return {"events": [], "data": {}}
+            
+        with open(log_file, 'r') as f:
+            data = json.load(f)
+            #print(f"Loaded data: {data}")  # Debug print
+            
+        if not isinstance(data, dict) or "events" not in data:
+            print("Invalid data structure")  # Debug print
+            #return {"events": [], "data": {}}
+            
+        events = data.get("events", [])
+        #print(f"Events found: {events}")  # Debug print
+        
+        if not events:  # If events is empty
+            print("No events found")  # Debug print
+            #return {"events": [], "data": {}}
+            
+        # Count items
+        item_counts = Counter()
+        for event in events:
+            if isinstance(event, dict) and "item" in event:
+                if event["item"] != "OVERRIDE":  # Don't count OVERRIDE events
+                    item_counts[event["item"]] += 1
+                
+        result = {
+            "events": events,
+            "data": dict(item_counts)
+        }
+        #print(f"Generated report: {result}")  # Debug print
+        return result
     except Exception as e:
-        return {"error": f"An error occurred: {str(e)}", "data": {}, "events": []}
-
-    # Count items dispensed
-    item_counts = Counter(event['item'] for event in events)
-    
-    # Generate report as a string
-    report = "PPE Dispensing Report:\n"
-    for item, count in item_counts.items():
-        report += f"{item}: {count} times\n"
-    
-    return {
-        "error": None,
-        "data": item_counts,
-        "report": report,
-        "events": events  # Return the events to access timestamps
-    }
+        print(f"Error generating report: {e}")  # Debug print
+        #return {"events": [], "data": {}}

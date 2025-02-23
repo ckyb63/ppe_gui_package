@@ -1,43 +1,24 @@
 """
-Dialog windows for the PPE GUI
+Help content widget
 
 Author: Max Chen
 """
-from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
-                            QPushButton, QComboBox, QWidget, QTextEdit)
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
+                            QPushButton)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 
-class HelpDialog(QDialog):
+class HelpContent(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
-        self.setWindowTitle("PPE Vending Machine Help")
-        self.setModal(True)
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
         self._init_ui()
         
     def _init_ui(self):
         layout = QVBoxLayout(self)
         layout.setSpacing(20)
         
-        # Add title section
-        self._create_title_section(layout)
-        
-        # Add help content
-        self._create_help_content(layout)
-        
-        # Add buttons
-        self._create_button_section(layout)
-        
-        # Set dialog styling
-        self._apply_styling()
-        
-        # Match parent window size
-        if self.parent:
-            self.setGeometry(self.parent.geometry())
-
-    def _create_title_section(self, layout):
+        # Title section
         title_widget = QWidget()
         title_layout = QHBoxLayout(title_widget)
         title_layout.setAlignment(Qt.AlignCenter)
@@ -63,27 +44,26 @@ class HelpDialog(QDialog):
         title_layout.addWidget(help_icon)
         title_layout.addWidget(title_text)
         layout.addWidget(title_widget)
-
-    def _create_help_content(self, layout):
+        
+        # Help content
         help_text = """
         <h2>PPE Detection:</h2>
         <ul style='font-size: 14pt;'>
-        <li>The camera will detect the presence of required PPE</li>
-        <li>Green buttons (O) indicate detected PPE</li>
-        <li>Red buttons (X) indicate missing PPE</li>
-        <li>The user may need to rotate head, look left and right, to fully detect all required PPE</li>
+        <li>The AI detects required PPE using the camera.</li>
+        <li>Rotate your head slightly to ensure all PPE is visible.</li>
+        <li>Green buttons (O) indicate detected PPE; red buttons (X) indicate missing PPE.</li>
         </ul>
 
-        <h2>Dispensing:</h2>
+        <h2>Dispensing PPE:</h2>
         <ul style='font-size: 14pt;'>
-        <li>Click on the missing PPE button to dispense that item</li>
-        <li>The safety gate remains locked until all required PPE is detected</li>
+        <li>Click on the PPE item to dispense if you do not have it.</li>
+        <li>The safety gate will remain locked until all required PPE is detected.</li>
         </ul>
 
         <h2>Safety Override:</h2>
         <ul style='font-size: 14pt;'>
-        <li>Orange OVERRIDE button for emergency or administrative override</li>
-        <li>It will log the user and time of the override</li>
+        <li>Use the orange OVERRIDE button for emergency or administrative overrides.</li>
+        <li>All overrides are logged with the user, reason, and timestamp.</li>
         </ul>
         """
         text_label = QLabel(help_text)
@@ -99,20 +79,20 @@ class HelpDialog(QDialog):
             }}
         """)
         layout.addWidget(text_label)
-
-    def _create_button_section(self, layout):
+        
+        # Button container
         button_container = QWidget()
         button_layout = QHBoxLayout(button_container)
         button_layout.setSpacing(40)
         
         # Accessibility toggle
-        self.toggle_button = QPushButton(
+        self.help_toggle_button = QPushButton(
             "Accessibility O/X OFF" if not self.parent.accessibility_mode else "Accessibility O/X ON"
         )
-        self.toggle_button.setFont(QFont('Arial', 20, QFont.Bold))
-        self.toggle_button.setFixedSize(400, 80)
-        self._update_toggle_button_style()
-        self.toggle_button.clicked.connect(self.toggle_accessibility)
+        self.help_toggle_button.setFont(QFont('Arial', 20, QFont.Bold))
+        self.help_toggle_button.setFixedSize(300, 80)
+        self._update_help_toggle_button_style()
+        self.help_toggle_button.clicked.connect(self._toggle_accessibility)
         
         # OK button
         ok_button = QPushButton("OK")
@@ -129,14 +109,15 @@ class HelpDialog(QDialog):
                 background-color: {self.parent.colors.primary_dark};
             }}
         """)
-        ok_button.clicked.connect(self.accept)
+        ok_button.clicked.connect(lambda: self.parent.switchContent())
         
-        button_layout.addWidget(self.toggle_button)
+        button_layout.addWidget(self.help_toggle_button)
         button_layout.addWidget(ok_button)
         layout.addWidget(button_container)
 
-    def _update_toggle_button_style(self):
-        self.toggle_button.setStyleSheet(f"""
+    def _update_help_toggle_button_style(self):
+        """Update help toggle button styling"""
+        self.help_toggle_button.setStyleSheet(f"""
             QPushButton {{
                 background-color: {self.parent.colors.success if self.parent.accessibility_mode else self.parent.colors.neutral};
                 color: white;
@@ -148,21 +129,18 @@ class HelpDialog(QDialog):
             }}
         """)
 
-    def _apply_styling(self):
-        self.setStyleSheet(f"""
-            QDialog {{
-                background: {self.parent.colors.background};
-            }}
-            QLabel {{
-                color: {self.parent.colors.text};
-            }}
-        """)
+    def update_toggle_button(self, text):
+        """Update the toggle button text and style"""
+        self.help_toggle_button.setText(text)
+        self._update_help_toggle_button_style()
 
-    def toggle_accessibility(self):
-        """Toggle accessibility mode"""
+    def _toggle_accessibility(self):
+        """Handle accessibility toggle from help screen"""
         self.parent.accessibility_mode = not self.parent.accessibility_mode
-        self.toggle_button.setText(
+        # Update button text and style immediately
+        self.help_toggle_button.setText(
             "Accessibility O/X ON" if self.parent.accessibility_mode else "Accessibility O/X OFF"
         )
-        self._update_toggle_button_style()
-        self.parent.update_status_displays() 
+        self._update_help_toggle_button_style()
+        # Sync with parent to update other UI elements
+        self.parent._sync_accessibility_buttons()

@@ -1,6 +1,6 @@
 # GUI Package for PPE Vending Machine
 
-![Version](https://img.shields.io/badge/Version-0.9.1-blue)
+[![Version](https://img.shields.io/badge/Version-0.9.1-blue)](CHANGELOG.md#latest-release)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
 ![PyQt5](https://img.shields.io/badge/PyQt5-5.15%2B-blue?logo=qt&logoColor=white)
 ![AVend API](https://img.shields.io/badge/AVend%20API-v1.2.2-blue?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyek0xMiAyMGMtNC40MiAwLTgtMy41OC04LThzMy41OC04IDgtOCA4IDMuNTggOCA4LTMuNTggOC04IDh6Ii8+PC9zdmc+)
@@ -17,6 +17,7 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Topics](#topics)
+- [Node and Topic Relationships](#node-and-topic-relationships)
 - [Screenshots](#screenshots)
 - [Author](#author)
 
@@ -128,14 +129,12 @@ dummy_nodes.launch.py
 
 ## Topics
 
-### Subscribed Topics
 - `ppe_status` (std_msgs/String): Receives PPE detection status
   - Format: "hardhat:true, beardnet:false, gloves:true, glasses:true, earplugs:false"
 
 - `ppeInventoryStatus` (std_msgs/String): Receives inventory status updates
   - Format: JSON string with inventory levels
 
-### Published Topics
 - `pleaseDispense` (std_msgs/String): Sends dispense requests
   - Values: "hardhat", "beardnet", "gloves", "glasses", "earplugs", "OVERRIDE"
 

@@ -12,6 +12,23 @@
 
 ## [Latest Release]
 
+## [0.9.2] - 2025-02-23
+### Added
+- Handlers for the settings, json, accessibility, and report files in the utils folder.
+
+### Changed
+- Refactored main_window.py to be more modular and easier to maintain.
+    - Override Content
+    - Help Content
+    - Settings Content
+    - Several Handler scripts as well
+- Changed formatting of the dispensing log.
+- Ensured all functions are working as expected.
+- Ensured json files are being saved in the proper directory.
+
+### Notes
+- All scripts were reworked and is now being checked for any bugs and issues. 
+
 ## [0.9.1] - 2025-02-22
 ### Added
 - Readme file info.
