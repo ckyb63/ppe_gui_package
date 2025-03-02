@@ -8,6 +8,7 @@
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-orange?logo=ubuntu&logoColor=white)
 
 <details>
+
 <summary>Table of Contents</summary>
 
 - [Introduction](#introduction)
@@ -30,26 +31,31 @@ The **PPE Vending Machine GUI Package** is a ROS2-based application designed to 
 ## Features
 
 #### Detection and Control
+
 - **Real-time PPE Detection**: Monitor PPE detection status in real-time for immediate feedback.
 - **Automated Safety Gate Control**: Implement logic for automatic control of the safety gate.
 - **Safety Gate Override System**: Allow the safety gate to be overridden provided user and reason information.
 - **PPE Dispensing System**: Send PPE dispense requests to the vending machine hardware based on GUI inputs.
 
 #### Integration and Simulation
+
 - **ROS2 Integration**: Seamlessly interface with vending machine hardware and computer vision models using ROS2.
 - **Simulation Support**: Test nodes are provided to simulate and test the GUI for demonstrations.
 
 #### User Experience
+
 - **Touchscreen Friendly**: GUI is developed with a touchscreen in mind with large touch targets and clear text labels.
 - **Theme Support**: The GUI supports a dark theme and a light theme.
 - **Accessibility Features**: The GUI supports a toggle for O/X status indicators, for users with visual impairments.
 
 #### Management and Reporting
+
 - **ESP32 Safety Gate Controller**: An ESP32 microcontroller is used to control the safety gate.
 - **Inventory Management**: Inventory is managed with a JSON file and can be viewed live from the GUI.
 - **Analytical Reporting**: Generate insightful reports with visualizations of PPE dispensing activities, including pie and bar charts, to aid in inventory management and decision-making. A ROS bag file is also recorded for later analysis using services such as AWS S3.
 
 ### Update Changelog
+
 For a detailed list of changes, bug fixes, new features, and the [Latest Release](CHANGELOG.md#latest-release), please refer to the [CHANGELOG](CHANGELOG.md).
 
 ## Dependencies
@@ -61,30 +67,35 @@ For a detailed list of changes, bug fixes, new features, and the [Latest Release
 ## Installation
 
 1. Create a ROS2 workspace (if you don't have one):
+
     ```bash
     mkdir -p ~/ros2_ws/src
     cd ~/ros2_ws
     ```
 
 2. Clone this package:
+
     ```bash
     cd src
     git clone https://github.com/ckyb63/ppe_gui_package.git
     ```
 
 3. Install dependencies using `rosdep`:
+
     ```bash
     cd ~/ros2_ws
     rosdep install --from-paths src --ignore-src -r -y
     ```
 
 4. Install additional dependencies:
+
     ```bash
     sudo apt update
     sudo apt install python3-pyqt5
     ```
 
 5. Build and source the workspace:
+
     ```bash
     cd ~/ros2_ws
     colcon build --packages-select gui_package --symlink-install
@@ -92,6 +103,7 @@ For a detailed list of changes, bug fixes, new features, and the [Latest Release
     ```
 
 6. Run the GUI:
+
     ```bash
     ros2 launch gui_package main_ppe_gui.launch.py
     ```
