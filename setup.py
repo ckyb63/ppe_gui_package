@@ -6,7 +6,7 @@ package_name = 'gui_package'
 
 setup(
     name=package_name,
-    version='0.9.3',
+    version='0.9.5',
     packages=find_packages(),
     data_files=[
         # Explicitly specify the marker file installation
