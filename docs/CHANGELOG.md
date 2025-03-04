@@ -5,15 +5,21 @@
 ### Planned
 
 - Main GUI Window to contain a live Camera Feed
-    - Live Camera Feed to the Main GUI window to show the PPE detection with highlighted PPE items
+  - Live Camera Feed to the Main GUI window to show the PPE detection with highlighted PPE items
 
 ### Possible Next Steps
 
 - User Authentication
-    - Implement either facial recognition or a QR/bar code scanner to authenticate the users (admins/employees).
+  - Implement either facial recognition or a QR/bar code scanner to authenticate the users (admins/employees).
 - Upgrade and migrate from PyQt5 to PyQt6
 
 ## [Latest Release]
+
+## [0.9.5] - 2025-03-04
+
+### Added
+
+- Magnetic Lock pin to the Arduino ESP32 Code. (It is Pin D26)
 
 ## [0.9.3] - 2025-03-01
 
