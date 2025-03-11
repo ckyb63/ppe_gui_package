@@ -7,13 +7,13 @@
 - Main GUI Window to contain a live Camera Feed
   - Live Camera Feed to the Main GUI window to show the PPE detection with highlighted PPE items
 
-### Possible Next Steps
-
-- User Authentication
-  - Implement either facial recognition or a QR/bar code scanner to authenticate the users (admins/employees).
-- Upgrade and migrate from PyQt5 to PyQt6
-
 ## [Latest Release]
+
+## [0.9.6] - 2025-03-11
+
+### Notes
+
+- Updated documentation.
 
 ## [0.9.5] - 2025-03-04
 
@@ -39,17 +39,17 @@
 ### Changed
 
 - Refactored main_window.py to be more modular and easier to maintain.
-    - Override Content
-    - Help Content
-    - Settings Content
-    - Several Handler scripts as well
+  - Override Content
+  - Help Content
+  - Settings Content
+  - Several Handler scripts as well
 - Changed formatting of the dispensing log.
 - Ensured all functions are working as expected.
 - Ensured json files are being saved in the proper directory.
 
 ### Notes
 
-- All scripts were reworked and is now being checked for any bugs and issues. 
+- All scripts were reworked and is now being checked for any bugs and issues.
 
 ## [0.9.1] - 2025-02-22
 
@@ -60,7 +60,7 @@
 - Configuration file for the Avend Connector Node
 - Logger for the Avend Connector Node
 - The temporary avend node is now complete and will be improved in future releases after testing with real hardware.
-- Added a subscriber for the Camera Feed to the main GUI window, but it is not fully implemented. 
+- Added a subscriber for the Camera Feed to the main GUI window, but it is not fully implemented.
 - Added a graphical chart of the nodes and topic relationships to the README.md file.
 
 ### Notes
@@ -71,9 +71,9 @@
 
 ## [0.9.0] - 2025-02-21
 
-### Added 
+### Added
 
-- Added the node for the GUI to interface with the Avend Smart Vending API for Dispensing and Inventory Status. It will be fully implemented in the following releases. 
+- Added the node for the GUI to interface with the Avend Smart Vending API for Dispensing and Inventory Status. It will be fully implemented in the following releases.
 
 ## [0.8.3] - 2025-02-20
 
@@ -102,7 +102,7 @@
 ### Fixed
 
 - Fixed main_gui launch file to shutdown the three nodes together when the main GUI is closed.
-- Reverted some major but kept minor structure changes so the package isn't just completely broken. 
+- Reverted some major but kept minor structure changes so the package isn't just completely broken.
 
 ## [0.8.1] - 2025-02-19
 
@@ -174,7 +174,7 @@
 
 ### Added
 
-- Added state logic to the ESP32 code. 
+- Added state logic to the ESP32 code.
 - Added a open gate button to the settings override tab
 
 ## [0.7.0] - 2025-02-13
@@ -250,7 +250,7 @@
 ### Added
 
 - Enhanced override system with user detailed user and reason information logging
-    - Added user selection dropdown for overrides
+  - Added user selection dropdown for overrides
 - Added reason tracking for override actions
 - Enhanced override dialog UI with themed dropdowns
 - Added validation for override user and reason selection

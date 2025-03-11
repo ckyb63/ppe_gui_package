@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>gui_package</name>
-  <version>0.9.5</version>
+  <version>0.9.6</version>
   <description>
     A ROS2 package containing a PyQt5-based graphical user interface for controlling and monitoring a 
     PPE (Personal Protective Equipment) vending machine.

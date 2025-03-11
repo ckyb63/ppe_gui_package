@@ -241,4 +241,3 @@ This chart provides a visual representation of how the various nodes communicate
 ## Author
 
 - Max Chen
-- Email: ckyb63@gmail.com
