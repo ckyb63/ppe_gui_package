@@ -16,35 +16,42 @@ class OverrideContent(QWidget):
         
     def _init_ui(self):
         layout = QVBoxLayout(self)
-        layout.setSpacing(20)
+        layout.setSpacing(30)
+        layout.setContentsMargins(20, 30, 20, 30)
         
         # Warning section
         warning_widget = QWidget()
         warning_layout = QHBoxLayout(warning_widget)
         warning_layout.setAlignment(Qt.AlignCenter)
+        warning_layout.setSpacing(20)
         
         warning_icon = QLabel("⚠️")
-        warning_icon.setFont(QFont('Arial', 48))
+        warning_icon.setFont(QFont('Arial', 56))
         warning_icon.setStyleSheet(f"color: {self.parent.colors.warning};")
         warning_layout.addWidget(warning_icon)
         
         warning_text = QLabel("WARNING")
-        warning_text.setFont(QFont('Arial', 36, QFont.Bold))
+        warning_text.setFont(QFont('Arial', 42, QFont.Bold))
         warning_text.setStyleSheet(f"color: {self.parent.colors.warning};")
         warning_layout.addWidget(warning_text)
+
+        warning_icon2 = QLabel("⚠️")
+        warning_icon2.setFont(QFont('Arial', 56))
+        warning_icon2.setStyleSheet(f"color: {self.parent.colors.warning};")
+        warning_layout.addWidget(warning_icon2)
         
         layout.addWidget(warning_widget)
         
         # Message section
         message = QLabel("Are you sure you want to override\nthe safety system?")
-        message.setFont(QFont('Arial', 24))
+        message.setFont(QFont('Arial', 28))
         message.setAlignment(Qt.AlignCenter)
         message.setWordWrap(True)
         message.setStyleSheet(f"color: {self.parent.colors.text};")
         layout.addWidget(message)
         
         info_text = QLabel(f"This will unlock the safety gate for {int(self.parent.override_duration)} seconds.")
-        info_text.setFont(QFont('Arial', 18))
+        info_text.setFont(QFont('Arial', 22))
         info_text.setAlignment(Qt.AlignCenter)
         info_text.setWordWrap(True)
         info_text.setStyleSheet(f"color: {self.parent.colors.text_secondary};")
@@ -52,45 +59,41 @@ class OverrideContent(QWidget):
         
         # Form section
         form_widget = QWidget()
-        form_layout = QFormLayout(form_widget)
-        form_layout.setSpacing(15)
+        form_layout = QVBoxLayout(form_widget)
+        form_layout.setSpacing(25)
+        form_layout.setContentsMargins(20, 20, 20, 20)
+        form_layout.setAlignment(Qt.AlignCenter)
         
         # User dropdown
         self.user_combo = QComboBox()
-        self.user_combo.setFont(QFont('Arial', 14))
+        self.user_combo.setFont(QFont('Arial', 20))
         self.user_combo.addItems(["Select User", "Operator", "Supervisor", "Admin", "Maintenance"])
         self.user_combo.setCurrentText("Select User")
         self._style_combo_box(self.user_combo)
+        form_layout.addWidget(self.user_combo)
         
         # Reason dropdown
         self.reason_combo = QComboBox()
-        self.reason_combo.setFont(QFont('Arial', 14))
+        self.reason_combo.setFont(QFont('Arial', 20))
         self.reason_combo.addItems([
             "Select Reason",
             "PPE Not Detected",
             "System Maintenance",
             "Emergency Override",
             "Admin Access",
-            "Calibration Required"
+            "Calibration Required",
+            "Other"
         ])
         self.reason_combo.setCurrentText("Select Reason")
         self._style_combo_box(self.reason_combo)
-        
-        # Add to form
-        form_layout.addRow("User:", self.user_combo)
-        form_layout.addRow("Reason:", self.reason_combo)
-        
-        # Style form labels
-        for label in form_widget.findChildren(QLabel):
-            label.setFont(QFont('Arial', 14))
-            label.setStyleSheet(f"color: {self.parent.colors.text};")
+        form_layout.addWidget(self.reason_combo)
             
         layout.addWidget(form_widget)
         
         # Button section
         button_widget = QWidget()
         button_layout = QHBoxLayout(button_widget)
-        button_layout.setSpacing(20)
+        button_layout.setSpacing(30)
         
         # No button
         no_button = QPushButton("NO")
@@ -136,11 +139,26 @@ class OverrideContent(QWidget):
             QComboBox {{
                 background-color: {self.parent.colors.surface};
                 color: {self.parent.colors.text};
-                border: 1px solid {self.parent.colors.neutral};
-                border-radius: 5px;
+                border: 2px solid {self.parent.colors.neutral};
+                border-radius: 8px;
+                padding: 12px;
+                min-width: 300px;
+                min-height: 60px;
+            }}
+            QComboBox::drop-down {{
+                border: none;
+                width: 50px;
+            }}
+            QComboBox::down-arrow {{
+                width: 30px;
+                height: 30px;
+            }}
+            QComboBox QAbstractItemView {{
+                background-color: {self.parent.colors.surface};
+                color: {self.parent.colors.text};
+                selection-background-color: {self.parent.colors.primary};
+                selection-color: white;
                 padding: 8px;
-                min-width: 200px;
-                min-height: 40px;
             }}
         """)
 

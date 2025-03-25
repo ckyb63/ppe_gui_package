@@ -57,21 +57,21 @@ class SettingsContent(QWidget):
         
         # Custom tab bar
         tab_bar = self.tabs.tabBar()
-        tab_bar.setStyleSheet("""
-            QTabBar::tab {
-                background: #007bff;  /* Default color */
+        tab_bar.setStyleSheet(f"""
+            QTabBar::tab {{
+                background: {self.parent.colors.primary};  /* Default color */
                 color: white;
                 padding: 10px;
-                border: 1px solid #ccc;
+                border: 1px solid {self.parent.colors.text_secondary};
                 border-bottom: none;
                 min-width: 75px;
-            }
-            QTabBar::tab:selected {
-                background: #0056b3;  /* Selected color */
-            }
-            QTabBar::tab:!selected {
-                background: #007bff;  /* Unselected color */
-            }
+            }}
+            QTabBar::tab:selected {{
+                background: {self.parent.colors.primary_dark};  /* Selected color */
+            }}
+            QTabBar::tab:!selected {{
+                background: {self.parent.colors.primary};  /* Unselected color */
+            }}
         """)
         
         # Add tabs
@@ -138,7 +138,7 @@ class InfoTab(QWidget):
         
         info_label = QLabel("Settings Tabs Overview")
         info_label.setFont(QFont('Arial', 24, QFont.Bold))
-        info_label.setStyleSheet("color: #333;")  # Dark text color
+        info_label.setStyleSheet(f"color: {self.parent.parent.colors.text};")
         layout.addWidget(info_label)
 
         # List of tabs and their descriptions
@@ -153,7 +153,7 @@ class InfoTab(QWidget):
         for tab_name, description in tab_info:
             label = QLabel(f"{tab_name} {description}")
             label.setFont(QFont('Arial', 16))  # Slightly smaller font for descriptions
-            label.setStyleSheet("color: #555; padding: 5px;")  # Medium gray text with padding
+            label.setStyleSheet(f"color: {self.parent.parent.colors.text}; padding: 5px;")  # Medium gray text with padding
             layout.addWidget(label)
 
 class ColorsTab(QWidget):
@@ -170,11 +170,13 @@ class ColorsTab(QWidget):
         # Create tab title
         colors_label = QLabel("Appearance")
         colors_label.setFont(QFont('Arial', 24, QFont.Bold))
+        colors_label.setStyleSheet(f"color: {self.parent.parent.colors.text};")
         layout.addWidget(colors_label)
         
         # Color scheme section
         scheme_label = QLabel("Color Scheme:")
         scheme_label.setFont(QFont('Arial', 18))
+        scheme_label.setStyleSheet(f"color: {self.parent.parent.colors.text};")
         layout.addWidget(scheme_label)
         
         self.color_scheme_combo = QComboBox()
@@ -182,16 +184,30 @@ class ColorsTab(QWidget):
         self.color_scheme_combo.setFont(QFont('Arial', 20))
         self.color_scheme_combo.setMinimumHeight(70)
         self.color_scheme_combo.setFixedHeight(50)
-        self.color_scheme_combo.setStyleSheet("""
-            QComboBox {
+        self.color_scheme_combo.setStyleSheet(f"""
+            QComboBox {{
                 padding: 10px;
                 min-width: 200px;
                 font-size: 24px;
-            }
+                background-color: {self.parent.parent.colors.surface};
+                color: {self.parent.parent.colors.text};
+                border: 1px solid {self.parent.parent.colors.text_secondary};
+                border-radius: 5px;
+            }}
+            QComboBox::drop-down {{
+                border: none;
+            }}
+            QComboBox::down-arrow {{
+                image: none;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 5px solid {self.parent.parent.colors.text};
+                margin-right: 10px;
+            }}
         """)
         self.color_scheme_combo.addItems(["Light", "Dark"])
         self.color_scheme_combo.setCurrentText("Dark" if self.parent.parent.colors.is_dark else "Light")
-        self.color_scheme_combo.currentTextChanged.connect(self.parent.parent._apply_theme_preview)
+        self.color_scheme_combo.currentTextChanged.connect(lambda text: self.parent.parent._apply_theme_preview(text))
         layout.addWidget(self.color_scheme_combo)
         
         # Add separator
@@ -211,10 +227,25 @@ class ColorsTab(QWidget):
         self.settings_toggle_button.setFont(QFont('Arial', 24, QFont.Bold))
         self.settings_toggle_button.setFixedHeight(90)
         self._update_toggle_button_style()
-        self.settings_toggle_button.clicked.connect(self.toggle_accessibility)
+        self.settings_toggle_button.clicked.connect(self._toggle_accessibility)
         layout.addWidget(self.settings_toggle_button)
         
         layout.addStretch()
+
+    def _toggle_accessibility(self):
+        """Toggle accessibility mode and update button text"""
+        # Toggle the mode through the parent's parent (main window)
+        self.parent.parent.accessibility_mode = not self.parent.parent.accessibility_mode
+        # Update the accessibility handler
+        self.parent.parent.accessibility_handler.accessibility_mode = self.parent.parent.accessibility_mode
+        # Update button text
+        self.settings_toggle_button.setText(
+            "Accessibility O/X ON" if self.parent.parent.accessibility_mode else "Accessibility O/X OFF"
+        )
+        # Update button style
+        self._update_toggle_button_style()
+        # Sync all buttons
+        self.parent.parent._sync_accessibility_buttons()
 
     def _update_toggle_button_style(self):
         """Update settings toggle button styling"""
@@ -224,18 +255,16 @@ class ColorsTab(QWidget):
                 color: white;
                 border: none;
                 border-radius: 10px;
+                padding: 10px;
             }}
             QPushButton:hover {{
                 background-color: {self.parent.parent.colors.success if self.parent.parent.accessibility_mode else '#555'};
+                opacity: 0.9;
+            }}
+            QPushButton:pressed {{
+                opacity: 0.8;
             }}
         """)
-
-    def toggle_accessibility(self):
-        self.parent.parent.toggle_accessibility_settings()
-        # Update button text after toggle
-        self.settings_toggle_button.setText(
-            "Accessibility O/X ON" if self.parent.parent.accessibility_mode else "Accessibility O/X OFF"
-        )
 
 class TimingTab(QWidget):
     def __init__(self, parent=None):

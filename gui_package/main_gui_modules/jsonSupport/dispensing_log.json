@@ -27,6 +27,34 @@
     {
       "item": "gloves",
       "timestamp": "2025-03-01 18:55:22"
+    },
+    {
+      "item": "safetyglasses",
+      "timestamp": "2025-03-24 21:21:54"
+    },
+    {
+      "item": "safetyglasses",
+      "timestamp": "2025-03-24 21:38:49"
+    },
+    {
+      "item": "hardhat",
+      "timestamp": "2025-03-24 21:38:50"
+    },
+    {
+      "item": "beardnet",
+      "timestamp": "2025-03-24 21:38:51"
+    },
+    {
+      "item": "gloves",
+      "timestamp": "2025-03-24 21:38:52"
+    },
+    {
+      "item": "gloves",
+      "timestamp": "2025-03-24 21:38:54"
+    },
+    {
+      "item": "earplugs",
+      "timestamp": "2025-03-24 21:38:55"
     }
   ]
 }

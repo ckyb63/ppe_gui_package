@@ -123,24 +123,33 @@ class HelpContent(QWidget):
                 color: white;
                 border: none;
                 border-radius: 10px;
+                padding: 10px;
             }}
             QPushButton:hover {{
                 background-color: {self.parent.colors.success if self.parent.accessibility_mode else '#555'};
+                opacity: 0.9;
+            }}
+            QPushButton:pressed {{
+                opacity: 0.8;
             }}
         """)
 
     def update_toggle_button(self, text):
-        """Update the toggle button text and style"""
+        """Update the accessibility toggle button text"""
         self.help_toggle_button.setText(text)
         self._update_help_toggle_button_style()
 
     def _toggle_accessibility(self):
-        """Handle accessibility toggle from help screen"""
+        """Toggle accessibility mode and update button text"""
+        # Toggle the mode through the parent
         self.parent.accessibility_mode = not self.parent.accessibility_mode
-        # Update button text and style immediately
+        # Update the accessibility handler
+        self.parent.accessibility_handler.accessibility_mode = self.parent.accessibility_mode
+        # Update button text
         self.help_toggle_button.setText(
             "Accessibility O/X ON" if self.parent.accessibility_mode else "Accessibility O/X OFF"
         )
+        # Update button style
         self._update_help_toggle_button_style()
-        # Sync with parent to update other UI elements
+        # Sync all buttons
         self.parent._sync_accessibility_buttons()

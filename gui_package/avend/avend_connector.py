@@ -26,7 +26,7 @@ import json
 from datetime import datetime
 import os
 from urllib.parse import quote
-from .utils.logger import AvendLogger
+from .logger import AvendLogger
 import yaml
 import time
 

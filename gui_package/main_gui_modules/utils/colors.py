@@ -16,27 +16,27 @@ class ColorScheme:
         self.is_dark = is_dark
         self.update_colors()
         
-    # Update the colors of the GUI
     def update_colors(self):
+        """Update the colors based on the current theme"""
         if self.is_dark:
-            self.background = "#1e1e1e"
-            self.surface = "#2d2d2d"
-            self.text = "#ffffff"
-            self.text_secondary = "#aaaaaa"
-            self.primary = "#007bff"
-            self.primary_dark = "#0056b3"
-            self.success = "#28a745"
-            self.warning = "#ffc107"
-            self.danger = "#dc3545"
-            self.neutral = "#666666"
+            self.background = "#1e1e1e"  # Dark background
+            self.surface = "#2d2d2d"     # Slightly lighter dark
+            self.text = "#ffffff"        # White text
+            self.text_secondary = "#aaaaaa"  # Light gray text
+            self.primary = "#007bff"     # Blue
+            self.primary_dark = "#0056b3" # Darker blue
+            self.success = "#28a745"     # Green
+            self.warning = "#ffc107"     # Yellow
+            self.danger = "#dc3545"      # Red
+            self.neutral = "#666666"     # Gray
         else:
-            self.background = "#ffffff"
-            self.surface = "#f8f9fa"
-            self.text = "#000000"
-            self.text_secondary = "#666666"
-            self.primary = "#007bff"
-            self.primary_dark = "#0056b3"
-            self.success = "#4caf50"
-            self.warning = "#ff9800"
-            self.danger = "#ff6b6b"
-            self.neutral = "#666666" 
+            self.background = "#ffffff"  # White background
+            self.surface = "#f8f9fa"     # Light gray surface
+            self.text = "#000000"        # Black text
+            self.text_secondary = "#666666"  # Dark gray text
+            self.primary = "#007bff"     # Blue
+            self.primary_dark = "#0056b3" # Darker blue
+            self.success = "#4caf50"     # Green
+            self.warning = "#ff9800"     # Orange
+            self.danger = "#ff6b6b"      # Red
+            self.neutral = "#666666"     # Gray 

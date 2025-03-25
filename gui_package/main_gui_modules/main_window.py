@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
 from std_msgs.msg import String
 
-from .widgets.sections import TitleSection, StatusSection, CameraSection, PPEGridSection
+from .widgets.sections import TitleSection, StatusSection, PPEGridSection
 from .utils.colors import ColorScheme
 from .utils.logger import OverrideLogger
 from .widgets.override import OverrideContent
@@ -104,7 +104,7 @@ class PPEVendingMachineGUI(QMainWindow):
         # Set window properties
         self.setWindowTitle('PPE Vending Machine')
         self.setMinimumSize(300, 240)
-        self.setFixedSize(600, 950)
+        self.setFixedSize(600, 900)  # Increased height to 900 pixels
         self.center()
         
         # Initial layout update
@@ -118,7 +118,7 @@ class PPEVendingMachineGUI(QMainWindow):
         # Create sections
         self.title_section = TitleSection(self)
         self.status_section = StatusSection(self)
-        self.camera_section = CameraSection(self)
+        # self.camera_section = CameraSection(self)  # Comment out camera section
         self.ppe_grid = PPEGridSection(self)
         
         # Add to layout based on orientation
@@ -195,10 +195,10 @@ class PPEVendingMachineGUI(QMainWindow):
             self.ppe_grid.show()
             left_layout.addWidget(self.ppe_grid)
             
-            # Right panel (camera)
-            self.camera_section.show()
+            # Right panel (camera) - commented out
+            # self.camera_section.show()
             landscape_layout.addWidget(left_widget, 1)
-            landscape_layout.addWidget(self.camera_section, 2)
+            # landscape_layout.addWidget(self.camera_section, 2)
             
             self.main_layout.addWidget(landscape)
         else:  # Portrait mode
@@ -207,12 +207,12 @@ class PPEVendingMachineGUI(QMainWindow):
             
             self.title_section.show()
             self.status_section.show()
-            self.camera_section.show()
+            # self.camera_section.show()
             self.ppe_grid.show()
             
             layout.addWidget(self.title_section)
             layout.addWidget(self.status_section)
-            layout.addWidget(self.camera_section, 1)
+            # layout.addWidget(self.camera_section, 1)
             layout.addWidget(self.ppe_grid)
             
             self.main_layout.addWidget(portrait)
@@ -244,7 +244,7 @@ class PPEVendingMachineGUI(QMainWindow):
             # Show main content widgets
             self.title_section.show()
             self.status_section.show()
-            self.camera_section.show()
+            # self.camera_section.show()
             self.ppe_grid.show()
             
             # Add widgets to layout based on orientation
@@ -424,22 +424,56 @@ class PPEVendingMachineGUI(QMainWindow):
 
     def apply_theme(self):
         """Apply current color scheme to all widgets"""
-        # Apply to main window
+        # Apply to main window and central widget
         self.setStyleSheet(f"""
-            QMainWindow {{
+            QMainWindow, QWidget {{
                 background-color: {self.colors.background};
+                color: {self.colors.text};
             }}
             QLabel {{
                 color: {self.colors.text};
+                background-color: transparent;
             }}
-            QWidget {{
-                background-color: {self.colors.background};
+            QWidget#status_container {{
+                background-color: {self.colors.surface};
+                border-radius: 15px;
+                padding: 10px;
+            }}
+            QTextEdit, QLineEdit {{
+                color: {self.colors.text};
+                background-color: {self.colors.surface};
+                border: 1px solid {self.colors.text_secondary};
+                border-radius: 5px;
+                padding: 5px;
+            }}
+            QTableWidget {{
+                color: {self.colors.text};
+                background-color: {self.colors.surface};
+                border: 1px solid {self.colors.text_secondary};
+            }}
+            QTableWidget::item {{
                 color: {self.colors.text};
             }}
+            QHeaderView::section {{
+                background-color: {self.colors.surface};
+                color: {self.colors.text};
+                border: 1px solid {self.colors.text_secondary};
+            }}
+            QTabWidget::pane {{
+                border: 1px solid {self.colors.text_secondary};
+                background-color: {self.colors.surface};
+            }}
+            QTabBar::tab {{
+                background-color: {self.colors.surface};
+                color: {self.colors.text};
+                border: 1px solid {self.colors.text_secondary};
+                padding: 5px;
+            }}
+            QTabBar::tab:selected {{
+                background-color: {self.colors.primary};
+                color: white;
+            }}
         """)
-        
-        # Update camera placeholder
-        self.camera_section.update_styling()
         
         # Force update of all buttons
         self.update_status_displays()
@@ -481,9 +515,9 @@ class PPEVendingMachineGUI(QMainWindow):
         left_layout.addWidget(self.ppe_grid)
         
         # Right panel (camera)
-        self.camera_section.show()
+        # self.camera_section.show()
         landscape_layout.addWidget(left_widget, 1)
-        landscape_layout.addWidget(self.camera_section, 2)
+        # landscape_layout.addWidget(self.camera_section, 2)
         
         self.main_layout.addWidget(landscape)
 
@@ -494,12 +528,12 @@ class PPEVendingMachineGUI(QMainWindow):
         
         self.title_section.show()
         self.status_section.show()
-        self.camera_section.show()
+        # self.camera_section.show()
         self.ppe_grid.show()
         
         layout.addWidget(self.title_section)
         layout.addWidget(self.status_section)
-        layout.addWidget(self.camera_section, 1)
+        # layout.addWidget(self.camera_section, 1)
         layout.addWidget(self.ppe_grid)
         
         self.main_layout.addWidget(portrait)
@@ -615,16 +649,70 @@ class PPEVendingMachineGUI(QMainWindow):
         except Exception as e:
             print(f"Error saving inventory data: {e}")
 
-    def _apply_theme_preview(self):
+    def _apply_theme_preview(self, theme_name=None):
         """Apply theme changes in real-time"""
-        settings = self.findChild(SettingsContent)
-        if settings:
-            colors_tab = settings.tabs.widget(1)  # Colors tab is at index 1
-            is_dark = colors_tab.color_scheme_combo.currentText() == "Dark"
-            if is_dark != self.colors.is_dark:
-                self.colors.is_dark = is_dark
-                self.colors.update_colors()
-                self.apply_theme()
+        if theme_name is None:
+            settings = self.findChild(SettingsContent)
+            if settings:
+                colors_tab = settings.tabs.widget(1)  # Colors tab is at index 1
+                theme_name = colors_tab.color_scheme_combo.currentText()
+        
+        is_dark = theme_name == "Dark"
+        if is_dark != self.colors.is_dark:
+            self.colors.is_dark = is_dark
+            self.colors.update_colors()
+            self.apply_theme()
+            
+            # Update all sections
+            if hasattr(self, 'title_section'):
+                self.title_section.setStyleSheet(f"""
+                    QWidget {{
+                        background-color: {self.colors.background};
+                    }}
+                    QLabel {{
+                        color: {self.colors.text};
+                    }}
+                """)
+            
+            if hasattr(self, 'status_section'):
+                self.status_section.setStyleSheet(f"""
+                    QWidget#status_container {{
+                        background-color: {self.colors.surface};
+                        border-radius: 15px;
+                    }}
+                    QLabel {{
+                        color: {self.colors.text};
+                    }}
+                """)
+            
+            if hasattr(self, 'ppe_grid'):
+                self.ppe_grid.update_button_styles(self.ppe_status)
+            
+            # Update content if in settings or help
+            settings = self.findChild(SettingsContent)
+            if settings:
+                settings.setStyleSheet(f"""
+                    QWidget {{
+                        background-color: {self.colors.background};
+                    }}
+                    QLabel {{
+                        color: {self.colors.text};
+                    }}
+                """)
+            
+            help_content = self.findChild(HelpContent)
+            if help_content:
+                help_content.setStyleSheet(f"""
+                    QWidget {{
+                        background-color: {self.colors.background};
+                    }}
+                    QLabel {{
+                        color: {self.colors.text};
+                    }}
+                """)
+            
+            # Force immediate update
+            QApplication.processEvents()
 
     def _handle_settings_save(self):
         """Save settings and return to main view"""
@@ -774,3 +862,40 @@ class PPEVendingMachineGUI(QMainWindow):
                     report_tab.update_report_display()
         except Exception as e:
             print(f"Error logging dispense event: {e}")
+
+    def _sync_accessibility_buttons(self):
+        """Sync accessibility mode changes across the UI"""
+        # Update settings if they exist
+        if hasattr(self, 'settings_content'):
+            colors_tab = self.settings_content.tabs.widget(1)  # Colors tab is at index 1
+            if colors_tab:
+                colors_tab.settings_toggle_button.setText(
+                    "Accessibility O/X ON" if self.accessibility_mode else "Accessibility O/X OFF"
+                )
+                colors_tab._update_toggle_button_style()
+        
+        # Update help if it exists
+        if hasattr(self, 'help_content'):
+            self.help_content.help_toggle_button.setText(
+                "Accessibility O/X ON" if self.accessibility_mode else "Accessibility O/X OFF"
+            )
+            self.help_content._update_help_toggle_button_style()
+        
+        # Update PPE grid buttons if they exist
+        if hasattr(self, 'ppe_grid'):
+            self.ppe_grid.update_button_styles(self.ppe_status)
+            
+            # Update button text based on accessibility mode
+            for key, button in self.ppe_grid.buttons.items():
+                if key != 'override':
+                    base_text = button.text().split('\n')[0]  # Get the original label
+                    if self.accessibility_mode:
+                        # Add O/X indicator
+                        status = self.ppe_status.get(key, False)
+                        button.setText(f"{base_text}\n{'O' if status else 'X'}")
+                    else:
+                        # Remove O/X indicator
+                        button.setText(base_text)
+        
+        # Force immediate update
+        QApplication.processEvents()

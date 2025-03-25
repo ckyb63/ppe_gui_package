@@ -18,32 +18,27 @@ class TitleSection(QWidget):
         
     def _init_ui(self):
         header_layout = QHBoxLayout(self)
-        
-        # Help button container
-        help_container = QWidget()
-        help_container.setFixedSize(60, 60)
-        help_layout = QHBoxLayout(help_container)
-        help_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setContentsMargins(15, 15, 15, 15)
         
         # Help button
         help_button = QPushButton("?")
-        help_button.setFont(QFont('Arial', 24, QFont.Bold))
-        help_button.setFixedSize(60, 60)
+        help_button.setFont(QFont('Arial', 28, QFont.Bold))
+        help_button.setFixedSize(70, 70)
         help_button.setStyleSheet(f"""
             QPushButton {{
                 background-color: {self.parent.colors.primary};
                 color: white;
-                border-radius: 30px;
                 border: none;
+                border-radius: 20px;
+                margin: 5px;
             }}
             QPushButton:hover {{
                 background-color: {self.parent.colors.primary_dark};
             }}
         """)
         help_button.clicked.connect(self.parent.show_help)
-        help_layout.addWidget(help_button)
+        header_layout.addWidget(help_button)
         
-        header_layout.addWidget(help_container)
         header_layout.addStretch(1)
         
         # Title
@@ -55,14 +50,15 @@ class TitleSection(QWidget):
         
         # Settings button
         settings_button = QPushButton("⚙️")
-        settings_button.setFont(QFont('Arial', 24, QFont.Bold))
-        settings_button.setFixedSize(60, 60)
+        settings_button.setFont(QFont('Arial', 28, QFont.Bold))
+        settings_button.setFixedSize(70, 70)
         settings_button.setStyleSheet(f"""
             QPushButton {{
                 background-color: {self.parent.colors.primary};
                 color: white;
-                border-radius: 30px;
                 border: none;
+                border-radius: 20px;
+                margin: 5px;
             }}
             QPushButton:hover {{
                 background-color: {self.parent.colors.primary_dark};
@@ -78,27 +74,49 @@ class StatusSection(QWidget):
         self._init_ui()
         
     def _init_ui(self):
-        status_layout = QVBoxLayout(self)
+        # Main container with background
+        main_container = QWidget()
+        main_container.setObjectName("status_container")  # Add object name for styling
+        main_container.setStyleSheet(f"""
+            QWidget#status_container {{
+                background-color: {self.parent.colors.surface};
+                border-radius: 15px;
+                padding: 10px;
+            }}
+            QLabel {{
+                color: {self.parent.colors.text};
+                background-color: transparent;
+            }}
+        """)
         
-        # Status line widget
-        status_line = QWidget()
-        status_layout_line = QHBoxLayout(status_line)
+        status_layout = QVBoxLayout(main_container)
+        status_layout.setSpacing(15)
+        status_layout.setContentsMargins(20, 20, 20, 20)
+        status_layout.setAlignment(Qt.AlignCenter)
         
         # Gate status
         self.gate_status = QLabel('Gate LOCKED')
-        self.gate_status.setFont(QFont('Arial', 20, QFont.Bold))
+        self.gate_status.setFont(QFont('Arial', 42, QFont.Bold))
+        self.gate_status.setAlignment(Qt.AlignCenter)
         self.update_gate_status(True)  # Initially locked
-        status_layout_line.addWidget(self.gate_status)
+        status_layout.addWidget(self.gate_status)
         
-        status_layout_line.addStretch(1)
+        # Add divider
+        divider = QWidget()
+        divider.setFixedHeight(1)
+        divider.setStyleSheet(f"background-color: {self.parent.colors.text_secondary};")
+        status_layout.addWidget(divider)
         
         # Status message
         self.status_label = QLabel('Ready to dispense...')
-        self.status_label.setFont(QFont('Arial', 18, QFont.Bold))
-        self.status_label.setStyleSheet(f"color: {self.parent.colors.text};")
-        status_layout_line.addWidget(self.status_label)
+        self.status_label.setFont(QFont('Arial', 26, QFont.Bold))
+        self.status_label.setAlignment(Qt.AlignCenter)
+        status_layout.addWidget(self.status_label)
         
-        status_layout.addWidget(status_line)
+        # Add the container to the main layout
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(20, 10, 20, 10)
+        main_layout.addWidget(main_container)
         
     def update_gate_status(self, is_locked):
         self.gate_status.setText('Gate LOCKED' if is_locked else 'Gate UNLOCKED')
@@ -106,15 +124,23 @@ class StatusSection(QWidget):
             QLabel {{
                 color: {'red' if is_locked else 'green'};
                 font-weight: bold;
-                padding: 5px;
-                font-size: 20pt;
+                padding: 10px;
+                font-size: 42px;
             }}
         """)
         
     def show_status(self, message, color="black"):
         self.status_label.setText(message)
-        self.status_label.setStyleSheet(f"color: {color}; font-weight: bold;")
+        self.status_label.setStyleSheet(f"""
+            QLabel {{
+                color: {color};
+                font-weight: bold;
+                font-size: 26px;
+            }}
+        """)
 
+# Comment out entire CameraSection class
+"""
 class CameraSection(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -135,24 +161,18 @@ class CameraSection(QWidget):
         camera_layout.addWidget(self.camera_placeholder)
         
     def create_camera_subscriber(self):
-        """Create a ROS2 subscriber for the camera feed."""
         #self.subscription = self.parent.create_subscription(
-        #    Image,  # Assuming the camera feed is of type sensor_msgs/Image
-        #    'camera_feed_topic',  # Replace with your actual camera feed topic
+        #    Image,
+        #    'camera_feed_topic',
         #    self.camera_feed_callback,
         #    10
         #)
 
-    def camera_feed_callback(self, msg):
-        """Callback function to handle incoming camera feed messages."""
-        # Convert the ROS image message to a format suitable for QLabel
-        # This may involve converting the image to QImage or similar
-        # Example:
-        # image = self.convert_ros_image_to_qimage(msg)
-        # self.camera_placeholder.setPixmap(QPixmap.fromImage(image))
+    def camera_feed_callback(self):
+        pass
 
     def update_styling(self):
-        self.camera_placeholder.setStyleSheet(f"""
+        self.camera_placeholder.setStyleSheet(f'''
             QLabel {{
                 border: 2px dashed {self.parent.colors.neutral};
                 background: {self.parent.colors.surface};
@@ -160,7 +180,8 @@ class CameraSection(QWidget):
                 min-height: 400px;
                 padding: 10px;
             }}
-        """)
+        ''')
+"""
 
 class PPEGridSection(QWidget):
     def __init__(self, parent=None):
@@ -171,15 +192,15 @@ class PPEGridSection(QWidget):
         
     def _init_ui(self):
         grid = QGridLayout(self)
-        grid.setSpacing(10)  # Add some spacing between buttons
+        grid.setSpacing(15)  # Increased spacing between buttons
         
         ppe_items = [
             ('Hard Hat', 'hardhat', 0, 0),
-            ('Beard Net', 'beardnet', 0, 1),
-            ('Gloves', 'gloves', 0, 2),
-            ('Safety Glasses', 'safetyglasses', 1, 0),
+            ('Beard Net', 'beardnet', 1, 0),
+            ('Gloves', 'gloves', 2, 0),
+            ('Safety Glasses', 'safetyglasses', 0, 1),
             ('Ear Plugs', 'earplugs', 1, 1),
-            ('OVERRIDE', 'override', 1, 2)
+            ('OVERRIDE', 'override', 2, 1)
         ]
         
         for label, key, row, col in ppe_items:
@@ -187,8 +208,9 @@ class PPEGridSection(QWidget):
             layout = QHBoxLayout(container)
             
             button = ColoredButton(label)
-            button.setFont(QFont('Arial', 16, QFont.Bold))
-            button.setMinimumHeight(110)  # Increased from 80 to 100
+            button.setFont(QFont('Arial', 22, QFont.Bold))  # Increased from 18 to 22
+            button.setMinimumHeight(150)  # Keep existing height
+            button.setMinimumWidth(250)  # Keep existing width
             button.clicked.connect(lambda checked, k=key: self.parent.on_ppe_button_click(k))
             
             layout.addWidget(button)
@@ -203,30 +225,9 @@ class PPEGridSection(QWidget):
             
         for key, button in self.buttons.items():
             if key == 'override':
-                button.setStyleSheet("""
-                    QPushButton {
-                        background-color: #ff9800;
-                        color: white;
-                        border: none;
-                        border-radius: 5px;
-                        font-weight: bold;
-                        padding: 10px;
-                    }
-                    QPushButton:hover {
-                        background-color: #f57c00;
-                    }
-                    QPushButton:pressed {
-                        background-color: #ef6c00;
-                    }
-                    QPushButton:disabled {
-                        background-color: #cccccc;
-                    }
-                """)
-            else:
-                status = ppe_status.get(key, False)
                 button.setStyleSheet(f"""
                     QPushButton {{
-                        background-color: {'#4caf50' if status else '#ff6b6b'};
+                        background-color: #ff9800;
                         color: white;
                         border: none;
                         border-radius: 5px;
@@ -234,12 +235,36 @@ class PPEGridSection(QWidget):
                         padding: 10px;
                     }}
                     QPushButton:hover {{
-                        background-color: {'#45a049' if status else '#ff5252'};
+                        background-color: #f57c00;
                     }}
                     QPushButton:pressed {{
-                        background-color: {'#3d8b40' if status else '#ff3838'};
+                        background-color: #ef6c00;
                     }}
                     QPushButton:disabled {{
-                        background-color: #cccccc;
+                        background-color: {self.parent.colors.neutral};
+                    }}
+                """)
+            else:
+                status = ppe_status.get(key, False)
+                button.setStyleSheet(f"""
+                    QPushButton {{
+                        background-color: {self.parent.colors.success if status else self.parent.colors.danger};
+                        color: white;
+                        border: none;
+                        border-radius: 5px;
+                        font-weight: bold;
+                        padding: 10px;
+                    }}
+                    QPushButton:hover {{
+                        background-color: {self.parent.colors.success if status else '#ff5252'};
+                        opacity: 0.9;
+                    }}
+                    QPushButton:pressed {{
+                        background-color: {self.parent.colors.success if status else '#ff3838'};
+                        opacity: 0.8;
+                    }}
+                    QPushButton:disabled {{
+                        background-color: {self.parent.colors.neutral};
+                        opacity: 0.7;
                     }}
                 """) 

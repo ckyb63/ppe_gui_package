@@ -1,13 +1,34 @@
 # Changelog
 
-## [Unreleased - Future Plans]
-
-### Planned
-
-- Main GUI Window to contain a live Camera Feed
-  - Live Camera Feed to the Main GUI window to show the PPE detection with highlighted PPE items
-
 ## [Latest Release]
+
+## [0.10.0] - 2025-03-25 - Major Update Woohoo!
+
+### Changed
+
+- With the camera feed removed, the layout of the GUI was updated to be more compact and user friendly, reorganized the status section to better express the current status of the Gate and PPE Dispensing.
+
+### Fixed
+
+- Fixed Dark Mode, it broke when the camera feed was removed.
+- Fixed the accessibility mode to work again, along with the broken buttons and indicators.
+
+### Updated
+
+- Updated the override content layout and styleto be more touch user friendly.
+
+### Removed
+
+- Fully Removed all Camera Feed Section from the GUI application.
+
+### Note
+
+- In dark mode, the status section keeps a white background. While unintended and might have been a bug, it is now a feature.
+
+### Known Issues
+
+- Documentation might need to be updated to reflect new changes.
+  - Screenshots and the camera feed description.
 
 ## [0.9.6] - 2025-03-11
 
