@@ -1,6 +1,24 @@
 # Changelog
 
-## [Latest Release]
+## [Upcoming]
+
+- Ensure that the Avend Connector Node is able to work.
+
+## [Latest]
+
+## [0.10.1] - 2025-03-25
+
+### Updated
+
+- Readme screenshots and figure updated to reflect the new GUI arrangements
+
+### Removed
+
+- Commented out the camera feed subscriber.
+
+### Known Issues
+
+- GUI will get stuck in dark mode. [Workaround: Restart the application.]
 
 ## [0.10.0] - 2025-03-25 - Major Update Woohoo!
 

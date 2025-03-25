@@ -1,8 +1,8 @@
 # GUI Package for PPE Vending Machine
 
 [![Version](https://img.shields.io/badge/Version-0.10.0-blue)](CHANGELOG.md#latest-release)
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
-![PyQt5](https://img.shields.io/badge/PyQt5-5.15%2B-blue?logo=qt&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10.12-blue?logo=python&logoColor=white)
+![PyQt5](https://img.shields.io/badge/PyQt5-5.15.6-blue?logo=qt&logoColor=white)
 ![AVend API](https://img.shields.io/badge/AVend%20API-v1.2.2-blue?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyek0xMiAyMGMtNC40MiAwLTgtMy41OC04LThzMy41OC04IDgtOCA4IDMuNTggOCA4LTMuNTggOC04IDh6Ii8+PC9zdmc+)
 ![ROS2](https://img.shields.io/badge/ROS2-Humble-orange?logo=ros&logoColor=white)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-orange?logo=ubuntu&logoColor=white)
@@ -14,7 +14,6 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [Update Changelog](#update-changelog)
-- [Dependencies](#dependencies)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Topics](#topics)
@@ -57,12 +56,6 @@ The **PPE Vending Machine GUI Package** is a ROS2-based application designed to 
 ### Update Changelog
 
 For a detailed list of changes, bug fixes, new features, and the [Latest Release](CHANGELOG.md#latest-release), please refer to the [CHANGELOG](CHANGELOG.md).
-
-## Dependencies
-
-- ROS2 Humble
-- Python 3.10+
-- PyQt5 5.15+
 
 ## Installation
 
@@ -171,8 +164,8 @@ This chart provides a visual representation of how the various nodes communicate
 
 <table>
 <tr>
-    <td width="50%"><img src="images/main_gui_window_75.png" width="100%" style="max-width:400px"/></td>
-    <td width="50%"><img src="images/dark_theme_with_OX_75.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="images/main_gui_window_101.png" width="100%" style="max-width:400px"/></td>
+    <td width="50%"><img src="images/dark_theme_with_OX_101.png" width="100%" style="max-width:400px"/></td>
 </tr>
 <tr>
     <td><em>Standard interface with PPE status indicators</em></td>
@@ -185,7 +178,7 @@ This chart provides a visual representation of how the various nodes communicate
 <details>
 <summary>Safety Gate Override</summary>
 
-![Override Dialog](images/override_content_75.png)
+![Override Dialog](images/override_content_101.png)
 
 *Enhanced override page with user authentication and reason tracking*
 

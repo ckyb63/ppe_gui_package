@@ -78,12 +78,12 @@ class PPEGuiNode(Node):
         logger.info("Created subscription to 'ppeInventoryStatus' topic")
         
         # Create a subscriber for camera feed
-        self.camera_subscription = self.create_subscription(
-            String,
-            'camera_feed',  # Topic name for camera feed
-            self.camera_feed_callback,  # Callback method to handle incoming messages
-            10)  # Queue size for incoming messages
-        logger.info("Created subscription to 'camera_feed' topic")
+#        self.camera_subscription = self.create_subscription(
+#            String,
+#            'camera_feed',  # Topic name for camera feed
+#            self.camera_feed_callback,  # Callback method to handle incoming messages
+#            10)  # Queue size for incoming messages
+#        logger.info("Created subscription to 'camera_feed' topic")
         
         logger.info("PPE GUI ROS node initialization complete")
     
@@ -214,16 +214,16 @@ class PPEGuiNode(Node):
         except Exception as e:
             logger.error(f"Error logging dispense event: {e}", exc_info=True)
     
-    def camera_feed_callback(self, msg):
-        """
-        Callback for camera feed messages
-        
-        Args:
-            msg (String): The camera feed message
-        """
-        try:
-            logger.debug("Received camera feed update")
-            # Process camera feed data if needed
-            pass
-        except Exception as e:
-            logger.error(f"Error in camera_feed_callback: {e}", exc_info=True)
+#    def camera_feed_callback(self, msg):
+#        """
+#        Callback for camera feed messages
+#        
+#        Args:
+#            msg (String): The camera feed message
+#        """
+#        try:
+#            logger.debug("Received camera feed update")
+#            # Process camera feed data if needed
+#            pass
+#        except Exception as e:
+#            logger.error(f"Error in camera_feed_callback: {e}", exc_info=True)
