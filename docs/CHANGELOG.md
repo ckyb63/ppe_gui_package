@@ -1,10 +1,11 @@
 # Changelog
 
-## [Upcoming]
-
-- Ensure that the Avend Connector Node is able to work.
-
 ## [Latest]
+
+## [0.10.2] - 2025-03-27
+
+- Package Development is discontinued.
+- Due to Camera selected with the Jetson Orin Nano, it only supports Jetpack 5 which requires a older version of Ubuntu, which in turn only supports ROS1 Noetic.
 
 ## [0.10.1] - 2025-03-25
 
@@ -33,7 +34,7 @@
 
 ### Updated
 
-- Updated the override content layout and styleto be more touch user friendly.
+- Updated the override content layout and styles to be more touch user friendly.
 
 ### Removed
 
